@@ -1,0 +1,1060 @@
+cip_group,rank_in_group,unitid,institution_name,state,cip_code,cip_title,on_stem_list,completions_masters,completions_masters_second_major,completions_masters_nonresident,institution_target_cip_count,data_year
+ds,1,212133,Eastern University,PA,30.7001,"Data Science, General.",true,664,0,16,3,2023-24
+ds,2,227216,University of North Texas,TX,30.7001,"Data Science, General.",true,344,0,336,4,2023-24
+ds,3,190150,Columbia University in the City of New York,NY,30.7001,"Data Science, General.",true,203,0,153,8,2023-24
+ds,4,185828,New Jersey Institute of Technology,NJ,30.7001,"Data Science, General.",true,201,0,154,4,2023-24
+ds,5,228778,The University of Texas at Austin,TX,30.7001,"Data Science, General.",true,174,0,53,5,2023-24
+ds,6,122755,San Jose State University,CA,30.7001,"Data Science, General.",true,171,0,115,5,2023-24
+ds,7,193900,New York University,NY,30.7001,"Data Science, General.",true,167,0,134,6,2023-24
+ds,8,186432,Saint Peter's University,NJ,30.7001,"Data Science, General.",true,154,0,146,5,2023-24
+ds,9,146612,Lewis University,IL,30.7001,"Data Science, General.",true,122,0,108,3,2023-24
+ds,10,234076,University of Virginia-Main Campus,VA,30.7001,"Data Science, General.",true,120,0,10,5,2023-24
+ds,11,180814,Bellevue University,NE,30.7001,"Data Science, General.",true,109,0,0,3,2023-24
+ds,12,229115,Texas Tech University,TX,30.7001,"Data Science, General.",true,107,0,16,3,2023-24
+ds,13,220862,University of Memphis,TN,30.7001,"Data Science, General.",true,98,0,93,2,2023-24
+ds,14,110680,University of California-San Diego,CA,30.7001,"Data Science, General.",true,73,0,46,5,2023-24
+ds,15,178059,Maryville University of Saint Louis,MO,30.7001,"Data Science, General.",true,71,0,31,3,2023-24
+ds,16,228246,Southern Methodist University,TX,30.7001,"Data Science, General.",true,69,0,5,4,2023-24
+ds,17,133669,Florida Atlantic University,FL,30.7001,"Data Science, General.",true,66,0,46,2,2023-24
+ds,18,143358,Bradley University,IL,30.7001,"Data Science, General.",true,63,35,61,2,2023-24
+ds,19,170976,University of Michigan-Ann Arbor,MI,30.7001,"Data Science, General.",true,63,0,56,7,2023-24
+ds,20,212054,Drexel University,PA,30.7001,"Data Science, General.",true,57,1,34,6,2023-24
+ds,21,166629,University of Massachusetts-Amherst,MA,30.7001,"Data Science, General.",true,55,0,21,4,2023-24
+ds,22,227757,Rice University,TX,30.7001,"Data Science, General.",true,52,0,27,4,2023-24
+ds,23,168421,Worcester Polytechnic Institute,MA,30.7001,"Data Science, General.",true,48,0,20,4,2023-24
+ds,24,122436,University of San Diego,CA,30.7001,"Data Science, General.",true,47,0,0,3,2023-24
+ds,25,217156,Brown University,RI,30.7001,"Data Science, General.",true,45,0,31,2,2023-24
+ds,26,104179,University of Arizona,AZ,30.7001,"Data Science, General.",true,43,0,28,4,2023-24
+ds,27,170082,Grand Valley State University,MI,30.7001,"Data Science, General.",true,40,0,33,2,2023-24
+ds,28,198419,Duke University,NC,30.7001,"Data Science, General.",true,36,0,25,4,2023-24
+ds,29,127918,Regis University,CO,30.7001,"Data Science, General.",true,35,0,7,1,2023-24
+ds,30,484613,University of Phoenix-Arizona,AZ,30.7001,"Data Science, General.",true,34,0,4,1,2023-24
+ds,31,120883,University of the Pacific,CA,30.7001,"Data Science, General.",true,32,0,26,2,2023-24
+ds,32,131159,American University,DC,30.7001,"Data Science, General.",true,31,0,18,5,2023-24
+ds,33,191241,Fordham University,NY,30.7001,"Data Science, General.",true,30,0,23,5,2023-24
+ds,34,203517,Kent State University at Kent,OH,30.7001,"Data Science, General.",true,29,0,29,4,2023-24
+ds,35,110705,University of California-Santa Barbara,CA,30.7001,"Data Science, General.",true,28,0,1,5,2023-24
+ds,36,171128,Michigan Technological University,MI,30.7001,"Data Science, General.",true,28,0,21,3,2023-24
+ds,37,228723,Texas A&M University-College Station,TX,30.7001,"Data Science, General.",true,28,0,23,4,2023-24
+ds,38,190044,Clarkson University,NY,30.7001,"Data Science, General.",true,27,0,22,2,2023-24
+ds,39,210401,Willamette University,OR,30.7001,"Data Science, General.",true,27,0,1,1,2023-24
+ds,40,130943,University of Delaware,DE,30.7001,"Data Science, General.",true,26,0,18,7,2023-24
+ds,41,174066,University of Minnesota-Twin Cities,MN,30.7001,"Data Science, General.",true,26,0,17,5,2023-24
+ds,42,240277,University of Wisconsin-Green Bay,WI,30.7001,"Data Science, General.",true,22,0,2,1,2023-24
+ds,43,145637,University of Illinois Urbana-Champaign,IL,30.7001,"Data Science, General.",true,21,0,19,6,2023-24
+ds,44,168148,Tufts University,MA,30.7001,"Data Science, General.",true,21,0,10,4,2023-24
+ds,45,126775,Colorado School of Mines,CO,30.7001,"Data Science, General.",true,20,0,1,2,2023-24
+ds,46,219356,South Dakota State University,SD,30.7001,"Data Science, General.",true,20,0,13,2,2023-24
+ds,47,133553,Embry-Riddle Aeronautical University-Daytona Beach,FL,30.7001,"Data Science, General.",true,18,0,8,2,2023-24
+ds,48,134097,Florida State University,FL,30.7001,"Data Science, General.",true,18,0,12,5,2023-24
+ds,49,178402,University of Missouri-Kansas City,MO,30.7001,"Data Science, General.",true,17,0,11,4,2023-24
+ds,50,211440,Carnegie Mellon University,PA,30.7001,"Data Science, General.",true,17,0,4,8,2023-24
+ds,51,240329,University of Wisconsin-La Crosse,WI,30.7001,"Data Science, General.",true,17,0,2,2,2023-24
+ds,52,178615,Truman State University,MO,30.7001,"Data Science, General.",true,16,0,0,1,2023-24
+ds,53,240268,University of Wisconsin-Eau Claire,WI,30.7001,"Data Science, General.",true,16,0,3,1,2023-24
+ds,54,240365,University of Wisconsin-Oshkosh,WI,30.7001,"Data Science, General.",true,15,0,0,1,2023-24
+ds,55,489937,Carolina University,NC,30.7001,"Data Science, General.",true,14,0,11,1,2023-24
+ds,56,197045,Utica University,NY,30.7001,"Data Science, General.",true,12,0,0,1,2023-24
+ds,57,198464,East Carolina University,NC,30.7001,"Data Science, General.",true,12,0,7,2,2023-24
+ds,58,482936,Florida Polytechnic University,FL,30.7001,"Data Science, General.",true,12,0,8,1,2023-24
+ds,59,486840,Kennesaw State University,GA,30.7001,"Data Science, General.",true,12,0,3,1,2023-24
+ds,60,213543,Lehigh University,PA,30.7001,"Data Science, General.",true,10,0,6,5,2023-24
+ds,61,129020,University of Connecticut,CT,30.7001,"Data Science, General.",true,9,0,2,6,2023-24
+ds,62,200697,Air Force Institute of Technology-Graduate School of Engineering & Management,OH,30.7001,"Data Science, General.",true,9,0,0,2,2023-24
+ds,63,219833,Christian Brothers University,TN,30.7001,"Data Science, General.",true,9,0,6,1,2023-24
+ds,64,220792,Meharry Medical College,TN,30.7001,"Data Science, General.",true,9,0,0,2,2023-24
+ds,65,220978,Middle Tennessee State University,TN,30.7001,"Data Science, General.",true,9,0,2,1,2023-24
+ds,66,232982,Old Dominion University,VA,30.7001,"Data Science, General.",true,8,0,4,2,2023-24
+ds,67,129242,Fairfield University,CT,30.7001,"Data Science, General.",true,7,0,2,4,2023-24
+ds,68,153658,University of Iowa,IA,30.7001,"Data Science, General.",true,7,0,2,4,2023-24
+ds,69,157085,University of Kentucky,KY,30.7001,"Data Science, General.",true,7,0,3,4,2023-24
+ds,70,240453,University of Wisconsin-Milwaukee,WI,30.7001,"Data Science, General.",true,7,0,6,4,2023-24
+ds,71,168227,Wentworth Institute of Technology,MA,30.7001,"Data Science, General.",true,6,0,0,2,2023-24
+ds,72,186201,Ramapo College of New Jersey,NJ,30.7001,"Data Science, General.",true,6,0,3,1,2023-24
+ds,73,193308,Monroe University,NY,30.7001,"Data Science, General.",true,6,0,5,1,2023-24
+ds,74,201441,Bowling Green State University-Main Campus,OH,30.7001,"Data Science, General.",true,6,0,3,4,2023-24
+ds,75,220792,Meharry Medical College,TN,30.7099,"Data Science, Other.",false,6,0,0,2,2023-24
+ds,76,498571,Pennsylvania Western University,PA,30.7001,"Data Science, General.",true,6,0,0,1,2023-24
+ds,77,131520,Howard University,DC,30.7001,"Data Science, General.",true,5,0,0,1,2023-24
+ds,78,146719,Loyola University Chicago,IL,30.7001,"Data Science, General.",true,5,0,0,5,2023-24
+ds,79,164988,Boston University,MA,30.7001,"Data Science, General.",true,5,0,3,8,2023-24
+ds,80,200280,University of North Dakota,ND,30.7001,"Data Science, General.",true,5,0,2,2,2023-24
+ds,81,240480,University of Wisconsin-Stevens Point,WI,30.7001,"Data Science, General.",true,5,0,0,1,2023-24
+ds,82,152390,Saint Mary's College,IN,30.7001,"Data Science, General.",true,4,0,0,1,2023-24
+ds,83,217819,College of Charleston,SC,30.7001,"Data Science, General.",true,4,0,0,1,2023-24
+ds,84,240426,University of Wisconsin-Superior,WI,30.7001,"Data Science, General.",true,4,0,0,1,2023-24
+ds,85,185572,Monmouth University,NJ,30.7001,"Data Science, General.",true,3,0,0,1,2023-24
+ds,86,125231,Walden University,MN,30.7001,"Data Science, General.",true,2,0,1,1,2023-24
+ds,87,155317,University of Kansas,KS,30.7001,"Data Science, General.",true,2,0,0,4,2023-24
+ds,88,220075,East Tennessee State University,TN,30.7001,"Data Science, General.",true,2,0,2,1,2023-24
+ds,89,234915,City University of Seattle,WA,30.7001,"Data Science, General.",true,2,0,0,1,2023-24
+ds,90,240444,University of Wisconsin-Madison,WI,30.7001,"Data Science, General.",true,2,0,1,5,2023-24
+ds,91,482149,Augusta University,GA,30.7001,"Data Science, General.",true,2,0,0,1,2023-24
+ds,92,155335,Newman University,KS,30.7001,"Data Science, General.",true,1,0,1,1,2023-24
+ds,93,156125,Wichita State University,KS,30.7001,"Data Science, General.",true,1,0,1,4,2023-24
+ds,94,186584,Seton Hall University,NJ,30.7001,"Data Science, General.",true,1,0,0,3,2023-24
+ds,95,230782,Weber State University,UT,30.7001,"Data Science, General.",true,1,0,0,2,2023-24
+ds,96,237525,Marshall University,WV,30.7001,"Data Science, General.",true,1,0,0,2,2023-24
+analytics,1,228787,The University of Texas at Dallas,TX,30.7102,Business Analytics.,true,1033,0,898,6,2023-24
+analytics,2,414878,Trine University-Regional/Non-Traditional Campuses,IN,30.7102,Business Analytics.,true,737,0,731,1,2023-24
+analytics,3,227216,University of North Texas,TX,30.7102,Business Analytics.,true,356,0,317,4,2023-24
+analytics,4,166629,University of Massachusetts-Amherst,MA,30.7102,Business Analytics.,true,271,0,115,4,2023-24
+analytics,5,224554,East Texas A&M University,TX,30.7102,Business Analytics.,true,257,0,186,2,2023-24
+analytics,6,215062,University of Pennsylvania,PA,30.7104,Financial Analytics.,true,255,93,79,6,2023-24
+analytics,7,164368,Hult International Business School,MA,30.7102,Business Analytics.,true,250,0,244,1,2023-24
+analytics,8,144050,University of Chicago,IL,30.7101,"Data Analytics, General.",true,246,0,164,4,2023-24
+analytics,9,164988,Boston University,MA,30.7102,Business Analytics.,true,226,0,199,8,2023-24
+analytics,10,129020,University of Connecticut,CT,30.7102,Business Analytics.,true,216,0,175,6,2023-24
+analytics,11,123961,University of Southern California,CA,30.7102,Business Analytics.,true,208,0,147,6,2023-24
+analytics,12,186432,Saint Peter's University,NJ,30.7102,Business Analytics.,true,206,0,204,5,2023-24
+analytics,13,190150,Columbia University in the City of New York,NY,30.7102,Business Analytics.,true,184,0,159,8,2023-24
+analytics,14,228778,The University of Texas at Austin,TX,30.7102,Business Analytics.,true,184,0,99,5,2023-24
+analytics,15,164988,Boston University,MA,30.7104,Financial Analytics.,true,153,0,128,8,2023-24
+analytics,16,190512,CUNY Bernard M Baruch College,NY,30.7102,Business Analytics.,true,149,0,65,3,2023-24
+analytics,17,191241,Fordham University,NY,30.7102,Business Analytics.,true,130,0,88,5,2023-24
+analytics,18,225511,University of Houston,TX,30.7104,Financial Analytics.,true,102,0,6,5,2023-24
+analytics,19,144740,DePaul University,IL,30.7102,Business Analytics.,true,100,0,76,5,2023-24
+analytics,20,228769,The University of Texas at Arlington,TX,30.7102,Business Analytics.,true,100,0,85,3,2023-24
+analytics,21,145637,University of Illinois Urbana-Champaign,IL,30.7102,Business Analytics.,true,95,0,85,6,2023-24
+analytics,22,203517,Kent State University at Kent,OH,30.7102,Business Analytics.,true,89,0,82,4,2023-24
+analytics,23,490133,Westcliff University,CA,30.7101,"Data Analytics, General.",true,82,0,79,1,2023-24
+analytics,24,174066,University of Minnesota-Twin Cities,MN,30.7102,Business Analytics.,true,78,0,69,5,2023-24
+analytics,25,164580,Babson College,MA,30.7102,Business Analytics.,true,77,0,59,1,2023-24
+analytics,26,170976,University of Michigan-Ann Arbor,MI,30.7104,Financial Analytics.,true,76,0,40,7,2023-24
+analytics,27,204857,Ohio University-Main Campus,OH,30.7102,Business Analytics.,true,74,0,0,2,2023-24
+analytics,28,212054,Drexel University,PA,30.7102,Business Analytics.,true,70,0,60,6,2023-24
+analytics,29,173328,Concordia University-Saint Paul,MN,30.7101,"Data Analytics, General.",true,68,0,60,1,2023-24
+analytics,30,211440,Carnegie Mellon University,PA,30.7199,"Data Analytics, Other.",true,64,0,27,8,2023-24
+analytics,31,120883,University of the Pacific,CA,30.7102,Business Analytics.,true,63,0,58,2,2023-24
+analytics,32,133669,Florida Atlantic University,FL,30.7102,Business Analytics.,true,61,0,22,2,2023-24
+analytics,33,227368,The University of Texas Rio Grande Valley,TX,30.7102,Business Analytics.,true,59,0,2,2,2023-24
+analytics,34,225432,University of Houston-Downtown,TX,30.7101,"Data Analytics, General.",true,58,0,15,1,2023-24
+analytics,35,132903,University of Central Florida,FL,30.7104,Financial Analytics.,true,56,0,7,2,2023-24
+analytics,36,194310,Pace University,NY,30.7102,Business Analytics.,true,55,0,45,3,2023-24
+analytics,37,199218,University of North Carolina Wilmington,NC,30.7104,Financial Analytics.,true,50,0,0,3,2023-24
+analytics,38,215293,University of Pittsburgh-Pittsburgh Campus,PA,30.7102,Business Analytics.,true,50,0,43,4,2023-24
+analytics,39,193900,New York University,NY,30.7102,Business Analytics.,true,49,0,30,6,2023-24
+analytics,40,228459,Texas State University,TX,30.7102,Business Analytics.,true,49,0,44,2,2023-24
+analytics,41,130226,Quinnipiac University,CT,30.7102,Business Analytics.,true,48,0,4,1,2023-24
+analytics,42,202806,Franklin University,OH,30.7102,Business Analytics.,true,48,0,35,2,2023-24
+analytics,43,225511,University of Houston,TX,30.7102,Business Analytics.,true,47,0,27,5,2023-24
+analytics,44,234030,Virginia Commonwealth University,VA,30.7101,"Data Analytics, General.",true,47,0,19,2,2023-24
+analytics,45,163286,University of Maryland-College Park,MD,30.7104,Financial Analytics.,true,46,0,9,6,2023-24
+analytics,46,176017,University of Mississippi,MS,30.7101,"Data Analytics, General.",true,45,0,0,3,2023-24
+analytics,47,226833,Midwestern State University,TX,30.7102,Business Analytics.,true,44,0,24,1,2023-24
+analytics,48,129242,Fairfield University,CT,30.7102,Business Analytics.,true,42,2,7,4,2023-24
+analytics,49,174817,Saint Mary's University of Minnesota,MN,30.7102,Business Analytics.,true,42,0,0,1,2023-24
+analytics,50,213543,Lehigh University,PA,30.7102,Business Analytics.,true,42,0,34,5,2023-24
+analytics,51,136172,University of North Florida,FL,30.7102,Business Analytics.,true,41,0,16,1,2023-24
+analytics,52,122436,University of San Diego,CA,30.7102,Business Analytics.,true,40,0,7,3,2023-24
+analytics,53,167987,University of Massachusetts-Dartmouth,MA,30.7101,"Data Analytics, General.",true,40,0,39,3,2023-24
+analytics,54,228875,Texas Christian University,TX,30.7102,Business Analytics.,true,40,0,10,2,2023-24
+analytics,55,202806,Franklin University,OH,30.7101,"Data Analytics, General.",true,35,0,1,2,2023-24
+analytics,56,240453,University of Wisconsin-Milwaukee,WI,30.7102,Business Analytics.,true,32,0,3,4,2023-24
+analytics,57,130943,University of Delaware,DE,30.7102,Business Analytics.,true,31,1,23,7,2023-24
+analytics,58,206604,Wright State University-Main Campus,OH,30.7102,Business Analytics.,true,30,0,22,4,2023-24
+analytics,59,179043,Rockhurst University,MO,30.7102,Business Analytics.,true,29,0,6,1,2023-24
+analytics,60,180814,Bellevue University,NE,30.7102,Business Analytics.,true,29,0,1,3,2023-24
+analytics,61,222831,Angelo State University,TX,30.7102,Business Analytics.,true,29,0,3,1,2023-24
+analytics,62,229027,The University of Texas at San Antonio,TX,30.7101,"Data Analytics, General.",true,29,0,7,3,2023-24
+analytics,63,168148,Tufts University,MA,30.7101,"Data Analytics, General.",true,27,0,19,4,2023-24
+analytics,64,117140,University of La Verne,CA,30.7101,"Data Analytics, General.",true,26,0,15,1,2023-24
+analytics,65,178059,Maryville University of Saint Louis,MO,30.7101,"Data Analytics, General.",true,26,0,1,3,2023-24
+analytics,66,237312,University of Charleston,WV,30.7102,Business Analytics.,true,26,0,0,1,2023-24
+analytics,67,226091,Lamar University,TX,30.7104,Financial Analytics.,true,24,0,2,1,2023-24
+analytics,68,240189,University of Wisconsin-Whitewater,WI,30.7102,Business Analytics.,true,24,0,1,1,2023-24
+analytics,69,489779,Purdue University Global,IN,30.7101,"Data Analytics, General.",true,23,0,0,1,2023-24
+analytics,70,110583,California State University-Long Beach,CA,30.7104,Financial Analytics.,true,22,2,4,3,2023-24
+analytics,71,196130,SUNY Buffalo State University,NY,30.7101,"Data Analytics, General.",true,22,0,5,1,2023-24
+analytics,72,212054,Drexel University,PA,30.7104,Financial Analytics.,true,22,0,22,6,2023-24
+analytics,73,150163,Butler University,IN,30.7101,"Data Analytics, General.",true,21,0,0,2,2023-24
+analytics,74,213367,La Salle University,PA,30.7102,Business Analytics.,true,21,0,4,1,2023-24
+analytics,75,211440,Carnegie Mellon University,PA,30.7101,"Data Analytics, General.",true,20,0,13,8,2023-24
+analytics,76,115083,Golden Gate University,CA,30.7102,Business Analytics.,true,18,0,5,3,2023-24
+analytics,77,123554,Saint Mary's College of California,CA,30.7102,Business Analytics.,true,18,0,5,2,2023-24
+analytics,78,153269,Drake University,IA,30.7101,"Data Analytics, General.",true,18,0,0,1,2023-24
+analytics,79,229160,Texas Wesleyan University,TX,30.7102,Business Analytics.,true,18,0,7,1,2023-24
+analytics,80,192448,Long Island University,NY,30.7101,"Data Analytics, General.",true,17,0,9,2,2023-24
+analytics,81,211440,Carnegie Mellon University,PA,30.7103,Data Visualization.,true,17,0,13,8,2023-24
+analytics,82,183044,University of New Hampshire-Main Campus,NH,30.7102,Business Analytics.,true,16,0,13,4,2023-24
+analytics,83,195003,Rochester Institute of Technology,NY,30.7104,Financial Analytics.,true,16,0,15,4,2023-24
+analytics,84,212133,Eastern University,PA,30.7102,Business Analytics.,true,15,0,0,3,2023-24
+analytics,85,169479,Davenport University,MI,30.7102,Business Analytics.,true,14,0,1,2,2023-24
+analytics,86,186584,Seton Hall University,NJ,30.7102,Business Analytics.,true,14,0,0,3,2023-24
+analytics,87,198695,High Point University,NC,30.7102,Business Analytics.,true,14,0,0,1,2023-24
+analytics,88,105330,Northern Arizona University,AZ,30.7102,Business Analytics.,true,12,0,8,2,2023-24
+analytics,89,182281,University of Nevada-Las Vegas,NV,30.7101,"Data Analytics, General.",true,12,0,5,3,2023-24
+analytics,90,182290,University of Nevada-Reno,NV,30.7102,Business Analytics.,true,12,0,0,3,2023-24
+analytics,91,196246,State University of New York at Plattsburgh,NY,30.7101,"Data Analytics, General.",true,12,0,5,1,2023-24
+analytics,92,130943,University of Delaware,DE,30.7104,Financial Analytics.,true,11,0,3,7,2023-24
+analytics,93,134097,Florida State University,FL,30.7102,Business Analytics.,true,11,0,8,5,2023-24
+analytics,94,181464,University of Nebraska-Lincoln,NE,30.7102,Business Analytics.,true,11,0,0,5,2023-24
+analytics,95,195164,St Bonaventure University,NY,30.7102,Business Analytics.,true,11,0,0,1,2023-24
+analytics,96,200800,University of Akron Main Campus,OH,30.7102,Business Analytics.,true,11,0,0,3,2023-24
+analytics,97,207263,Northeastern State University,OK,30.7104,Financial Analytics.,true,11,0,1,1,2023-24
+analytics,98,219471,University of South Dakota,SD,30.7102,Business Analytics.,true,11,0,6,1,2023-24
+analytics,99,168421,Worcester Polytechnic Institute,MA,30.7102,Business Analytics.,true,10,0,5,4,2023-24
+analytics,100,164924,Boston College,MA,30.7101,"Data Analytics, General.",true,9,0,7,3,2023-24
+analytics,101,217059,York College of Pennsylvania,PA,30.7102,Business Analytics.,true,9,0,0,1,2023-24
+analytics,102,172608,Walsh College,MI,30.7101,"Data Analytics, General.",true,8,0,1,2,2023-24
+analytics,103,190044,Clarkson University,NY,30.7101,"Data Analytics, General.",true,8,0,0,2,2023-24
+analytics,104,161873,University of Baltimore,MD,30.7104,Financial Analytics.,true,7,0,2,2,2023-24
+analytics,105,131159,American University,DC,30.7104,Financial Analytics.,true,6,0,6,5,2023-24
+analytics,106,459727,Touro University Worldwide,CA,30.7102,Business Analytics.,true,6,0,0,1,2023-24
+analytics,107,134079,Florida Southern College,FL,30.7102,Business Analytics.,true,5,0,2,1,2023-24
+analytics,108,199847,Wake Forest University,NC,30.7104,Financial Analytics.,true,5,0,0,4,2023-24
+analytics,109,216852,Widener University,PA,30.7101,"Data Analytics, General.",true,5,0,1,2,2023-24
+analytics,110,228769,The University of Texas at Arlington,TX,30.7101,"Data Analytics, General.",true,5,0,0,3,2023-24
+analytics,111,153825,Loras College,IA,30.7101,"Data Analytics, General.",true,4,0,2,1,2023-24
+analytics,112,169910,Ferris State University,MI,30.7101,"Data Analytics, General.",true,4,0,0,1,2023-24
+analytics,113,185590,Montclair State University,NJ,30.7102,Business Analytics.,true,4,0,3,4,2023-24
+analytics,114,199412,Queens University of Charlotte,NC,30.7104,Financial Analytics.,true,4,0,3,1,2023-24
+analytics,115,207458,Oklahoma City University,OK,30.7101,"Data Analytics, General.",true,4,0,1,2,2023-24
+analytics,116,212133,Eastern University,PA,30.7101,"Data Analytics, General.",true,4,0,0,3,2023-24
+analytics,117,215947,Seton Hill University,PA,30.7102,Business Analytics.,true,4,0,1,1,2023-24
+analytics,118,222628,Amberton University,TX,30.7102,Business Analytics.,true,4,0,0,2,2023-24
+analytics,119,223232,Baylor University,TX,30.7102,Business Analytics.,true,4,0,0,3,2023-24
+analytics,120,231651,Regent University,VA,30.7102,Business Analytics.,true,4,0,0,1,2023-24
+analytics,121,239105,Marquette University,WI,30.7199,"Data Analytics, Other.",true,4,0,0,4,2023-24
+analytics,122,446640,Harrisburg University of Science and Technology,PA,30.7102,Business Analytics.,true,4,0,4,3,2023-24
+analytics,123,133553,Embry-Riddle Aeronautical University-Daytona Beach,FL,30.7102,Business Analytics.,true,3,0,1,2,2023-24
+analytics,124,141334,University of West Georgia,GA,30.7102,Business Analytics.,true,3,0,3,1,2023-24
+analytics,125,152600,Valparaiso University,IN,30.7102,Business Analytics.,true,3,0,3,2,2023-24
+analytics,126,169798,Eastern Michigan University,MI,30.7102,Business Analytics.,true,3,0,1,4,2023-24
+analytics,127,225414,University of Houston-Clear Lake,TX,30.7104,Financial Analytics.,true,3,0,0,2,2023-24
+analytics,128,238616,Concordia University-Wisconsin,WI,30.7102,Business Analytics.,true,3,0,3,1,2023-24
+analytics,129,100751,The University of Alabama,AL,30.7102,Business Analytics.,true,2,0,1,4,2023-24
+analytics,130,130989,Goldey-Beacom College,DE,30.7102,Business Analytics.,true,2,0,2,2,2023-24
+analytics,131,145725,Illinois Institute of Technology,IL,30.7102,Business Analytics.,true,2,0,2,3,2023-24
+analytics,132,166869,MGH Institute of Health Professions,MA,30.7101,"Data Analytics, General.",true,2,0,0,1,2023-24
+analytics,133,168227,Wentworth Institute of Technology,MA,30.7102,Business Analytics.,true,2,0,0,2,2023-24
+analytics,134,214157,Moravian University,PA,30.7101,"Data Analytics, General.",true,2,0,0,1,2023-24
+analytics,135,215062,University of Pennsylvania,PA,30.7102,Business Analytics.,true,2,0,1,6,2023-24
+analytics,136,218663,University of South Carolina-Columbia,SC,30.7199,"Data Analytics, Other.",true,2,0,0,4,2023-24
+analytics,137,220631,Lincoln Memorial University,TN,30.7102,Business Analytics.,true,2,0,0,1,2023-24
+analytics,138,104151,Arizona State University Campus Immersion,AZ,30.7101,"Data Analytics, General.",true,1,0,1,6,2023-24
+analytics,139,130183,Post University,CT,30.7102,Business Analytics.,true,1,0,0,1,2023-24
+analytics,140,143358,Bradley University,IL,30.7102,Business Analytics.,true,1,0,1,2,2023-24
+analytics,141,196060,University at Albany,NY,30.7102,Business Analytics.,true,1,0,0,2,2023-24
+analytics,142,207458,Oklahoma City University,OK,30.7104,Financial Analytics.,true,1,0,0,2,2023-24
+analytics,143,231420,Averett University,VA,30.7102,Business Analytics.,true,1,0,0,1,2023-24
+analytics,144,235316,Gonzaga University,WA,30.7102,Business Analytics.,true,1,0,0,1,2023-24
+stats,1,227216,University of North Texas,TX,27.0503,Mathematics and Statistics.,true,431,0,359,4,2023-24
+stats,2,190150,Columbia University in the City of New York,NY,27.0501,"Statistics, General.",true,335,0,309,8,2023-24
+stats,3,162928,Johns Hopkins University,MD,27.0501,"Statistics, General.",true,135,0,69,6,2023-24
+stats,4,190150,Columbia University in the City of New York,NY,27.0502,Mathematical Statistics and Probability.,true,103,0,95,8,2023-24
+stats,5,186380,Rutgers University-New Brunswick,NJ,27.0501,"Statistics, General.",true,94,0,76,3,2023-24
+stats,6,228723,Texas A&M University-College Station,TX,27.0501,"Statistics, General.",true,90,0,4,4,2023-24
+stats,7,145637,University of Illinois Urbana-Champaign,IL,27.0501,"Statistics, General.",true,89,0,73,6,2023-24
+stats,8,240444,University of Wisconsin-Madison,WI,27.0501,"Statistics, General.",true,79,0,69,5,2023-24
+stats,9,170976,University of Michigan-Ann Arbor,MI,27.0601,"Applied Statistics, General.",true,71,0,61,7,2023-24
+stats,10,164988,Boston University,MA,27.0501,"Statistics, General.",true,69,0,63,8,2023-24
+stats,11,190415,Cornell University,NY,27.0501,"Statistics, General.",true,67,0,55,5,2023-24
+stats,12,149772,Western Illinois University,IL,27.0501,"Statistics, General.",true,65,0,64,2,2023-24
+stats,13,243744,Stanford University,CA,27.0501,"Statistics, General.",true,60,0,34,3,2023-24
+stats,14,162928,Johns Hopkins University,MD,27.0601,"Applied Statistics, General.",true,58,0,1,6,2023-24
+stats,15,198419,Duke University,NC,27.0501,"Statistics, General.",true,52,0,44,4,2023-24
+stats,16,199193,North Carolina State University at Raleigh,NC,27.0501,"Statistics, General.",true,52,0,15,3,2023-24
+stats,17,479956,Pennsylvania State University-World Campus,PA,27.0501,"Statistics, General.",true,49,0,8,2,2023-24
+stats,18,236948,University of Washington-Seattle Campus,WA,27.0501,"Statistics, General.",true,46,0,34,4,2023-24
+stats,19,144050,University of Chicago,IL,27.0501,"Statistics, General.",true,44,1,36,4,2023-24
+stats,20,110574,California State University-East Bay,CA,27.0501,"Statistics, General.",true,43,0,25,3,2023-24
+stats,21,110635,University of California-Berkeley,CA,27.0501,"Statistics, General.",true,42,0,25,3,2023-24
+stats,22,110644,University of California-Davis,CA,27.0501,"Statistics, General.",true,42,0,29,4,2023-24
+stats,23,170976,University of Michigan-Ann Arbor,MI,27.0502,Mathematical Statistics and Probability.,true,40,0,38,7,2023-24
+stats,24,190512,CUNY Bernard M Baruch College,NY,27.0501,"Statistics, General.",true,40,0,11,3,2023-24
+stats,25,131496,Georgetown University,DC,27.0503,Mathematics and Statistics.,true,37,0,27,5,2023-24
+stats,26,110662,University of California-Los Angeles,CA,27.0599,"Statistics, Other.",true,35,0,18,6,2023-24
+stats,27,126818,Colorado State University-Fort Collins,CO,27.0601,"Applied Statistics, General.",true,32,0,2,5,2023-24
+stats,28,147767,Northwestern University,IL,27.0501,"Statistics, General.",true,32,0,25,4,2023-24
+stats,29,215062,University of Pennsylvania,PA,27.0501,"Statistics, General.",true,32,4,16,6,2023-24
+stats,30,104717,Grand Canyon University,AZ,27.0501,"Statistics, General.",true,31,0,5,2,2023-24
+stats,31,193900,New York University,NY,27.0501,"Statistics, General.",true,31,0,22,6,2023-24
+stats,32,209542,Oregon State University,OR,27.0599,"Statistics, Other.",true,31,0,0,3,2023-24
+stats,33,155317,University of Kansas,KS,27.0601,"Applied Statistics, General.",true,28,0,0,4,2023-24
+stats,34,170976,University of Michigan-Ann Arbor,MI,27.0501,"Statistics, General.",true,28,0,21,7,2023-24
+stats,35,483124,Arizona State University Digital Immersion,AZ,27.0601,"Applied Statistics, General.",true,28,0,1,2,2023-24
+stats,36,166027,Harvard University,MA,27.0501,"Statistics, General.",true,27,0,13,3,2023-24
+stats,37,228787,The University of Texas at Dallas,TX,27.0501,"Statistics, General.",true,26,0,10,6,2023-24
+stats,38,130794,Yale University,CT,27.0501,"Statistics, General.",true,25,1,13,3,2023-24
+stats,39,139959,University of Georgia,GA,27.0501,"Statistics, General.",true,25,0,14,4,2023-24
+stats,40,227757,Rice University,TX,27.0501,"Statistics, General.",true,25,0,19,4,2023-24
+stats,41,243780,Purdue University-Main Campus,IN,27.0501,"Statistics, General.",true,25,0,20,5,2023-24
+stats,42,130943,University of Delaware,DE,27.0501,"Statistics, General.",true,23,0,18,7,2023-24
+stats,43,190576,CUNY Graduate School and University Center,NY,27.0501,"Statistics, General.",true,23,0,0,2,2023-24
+stats,44,110653,University of California-Irvine,CA,27.0501,"Statistics, General.",true,22,0,11,4,2023-24
+stats,45,179867,Washington University in St Louis,MO,27.0501,"Statistics, General.",true,22,0,18,4,2023-24
+stats,46,195003,Rochester Institute of Technology,NY,27.0601,"Applied Statistics, General.",true,22,0,4,4,2023-24
+stats,47,234076,University of Virginia-Main Campus,VA,27.0501,"Statistics, General.",true,22,0,4,5,2023-24
+stats,48,119605,National University,CA,27.0501,"Statistics, General.",true,21,0,0,1,2023-24
+stats,49,110705,University of California-Santa Barbara,CA,27.0501,"Statistics, General.",true,20,0,11,5,2023-24
+stats,50,131469,George Washington University,DC,27.0501,"Statistics, General.",true,20,0,17,4,2023-24
+stats,51,216764,West Chester University of Pennsylvania,PA,27.0501,"Statistics, General.",true,20,0,4,1,2023-24
+stats,52,225511,University of Houston,TX,27.0503,Mathematics and Statistics.,true,20,0,9,5,2023-24
+stats,53,110662,University of California-Los Angeles,CA,27.0501,"Statistics, General.",true,19,0,6,6,2023-24
+stats,54,122409,San Diego State University,CA,27.0501,"Statistics, General.",true,19,0,4,2,2023-24
+stats,55,204796,Ohio State University-Main Campus,OH,27.0501,"Statistics, General.",true,19,0,9,4,2023-24
+stats,56,130943,University of Delaware,DE,27.0601,"Applied Statistics, General.",true,18,0,0,7,2023-24
+stats,57,174066,University of Minnesota-Twin Cities,MN,27.0501,"Statistics, General.",true,18,0,16,5,2023-24
+stats,58,110583,California State University-Long Beach,CA,27.0599,"Statistics, Other.",true,17,0,2,3,2023-24
+stats,59,139755,Georgia Institute of Technology-Main Campus,GA,27.0501,"Statistics, General.",true,17,0,11,4,2023-24
+stats,60,171128,Michigan Technological University,MI,27.0601,"Applied Statistics, General.",true,17,0,0,3,2023-24
+stats,61,132903,University of Central Florida,FL,27.0501,"Statistics, General.",true,16,0,7,2,2023-24
+stats,62,134097,Florida State University,FL,27.0501,"Statistics, General.",true,16,0,10,5,2023-24
+stats,63,209542,Oregon State University,OR,27.0501,"Statistics, General.",true,16,0,3,3,2023-24
+stats,64,229027,The University of Texas at San Antonio,TX,27.0501,"Statistics, General.",true,16,0,0,3,2023-24
+stats,65,110565,California State University-Fullerton,CA,27.0501,"Statistics, General.",true,15,0,0,2,2023-24
+stats,66,190594,CUNY Hunter College,NY,27.0503,Mathematics and Statistics.,true,15,0,1,1,2023-24
+stats,67,216597,Villanova University,PA,27.0601,"Applied Statistics, General.",true,15,0,3,2,2023-24
+stats,68,106397,University of Arkansas,AR,27.0501,"Statistics, General.",true,14,0,3,3,2023-24
+stats,69,187046,Thomas Edison State University,NJ,27.0599,"Statistics, Other.",true,14,0,0,1,2023-24
+stats,70,190664,CUNY Queens College,NY,27.0599,"Statistics, Other.",true,14,0,3,2,2023-24
+stats,71,230038,Brigham Young University,UT,27.0501,"Statistics, General.",true,14,0,0,3,2023-24
+stats,72,155399,Kansas State University,KS,27.0501,"Statistics, General.",true,13,0,3,3,2023-24
+stats,73,201441,Bowling Green State University-Main Campus,OH,27.0601,"Applied Statistics, General.",true,13,0,11,4,2023-24
+stats,74,214777,Pennsylvania State University-Main Campus,PA,27.0501,"Statistics, General.",true,13,0,6,4,2023-24
+stats,75,204024,Miami University-Oxford,OH,27.0501,"Statistics, General.",true,12,0,7,3,2023-24
+stats,76,211440,Carnegie Mellon University,PA,27.0501,"Statistics, General.",true,12,0,3,8,2023-24
+stats,77,215293,University of Pittsburgh-Pittsburgh Campus,PA,27.0501,"Statistics, General.",true,12,0,6,4,2023-24
+stats,78,100751,The University of Alabama,AL,27.0601,"Applied Statistics, General.",true,11,0,0,4,2023-24
+stats,79,122597,San Francisco State University,CA,27.0501,"Statistics, General.",true,11,0,7,3,2023-24
+stats,80,144740,DePaul University,IL,27.0601,"Applied Statistics, General.",true,11,0,1,5,2023-24
+stats,81,166629,University of Massachusetts-Amherst,MA,27.0501,"Statistics, General.",true,11,0,6,4,2023-24
+stats,82,178396,University of Missouri-Columbia,MO,27.0501,"Statistics, General.",true,11,0,1,3,2023-24
+stats,83,104151,Arizona State University Campus Immersion,AZ,27.0501,"Statistics, General.",true,10,0,2,6,2023-24
+stats,84,159391,Louisiana State University and Agricultural & Mechanical College,LA,27.0501,"Statistics, General.",true,10,0,7,3,2023-24
+stats,85,171100,Michigan State University,MI,27.0501,"Statistics, General.",true,10,0,9,5,2023-24
+stats,86,221759,The University of Tennessee-Knoxville,TN,27.0501,"Statistics, General.",true,10,0,7,5,2023-24
+stats,87,227368,The University of Texas Rio Grande Valley,TX,27.0503,Mathematics and Statistics.,true,10,0,6,2,2023-24
+stats,88,229115,Texas Tech University,TX,27.0501,"Statistics, General.",true,10,0,8,3,2023-24
+stats,89,230728,Utah State University,UT,27.0501,"Statistics, General.",true,10,0,1,3,2023-24
+stats,90,100858,Auburn University,AL,27.0501,"Statistics, General.",true,9,0,9,1,2023-24
+stats,91,110680,University of California-San Diego,CA,27.0501,"Statistics, General.",true,9,0,5,5,2023-24
+stats,92,122755,San Jose State University,CA,27.0501,"Statistics, General.",true,9,0,2,5,2023-24
+stats,93,151351,Indiana University-Bloomington,IN,27.0502,Mathematical Statistics and Probability.,true,9,0,5,5,2023-24
+stats,94,170082,Grand Valley State University,MI,27.0501,"Statistics, General.",true,9,0,0,2,2023-24
+stats,95,195030,University of Rochester,NY,27.0501,"Statistics, General.",true,9,0,8,3,2023-24
+stats,96,199847,Wake Forest University,NC,27.0501,"Statistics, General.",true,9,0,5,4,2023-24
+stats,97,202134,Cleveland State University,OH,27.0601,"Applied Statistics, General.",true,9,0,1,1,2023-24
+stats,98,223232,Baylor University,TX,27.0601,"Applied Statistics, General.",true,9,0,1,3,2023-24
+stats,99,228778,The University of Texas at Austin,TX,27.0501,"Statistics, General.",true,9,0,8,5,2023-24
+stats,100,236939,Washington State University,WA,27.0501,"Statistics, General.",true,9,0,7,2,2023-24
+stats,101,105330,Northern Arizona University,AZ,27.0501,"Statistics, General.",true,8,0,5,2,2023-24
+stats,102,126562,University of Colorado Denver/Anschutz Medical Campus,CO,27.0501,"Statistics, General.",true,8,0,0,3,2023-24
+stats,103,131159,American University,DC,27.0501,"Statistics, General.",true,8,0,1,5,2023-24
+stats,104,137351,University of South Florida,FL,27.0501,"Statistics, General.",true,8,0,7,2,2023-24
+stats,105,145600,University of Illinois Chicago,IL,27.0501,"Statistics, General.",true,8,0,7,4,2023-24
+stats,106,157085,University of Kentucky,KY,27.0501,"Statistics, General.",true,8,0,2,4,2023-24
+stats,107,163286,University of Maryland-College Park,MD,27.0501,"Statistics, General.",true,8,0,3,6,2023-24
+stats,108,228796,The University of Texas at El Paso,TX,27.0503,Mathematics and Statistics.,true,8,0,5,2,2023-24
+stats,109,233921,Virginia Polytechnic Institute and State University,VA,27.0501,"Statistics, General.",true,8,0,3,3,2023-24
+stats,110,104179,University of Arizona,AZ,27.0501,"Statistics, General.",true,7,0,4,4,2023-24
+stats,111,126818,Colorado State University-Fort Collins,CO,27.0501,"Statistics, General.",true,7,0,6,5,2023-24
+stats,112,133951,Florida International University,FL,27.0501,"Statistics, General.",true,7,0,4,3,2023-24
+stats,113,146719,Loyola University Chicago,IL,27.0501,"Statistics, General.",true,7,0,3,5,2023-24
+stats,114,153603,Iowa State University,IA,27.0501,"Statistics, General.",true,7,0,2,3,2023-24
+stats,115,153658,University of Iowa,IA,27.0501,"Statistics, General.",true,7,0,4,4,2023-24
+stats,116,163268,University of Maryland-Baltimore County,MD,27.0501,"Statistics, General.",true,7,0,5,2,2023-24
+stats,117,169248,Central Michigan University,MI,27.0501,"Statistics, General.",true,7,0,5,1,2023-24
+stats,118,199120,University of North Carolina at Chapel Hill,NC,27.0502,Mathematical Statistics and Probability.,true,7,0,2,3,2023-24
+stats,119,207388,Oklahoma State University-Main Campus,OK,27.0501,"Statistics, General.",true,7,0,1,2,2023-24
+stats,120,217484,University of Rhode Island,RI,27.0501,"Statistics, General.",true,7,0,6,2,2023-24
+stats,121,232186,George Mason University,VA,27.0501,"Statistics, General.",true,7,0,1,1,2023-24
+stats,122,233921,Virginia Polytechnic Institute and State University,VA,27.0601,"Applied Statistics, General.",true,7,0,4,3,2023-24
+stats,123,102614,University of Alaska Fairbanks,AK,27.0501,"Statistics, General.",true,6,0,2,1,2023-24
+stats,124,157085,University of Kentucky,KY,27.0601,"Applied Statistics, General.",true,6,0,0,4,2023-24
+stats,125,161253,University of Maine,ME,27.0503,Mathematics and Statistics.,true,6,0,1,3,2023-24
+stats,126,172699,Western Michigan University,MI,27.0501,"Statistics, General.",true,6,0,4,3,2023-24
+stats,127,187985,University of New Mexico-Main Campus,NM,27.0501,"Statistics, General.",true,6,0,4,1,2023-24
+stats,128,123961,University of Southern California,CA,27.0501,"Statistics, General.",true,5,0,5,6,2023-24
+stats,129,142285,University of Idaho,ID,27.0501,"Statistics, General.",true,5,0,2,2,2023-24
+stats,130,147703,Northern Illinois University,IL,27.0501,"Statistics, General.",true,5,0,3,4,2023-24
+stats,131,151351,Indiana University-Bloomington,IN,27.0501,"Statistics, General.",true,5,0,1,5,2023-24
+stats,132,153366,Graceland University-Lamoni,IA,27.0503,Mathematics and Statistics.,true,5,0,2,1,2023-24
+stats,133,168421,Worcester Polytechnic Institute,MA,27.0501,"Statistics, General.",true,5,0,3,4,2023-24
+stats,134,171128,Michigan Technological University,MI,27.0501,"Statistics, General.",true,5,0,4,3,2023-24
+stats,135,180461,Montana State University,MT,27.0503,Mathematics and Statistics.,true,5,0,1,3,2023-24
+stats,136,182290,University of Nevada-Reno,NV,27.0502,Mathematical Statistics and Probability.,true,5,0,1,3,2023-24
+stats,137,227881,Sam Houston State University,TX,27.0501,"Statistics, General.",true,5,0,4,1,2023-24
+stats,138,231174,University of Vermont,VT,27.0501,"Statistics, General.",true,5,0,1,2,2023-24
+stats,139,240329,University of Wisconsin-La Crosse,WI,27.0601,"Applied Statistics, General.",true,5,0,0,2,2023-24
+stats,140,243780,Purdue University-Main Campus,IN,27.0502,Mathematical Statistics and Probability.,true,5,0,2,5,2023-24
+stats,141,109785,Azusa Pacific University,CA,27.0501,"Statistics, General.",true,4,0,3,1,2023-24
+stats,142,173920,Minnesota State University-Mankato,MN,27.0599,"Statistics, Other.",true,4,0,1,1,2023-24
+stats,143,176080,Mississippi State University,MS,27.0501,"Statistics, General.",true,4,0,1,1,2023-24
+stats,144,178402,University of Missouri-Kansas City,MO,27.0501,"Statistics, General.",true,4,0,0,4,2023-24
+stats,145,200800,University of Akron Main Campus,OH,27.0501,"Statistics, General.",true,4,0,2,3,2023-24
+stats,146,201645,Case Western Reserve University,OH,27.0501,"Statistics, General.",true,4,0,4,2,2023-24
+stats,147,209807,Portland State University,OR,27.0501,"Statistics, General.",true,4,0,2,3,2023-24
+stats,148,216339,Temple University,PA,27.0501,"Statistics, General.",true,4,0,0,5,2023-24
+stats,149,219356,South Dakota State University,SD,27.0501,"Statistics, General.",true,4,1,3,2,2023-24
+stats,150,228705,Texas A&M University-Kingsville,TX,27.0503,Mathematics and Statistics.,true,4,0,4,1,2023-24
+stats,151,240727,University of Wyoming,WY,27.0501,"Statistics, General.",true,4,0,1,2,2023-24
+stats,152,106458,Arkansas State University,AR,27.0501,"Statistics, General.",true,3,0,1,3,2023-24
+stats,153,110671,University of California-Riverside,CA,27.0501,"Statistics, General.",true,3,0,3,3,2023-24
+stats,154,110714,University of California-Santa Cruz,CA,27.0502,Mathematical Statistics and Probability.,true,3,0,2,2,2023-24
+stats,155,156620,Eastern Kentucky University,KY,27.0503,Mathematics and Statistics.,true,3,0,0,1,2023-24
+stats,156,171571,Oakland University,MI,27.0501,"Statistics, General.",true,3,0,1,2,2023-24
+stats,157,172644,Wayne State University,MI,27.0501,"Statistics, General.",true,3,0,0,2,2023-24
+stats,158,181464,University of Nebraska-Lincoln,NE,27.0501,"Statistics, General.",true,3,0,2,5,2023-24
+stats,159,183044,University of New Hampshire-Main Campus,NH,27.0501,"Statistics, General.",true,3,0,0,4,2023-24
+stats,160,185590,Montclair State University,NJ,27.0501,"Statistics, General.",true,3,0,1,4,2023-24
+stats,161,185828,New Jersey Institute of Technology,NJ,27.0501,"Statistics, General.",true,3,0,2,4,2023-24
+stats,162,201885,University of Cincinnati-Main Campus,OH,27.0501,"Statistics, General.",true,3,0,1,3,2023-24
+stats,163,206604,Wright State University-Main Campus,OH,27.0501,"Statistics, General.",true,3,0,1,4,2023-24
+stats,164,225414,University of Houston-Clear Lake,TX,27.0501,"Statistics, General.",true,3,0,1,2,2023-24
+stats,165,228246,Southern Methodist University,TX,27.0501,"Statistics, General.",true,3,0,0,4,2023-24
+stats,166,228431,Stephen F Austin State University,TX,27.0503,Mathematics and Statistics.,true,3,0,0,1,2023-24
+stats,167,239105,Marquette University,WI,27.0601,"Applied Statistics, General.",true,3,0,0,4,2023-24
+stats,168,129020,University of Connecticut,CT,27.0501,"Statistics, General.",true,2,0,1,6,2023-24
+stats,169,134130,University of Florida,FL,27.0501,"Statistics, General.",true,2,0,2,2,2023-24
+stats,170,150136,Ball State University,IN,27.0501,"Statistics, General.",true,2,2,2,2,2023-24
+stats,171,160755,Tulane University of Louisiana,LA,27.0501,"Statistics, General.",true,2,0,1,4,2023-24
+stats,172,161554,University of Southern Maine,ME,27.0501,"Statistics, General.",true,2,0,0,1,2023-24
+stats,173,169798,Eastern Michigan University,MI,27.0601,"Applied Statistics, General.",true,2,0,2,4,2023-24
+stats,174,188030,New Mexico State University-Main Campus,NM,27.0501,"Statistics, General.",true,2,0,2,1,2023-24
+stats,175,191241,Fordham University,NY,27.0501,"Statistics, General.",true,2,0,0,5,2023-24
+stats,176,196079,Binghamton University,NY,27.0503,Mathematics and Statistics.,true,2,0,0,3,2023-24
+stats,177,199148,University of North Carolina at Greensboro,NC,27.0601,"Applied Statistics, General.",true,2,0,1,2,2023-24
+stats,178,213543,Lehigh University,PA,27.0501,"Statistics, General.",true,2,0,2,5,2023-24
+stats,179,110422,California Polytechnic State University-San Luis Obispo,CA,27.0501,"Statistics, General.",true,1,0,0,3,2023-24
+stats,180,112251,Claremont Graduate University,CA,27.0601,"Applied Statistics, General.",true,1,0,0,4,2023-24
+stats,181,196413,Syracuse University,NY,27.0501,"Statistics, General.",true,1,0,1,4,2023-24
+stats,182,200332,North Dakota State University-Main Campus,ND,27.0501,"Statistics, General.",true,1,0,0,2,2023-24
+stats,183,218663,University of South Carolina-Columbia,SC,27.0501,"Statistics, General.",true,1,0,0,4,2023-24
+stats,184,218663,University of South Carolina-Columbia,SC,27.0601,"Applied Statistics, General.",true,1,0,0,4,2023-24
+mgmt_sci,1,190150,Columbia University in the City of New York,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,1621,0,932,8,2023-24
+mgmt_sci,2,147767,Northwestern University,IL,52.1301,Management Science.,true,1617,112,387,4,2023-24
+mgmt_sci,3,139755,Georgia Institute of Technology-Main Campus,GA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,1403,0,457,4,2023-24
+mgmt_sci,4,144050,University of Chicago,IL,52.1301,Management Science.,true,1251,1,439,4,2023-24
+mgmt_sci,5,193900,New York University,NY,52.1301,Management Science.,true,1134,0,139,6,2023-24
+mgmt_sci,6,482705,Northeastern University Professional Programs,MA,52.1301,Management Science.,true,1132,0,1013,3,2023-24
+mgmt_sci,7,198419,Duke University,NC,52.1399,"Management Sciences and Quantitative Methods, Other.",true,1062,0,540,4,2023-24
+mgmt_sci,8,145637,University of Illinois Urbana-Champaign,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,1028,0,287,6,2023-24
+mgmt_sci,9,166027,Harvard University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,1010,0,371,3,2023-24
+mgmt_sci,10,199120,University of North Carolina at Chapel Hill,NC,52.1301,Management Science.,true,954,0,113,3,2023-24
+mgmt_sci,11,123961,University of Southern California,CA,52.1301,Management Science.,true,777,0,389,6,2023-24
+mgmt_sci,12,110662,University of California-Los Angeles,CA,52.1301,Management Science.,true,737,0,181,6,2023-24
+mgmt_sci,13,166683,Massachusetts Institute of Technology,MA,52.1301,Management Science.,true,701,0,305,3,2023-24
+mgmt_sci,14,195030,University of Rochester,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,631,0,517,3,2023-24
+mgmt_sci,15,110635,University of California-Berkeley,CA,52.1301,Management Science.,true,583,0,175,3,2023-24
+mgmt_sci,16,162928,Johns Hopkins University,MD,52.1302,Business Statistics.,true,578,0,493,6,2023-24
+mgmt_sci,17,227757,Rice University,TX,52.1399,"Management Sciences and Quantitative Methods, Other.",true,539,0,90,4,2023-24
+mgmt_sci,18,104151,Arizona State University Campus Immersion,AZ,52.1301,Management Science.,true,526,0,322,6,2023-24
+mgmt_sci,19,228246,Southern Methodist University,TX,52.1301,Management Science.,true,524,0,79,4,2023-24
+mgmt_sci,20,162928,Johns Hopkins University,MD,52.1301,Management Science.,true,522,0,55,6,2023-24
+mgmt_sci,21,243744,Stanford University,CA,52.1301,Management Science.,true,511,0,184,3,2023-24
+mgmt_sci,22,129941,University of New Haven,CT,52.1302,Business Statistics.,true,436,0,435,1,2023-24
+mgmt_sci,23,156541,University of the Cumberlands,KY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,415,0,358,2,2023-24
+mgmt_sci,24,110644,University of California-Davis,CA,52.1301,Management Science.,true,351,0,23,4,2023-24
+mgmt_sci,25,179867,Washington University in St Louis,MO,52.1302,Business Statistics.,true,351,0,342,4,2023-24
+mgmt_sci,26,163286,University of Maryland-College Park,MD,52.1301,Management Science.,true,326,0,24,6,2023-24
+mgmt_sci,27,139658,Emory University,GA,52.1301,Management Science.,true,310,0,81,3,2023-24
+mgmt_sci,28,199218,University of North Carolina Wilmington,NC,52.1301,Management Science.,true,304,0,23,3,2023-24
+mgmt_sci,29,211440,Carnegie Mellon University,PA,52.1301,Management Science.,true,304,0,124,8,2023-24
+mgmt_sci,30,446640,Harrisburg University of Science and Technology,PA,52.1301,Management Science.,true,302,0,289,3,2023-24
+mgmt_sci,31,199193,North Carolina State University at Raleigh,NC,52.1301,Management Science.,true,298,0,18,3,2023-24
+mgmt_sci,32,159391,Louisiana State University and Agricultural & Mechanical College,LA,52.1301,Management Science.,true,295,0,9,3,2023-24
+mgmt_sci,33,190415,Cornell University,NY,52.1301,Management Science.,true,286,0,240,5,2023-24
+mgmt_sci,34,126818,Colorado State University-Fort Collins,CO,52.1399,"Management Sciences and Quantitative Methods, Other.",true,281,1,26,5,2023-24
+mgmt_sci,35,130253,Sacred Heart University,CT,52.1302,Business Statistics.,true,270,0,260,2,2023-24
+mgmt_sci,36,228787,The University of Texas at Dallas,TX,52.1301,Management Science.,true,247,0,222,6,2023-24
+mgmt_sci,37,164988,Boston University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,243,2,223,8,2023-24
+mgmt_sci,38,196079,Binghamton University,NY,52.1301,Management Science.,true,238,0,5,3,2023-24
+mgmt_sci,39,221759,The University of Tennessee-Knoxville,TN,52.1301,Management Science.,true,235,0,13,5,2023-24
+mgmt_sci,40,191241,Fordham University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,220,0,145,5,2023-24
+mgmt_sci,41,183026,Southern New Hampshire University,NH,52.1302,Business Statistics.,true,214,0,0,2,2023-24
+mgmt_sci,42,190512,CUNY Bernard M Baruch College,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,213,0,127,3,2023-24
+mgmt_sci,43,139755,Georgia Institute of Technology-Main Campus,GA,52.1301,Management Science.,true,211,0,25,4,2023-24
+mgmt_sci,44,152080,University of Notre Dame,IN,52.1399,"Management Sciences and Quantitative Methods, Other.",true,202,0,51,3,2023-24
+mgmt_sci,45,162928,Johns Hopkins University,MD,52.1399,"Management Sciences and Quantitative Methods, Other.",true,193,0,177,6,2023-24
+mgmt_sci,46,149231,Southern Illinois University Edwardsville,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,192,0,4,1,2023-24
+mgmt_sci,47,110653,University of California-Irvine,CA,52.1301,Management Science.,true,188,0,122,4,2023-24
+mgmt_sci,48,130794,Yale University,CT,52.1301,Management Science.,true,186,0,163,3,2023-24
+mgmt_sci,49,191649,Hofstra University,NY,52.1301,Management Science.,true,181,0,33,3,2023-24
+mgmt_sci,50,163286,University of Maryland-College Park,MD,52.1302,Business Statistics.,true,180,0,132,6,2023-24
+mgmt_sci,51,110680,University of California-San Diego,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,179,0,118,5,2023-24
+mgmt_sci,52,178396,University of Missouri-Columbia,MO,52.1399,"Management Sciences and Quantitative Methods, Other.",true,173,0,1,3,2023-24
+mgmt_sci,53,214777,Pennsylvania State University-Main Campus,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,173,0,51,4,2023-24
+mgmt_sci,54,132471,Barry University,FL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,171,6,24,1,2023-24
+mgmt_sci,55,139940,Georgia State University,GA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,163,0,112,3,2023-24
+mgmt_sci,56,106458,Arkansas State University,AR,52.1301,Management Science.,true,162,0,21,3,2023-24
+mgmt_sci,57,196413,Syracuse University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,162,0,82,4,2023-24
+mgmt_sci,58,240444,University of Wisconsin-Madison,WI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,160,0,127,5,2023-24
+mgmt_sci,59,185590,Montclair State University,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,159,0,2,4,2023-24
+mgmt_sci,60,110574,California State University-East Bay,CA,52.1301,Management Science.,true,153,0,143,3,2023-24
+mgmt_sci,61,161253,University of Maine,ME,52.1301,Management Science.,true,153,0,14,3,2023-24
+mgmt_sci,62,167358,Northeastern University,MA,52.1302,Business Statistics.,true,153,0,145,2,2023-24
+mgmt_sci,63,230038,Brigham Young University,UT,52.1301,Management Science.,true,153,0,10,3,2023-24
+mgmt_sci,64,131496,Georgetown University,DC,52.1301,Management Science.,true,151,0,8,5,2023-24
+mgmt_sci,65,194091,New York Institute of Technology,NY,52.1301,Management Science.,true,149,0,124,3,2023-24
+mgmt_sci,66,483124,Arizona State University Digital Immersion,AZ,52.1301,Management Science.,true,147,0,13,2,2023-24
+mgmt_sci,67,479956,Pennsylvania State University-World Campus,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,146,0,5,2,2023-24
+mgmt_sci,68,126562,University of Colorado Denver/Anschutz Medical Campus,CO,52.1301,Management Science.,true,140,0,57,3,2023-24
+mgmt_sci,69,199847,Wake Forest University,NC,52.1301,Management Science.,true,140,0,60,4,2023-24
+mgmt_sci,70,146612,Lewis University,IL,52.1301,Management Science.,true,139,0,134,3,2023-24
+mgmt_sci,71,157289,University of Louisville,KY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,137,0,78,2,2023-24
+mgmt_sci,72,123961,University of Southern California,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,135,0,32,6,2023-24
+mgmt_sci,73,131496,Georgetown University,DC,52.1399,"Management Sciences and Quantitative Methods, Other.",true,132,0,9,5,2023-24
+mgmt_sci,74,183026,Southern New Hampshire University,NH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,131,0,72,2,2023-24
+mgmt_sci,75,186867,Stevens Institute of Technology,NJ,52.1302,Business Statistics.,true,130,0,110,2,2023-24
+mgmt_sci,76,236948,University of Washington-Seattle Campus,WA,52.1301,Management Science.,true,129,0,109,4,2023-24
+mgmt_sci,77,139658,Emory University,GA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,128,0,102,3,2023-24
+mgmt_sci,78,140951,Savannah College of Art and Design,GA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,128,1,59,1,2023-24
+mgmt_sci,79,240453,University of Wisconsin-Milwaukee,WI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,125,0,16,4,2023-24
+mgmt_sci,80,182670,Dartmouth College,NH,52.1301,Management Science.,true,122,0,80,1,2023-24
+mgmt_sci,81,215062,University of Pennsylvania,PA,52.1301,Management Science.,true,122,11,60,6,2023-24
+mgmt_sci,82,145600,University of Illinois Chicago,IL,52.1301,Management Science.,true,120,0,108,4,2023-24
+mgmt_sci,83,135726,University of Miami,FL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,119,0,30,2,2023-24
+mgmt_sci,84,153658,University of Iowa,IA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,119,10,21,4,2023-24
+mgmt_sci,85,155681,Pittsburg State University,KS,52.1399,"Management Sciences and Quantitative Methods, Other.",true,119,0,5,1,2023-24
+mgmt_sci,86,234076,University of Virginia-Main Campus,VA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,119,0,27,5,2023-24
+mgmt_sci,87,201885,University of Cincinnati-Main Campus,OH,52.1301,Management Science.,true,118,0,95,3,2023-24
+mgmt_sci,88,194310,Pace University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,117,0,104,3,2023-24
+mgmt_sci,89,146719,Loyola University Chicago,IL,52.1301,Management Science.,true,113,0,15,5,2023-24
+mgmt_sci,90,199139,University of North Carolina at Charlotte,NC,52.1399,"Management Sciences and Quantitative Methods, Other.",true,113,0,50,2,2023-24
+mgmt_sci,91,163286,University of Maryland-College Park,MD,52.1399,"Management Sciences and Quantitative Methods, Other.",true,112,0,52,6,2023-24
+mgmt_sci,92,186867,Stevens Institute of Technology,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,111,0,96,2,2023-24
+mgmt_sci,93,122931,Santa Clara University,CA,52.1301,Management Science.,true,110,0,60,1,2023-24
+mgmt_sci,94,110680,University of California-San Diego,CA,52.1301,Management Science.,true,109,0,36,5,2023-24
+mgmt_sci,95,121150,Pepperdine University,CA,52.1301,Management Science.,true,108,0,59,1,2023-24
+mgmt_sci,96,151351,Indiana University-Bloomington,IN,52.1399,"Management Sciences and Quantitative Methods, Other.",true,108,0,57,5,2023-24
+mgmt_sci,97,160755,Tulane University of Louisiana,LA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,108,3,24,4,2023-24
+mgmt_sci,98,199847,Wake Forest University,NC,52.1399,"Management Sciences and Quantitative Methods, Other.",true,108,0,38,4,2023-24
+mgmt_sci,99,139959,University of Georgia,GA,52.1301,Management Science.,true,106,0,23,4,2023-24
+mgmt_sci,100,176017,University of Mississippi,MS,52.1301,Management Science.,true,106,0,5,3,2023-24
+mgmt_sci,101,186380,Rutgers University-New Brunswick,NJ,52.1301,Management Science.,true,106,0,31,3,2023-24
+mgmt_sci,102,171100,Michigan State University,MI,52.1302,Business Statistics.,true,105,0,42,5,2023-24
+mgmt_sci,103,212601,Gannon University,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,105,0,88,1,2023-24
+mgmt_sci,104,236948,University of Washington-Seattle Campus,WA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,105,0,69,4,2023-24
+mgmt_sci,105,243780,Purdue University-Main Campus,IN,52.1399,"Management Sciences and Quantitative Methods, Other.",true,105,0,65,5,2023-24
+mgmt_sci,106,164988,Boston University,MA,52.1301,Management Science.,true,104,0,80,8,2023-24
+mgmt_sci,107,171100,Michigan State University,MI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,104,0,34,5,2023-24
+mgmt_sci,108,231624,William & Mary,VA,52.1301,Management Science.,true,104,0,28,1,2023-24
+mgmt_sci,109,104717,Grand Canyon University,AZ,52.1301,Management Science.,true,103,0,54,2,2023-24
+mgmt_sci,110,131469,George Washington University,DC,52.1301,Management Science.,true,103,0,83,4,2023-24
+mgmt_sci,111,104179,University of Arizona,AZ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,102,0,19,4,2023-24
+mgmt_sci,112,233541,Shenandoah University,VA,52.1301,Management Science.,true,101,0,43,1,2023-24
+mgmt_sci,113,212054,Drexel University,PA,52.1301,Management Science.,true,100,0,6,6,2023-24
+mgmt_sci,114,221759,The University of Tennessee-Knoxville,TN,52.1399,"Management Sciences and Quantitative Methods, Other.",true,100,0,8,5,2023-24
+mgmt_sci,115,131496,Georgetown University,DC,52.1302,Business Statistics.,true,99,0,1,5,2023-24
+mgmt_sci,116,179867,Washington University in St Louis,MO,52.1301,Management Science.,true,98,0,72,4,2023-24
+mgmt_sci,117,128744,University of Bridgeport,CT,52.1301,Management Science.,true,94,0,87,2,2023-24
+mgmt_sci,118,185828,New Jersey Institute of Technology,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,94,0,12,4,2023-24
+mgmt_sci,119,190415,Cornell University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,94,0,88,5,2023-24
+mgmt_sci,120,110662,University of California-Los Angeles,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,93,0,55,6,2023-24
+mgmt_sci,121,195003,Rochester Institute of Technology,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,92,0,24,4,2023-24
+mgmt_sci,122,110662,University of California-Los Angeles,CA,52.1304,Actuarial Science.,true,89,0,78,6,2023-24
+mgmt_sci,123,186399,Rutgers University-Newark,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,89,0,81,3,2023-24
+mgmt_sci,124,110644,University of California-Davis,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,88,0,71,4,2023-24
+mgmt_sci,125,131159,American University,DC,52.1301,Management Science.,true,88,0,52,5,2023-24
+mgmt_sci,126,213020,Indiana University of Pennsylvania-Main Campus,PA,52.1301,Management Science.,true,87,0,87,1,2023-24
+mgmt_sci,127,165334,Clark University,MA,52.1301,Management Science.,true,86,0,79,2,2023-24
+mgmt_sci,128,122612,University of San Francisco,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,84,0,68,3,2023-24
+mgmt_sci,129,126614,University of Colorado Boulder,CO,52.1302,Business Statistics.,true,83,0,33,2,2023-24
+mgmt_sci,130,163204,University of Maryland Global Campus,MD,52.1302,Business Statistics.,true,83,0,3,1,2023-24
+mgmt_sci,131,168005,Suffolk University,MA,52.1301,Management Science.,true,83,0,62,3,2023-24
+mgmt_sci,132,134097,Florida State University,FL,52.1301,Management Science.,true,82,0,3,5,2023-24
+mgmt_sci,133,215770,Saint Joseph's University - Philadelphia,PA,52.1301,Management Science.,true,82,0,31,1,2023-24
+mgmt_sci,134,196088,University at Buffalo,NY,52.1301,Management Science.,true,81,0,51,2,2023-24
+mgmt_sci,135,215062,University of Pennsylvania,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,80,99,50,6,2023-24
+mgmt_sci,136,185828,New Jersey Institute of Technology,NJ,52.1301,Management Science.,true,79,0,61,4,2023-24
+mgmt_sci,137,166683,Massachusetts Institute of Technology,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,78,0,58,3,2023-24
+mgmt_sci,138,179159,Saint Louis University,MO,52.1301,Management Science.,true,78,0,60,2,2023-24
+mgmt_sci,139,110653,University of California-Irvine,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,77,0,36,4,2023-24
+mgmt_sci,140,221999,Vanderbilt University,TN,52.1399,"Management Sciences and Quantitative Methods, Other.",true,77,1,16,3,2023-24
+mgmt_sci,141,186399,Rutgers University-Newark,NJ,52.1301,Management Science.,true,74,0,45,3,2023-24
+mgmt_sci,142,243780,Purdue University-Main Campus,IN,52.1301,Management Science.,true,74,0,52,5,2023-24
+mgmt_sci,143,106397,University of Arkansas,AR,52.1301,Management Science.,true,73,0,21,3,2023-24
+mgmt_sci,144,215929,University of Scranton,PA,52.1301,Management Science.,true,73,3,55,1,2023-24
+mgmt_sci,145,204796,Ohio State University-Main Campus,OH,52.1301,Management Science.,true,72,0,18,4,2023-24
+mgmt_sci,146,137546,Stetson University,FL,52.1301,Management Science.,true,71,0,1,2,2023-24
+mgmt_sci,147,152080,University of Notre Dame,IN,52.1301,Management Science.,true,71,0,10,3,2023-24
+mgmt_sci,148,230764,University of Utah,UT,52.1301,Management Science.,true,71,0,39,2,2023-24
+mgmt_sci,149,130253,Sacred Heart University,CT,52.1399,"Management Sciences and Quantitative Methods, Other.",true,69,0,2,2,2023-24
+mgmt_sci,150,170976,University of Michigan-Ann Arbor,MI,52.1301,Management Science.,true,69,0,60,7,2023-24
+mgmt_sci,151,209542,Oregon State University,OR,52.1301,Management Science.,true,68,0,55,3,2023-24
+mgmt_sci,152,131469,George Washington University,DC,52.1399,"Management Sciences and Quantitative Methods, Other.",true,66,0,32,4,2023-24
+mgmt_sci,153,110671,University of California-Riverside,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,64,0,46,3,2023-24
+mgmt_sci,154,156541,University of the Cumberlands,KY,52.1301,Management Science.,true,64,0,42,2,2023-24
+mgmt_sci,155,165334,Clark University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,62,0,55,2,2023-24
+mgmt_sci,156,165015,Brandeis University,MA,52.1301,Management Science.,true,61,8,57,2,2023-24
+mgmt_sci,157,216339,Temple University,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,61,0,26,5,2023-24
+mgmt_sci,158,192703,Manhattan University,NY,52.1301,Management Science.,true,60,0,4,1,2023-24
+mgmt_sci,159,207388,Oklahoma State University-Main Campus,OK,52.1302,Business Statistics.,true,60,0,39,2,2023-24
+mgmt_sci,160,236595,Seattle University,WA,52.1301,Management Science.,true,59,0,28,2,2023-24
+mgmt_sci,161,100706,University of Alabama in Huntsville,AL,52.1301,Management Science.,true,58,0,49,1,2023-24
+mgmt_sci,162,101189,Faulkner University,AL,52.1301,Management Science.,true,58,0,4,1,2023-24
+mgmt_sci,163,104151,Arizona State University Campus Immersion,AZ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,57,0,7,6,2023-24
+mgmt_sci,164,131113,Wilmington University,DE,52.1302,Business Statistics.,true,57,0,23,1,2023-24
+mgmt_sci,165,185590,Montclair State University,NJ,52.1301,Management Science.,true,57,0,14,4,2023-24
+mgmt_sci,166,199218,University of North Carolina Wilmington,NC,52.1399,"Management Sciences and Quantitative Methods, Other.",true,57,0,2,3,2023-24
+mgmt_sci,167,207971,University of Tulsa,OK,52.1301,Management Science.,true,56,0,6,3,2023-24
+mgmt_sci,168,234076,University of Virginia-Main Campus,VA,52.1301,Management Science.,true,56,0,1,5,2023-24
+mgmt_sci,169,140447,Mercer University,GA,52.1301,Management Science.,true,55,0,38,1,2023-24
+mgmt_sci,170,156125,Wichita State University,KS,52.1301,Management Science.,true,55,0,53,4,2023-24
+mgmt_sci,171,164739,Bentley University,MA,52.1302,Business Statistics.,true,55,4,31,2,2023-24
+mgmt_sci,172,192448,Long Island University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,54,0,3,2,2023-24
+mgmt_sci,173,144740,DePaul University,IL,52.1301,Management Science.,true,53,0,29,5,2023-24
+mgmt_sci,174,164270,McDaniel College,MD,52.1301,Management Science.,true,53,0,29,1,2023-24
+mgmt_sci,175,111948,Chapman University,CA,52.1301,Management Science.,true,52,0,5,3,2023-24
+mgmt_sci,176,168005,Suffolk University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,52,0,36,3,2023-24
+mgmt_sci,177,190415,Cornell University,NY,52.1302,Business Statistics.,true,52,0,3,5,2023-24
+mgmt_sci,178,110422,California Polytechnic State University-San Luis Obispo,CA,52.1301,Management Science.,true,51,0,10,3,2023-24
+mgmt_sci,179,145336,Governors State University,IL,52.1301,Management Science.,true,51,0,47,1,2023-24
+mgmt_sci,180,217165,Bryant University,RI,52.1301,Management Science.,true,51,0,3,1,2023-24
+mgmt_sci,181,214777,Pennsylvania State University-Main Campus,PA,52.1301,Management Science.,true,50,0,37,4,2023-24
+mgmt_sci,182,147703,Northern Illinois University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,49,0,1,4,2023-24
+mgmt_sci,183,160755,Tulane University of Louisiana,LA,52.1301,Management Science.,true,49,2,33,4,2023-24
+mgmt_sci,184,164739,Bentley University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,49,0,10,2,2023-24
+mgmt_sci,185,171492,Northwood University,MI,52.1302,Business Statistics.,true,49,0,38,1,2023-24
+mgmt_sci,186,228723,Texas A&M University-College Station,TX,52.1302,Business Statistics.,true,49,0,0,4,2023-24
+mgmt_sci,187,170976,University of Michigan-Ann Arbor,MI,52.1302,Business Statistics.,true,48,0,15,7,2023-24
+mgmt_sci,188,181464,University of Nebraska-Lincoln,NE,52.1399,"Management Sciences and Quantitative Methods, Other.",true,48,0,2,5,2023-24
+mgmt_sci,189,186399,Rutgers University-Newark,NJ,52.1302,Business Statistics.,true,48,0,18,3,2023-24
+mgmt_sci,190,194824,Rensselaer Polytechnic Institute,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,48,0,6,3,2023-24
+mgmt_sci,191,166638,University of Massachusetts-Boston,MA,52.1301,Management Science.,true,47,0,32,2,2023-24
+mgmt_sci,192,174066,University of Minnesota-Twin Cities,MN,52.1301,Management Science.,true,47,0,17,5,2023-24
+mgmt_sci,193,186371,Rutgers University-Camden,NJ,52.1301,Management Science.,true,47,0,13,1,2023-24
+mgmt_sci,194,377564,University of Washington-Tacoma Campus,WA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,47,0,24,1,2023-24
+mgmt_sci,195,127060,University of Denver,CO,52.1302,Business Statistics.,true,46,0,23,3,2023-24
+mgmt_sci,196,135726,University of Miami,FL,52.1302,Business Statistics.,true,46,0,20,2,2023-24
+mgmt_sci,197,145600,University of Illinois Chicago,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,46,0,42,4,2023-24
+mgmt_sci,198,147767,Northwestern University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,46,0,37,4,2023-24
+mgmt_sci,199,168005,Suffolk University,MA,52.1302,Business Statistics.,true,46,0,37,3,2023-24
+mgmt_sci,200,212054,Drexel University,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,46,3,7,6,2023-24
+mgmt_sci,201,449339,American Public University System,WV,52.1301,Management Science.,true,46,0,0,1,2023-24
+mgmt_sci,202,129525,University of Hartford,CT,52.1302,Business Statistics.,true,45,0,27,1,2023-24
+mgmt_sci,203,164076,Towson University,MD,52.1399,"Management Sciences and Quantitative Methods, Other.",true,45,0,5,2,2023-24
+mgmt_sci,204,225511,University of Houston,TX,52.1301,Management Science.,true,44,0,22,5,2023-24
+mgmt_sci,205,228875,Texas Christian University,TX,52.1399,"Management Sciences and Quantitative Methods, Other.",true,44,0,7,2,2023-24
+mgmt_sci,206,110705,University of California-Santa Barbara,CA,52.1301,Management Science.,true,43,0,28,5,2023-24
+mgmt_sci,207,115083,Golden Gate University,CA,52.1302,Business Statistics.,true,42,0,18,3,2023-24
+mgmt_sci,208,123961,University of Southern California,CA,52.1302,Business Statistics.,true,42,0,38,6,2023-24
+mgmt_sci,209,172608,Walsh College,MI,52.1301,Management Science.,true,42,0,8,2,2023-24
+mgmt_sci,210,174914,University of St Thomas,MN,52.1302,Business Statistics.,true,42,1,18,1,2023-24
+mgmt_sci,211,122409,San Diego State University,CA,52.1301,Management Science.,true,41,0,29,2,2023-24
+mgmt_sci,212,207324,Oklahoma Christian University,OK,52.1301,Management Science.,true,41,0,24,1,2023-24
+mgmt_sci,213,147703,Northern Illinois University,IL,52.1301,Management Science.,true,40,0,2,4,2023-24
+mgmt_sci,214,216339,Temple University,PA,52.1302,Business Statistics.,true,40,0,22,5,2023-24
+mgmt_sci,215,129020,University of Connecticut,CT,52.1301,Management Science.,true,39,0,1,6,2023-24
+mgmt_sci,216,136215,Nova Southeastern University,FL,52.1301,Management Science.,true,39,0,14,1,2023-24
+mgmt_sci,217,221759,The University of Tennessee-Knoxville,TN,52.1302,Business Statistics.,true,39,0,7,5,2023-24
+mgmt_sci,218,228778,The University of Texas at Austin,TX,52.1301,Management Science.,true,39,0,37,5,2023-24
+mgmt_sci,219,145725,Illinois Institute of Technology,IL,52.1301,Management Science.,true,38,0,32,3,2023-24
+mgmt_sci,220,151351,Indiana University-Bloomington,IN,52.1302,Business Statistics.,true,38,0,11,5,2023-24
+mgmt_sci,221,188429,Adelphi University,NY,52.1301,Management Science.,true,38,0,36,2,2023-24
+mgmt_sci,222,190150,Columbia University in the City of New York,NY,52.1302,Business Statistics.,true,38,0,36,8,2023-24
+mgmt_sci,223,202480,University of Dayton,OH,52.1301,Management Science.,true,38,0,16,2,2023-24
+mgmt_sci,224,129242,Fairfield University,CT,52.1302,Business Statistics.,true,37,1,9,4,2023-24
+mgmt_sci,225,212106,Duquesne University,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,37,0,11,2,2023-24
+mgmt_sci,226,166513,University of Massachusetts-Lowell,MA,52.1301,Management Science.,true,36,0,21,1,2023-24
+mgmt_sci,227,110529,California State Polytechnic University-Pomona,CA,52.1301,Management Science.,true,35,0,16,1,2023-24
+mgmt_sci,228,127060,University of Denver,CO,52.1399,"Management Sciences and Quantitative Methods, Other.",true,35,0,9,3,2023-24
+mgmt_sci,229,146612,Lewis University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,35,0,29,3,2023-24
+mgmt_sci,230,151290,Indiana Institute of Technology,IN,52.1301,Management Science.,true,35,0,34,1,2023-24
+mgmt_sci,231,156125,Wichita State University,KS,52.1399,"Management Sciences and Quantitative Methods, Other.",true,35,0,34,4,2023-24
+mgmt_sci,232,204024,Miami University-Oxford,OH,52.1302,Business Statistics.,true,35,0,3,3,2023-24
+mgmt_sci,233,224323,University of Dallas,TX,52.1301,Management Science.,true,35,0,22,1,2023-24
+mgmt_sci,234,186432,Saint Peter's University,NJ,52.1301,Management Science.,true,34,0,32,5,2023-24
+mgmt_sci,235,149222,Southern Illinois University-Carbondale,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,33,0,16,2,2023-24
+mgmt_sci,236,164924,Boston College,MA,52.1301,Management Science.,true,32,0,15,3,2023-24
+mgmt_sci,237,171137,University of Michigan-Dearborn,MI,52.1301,Management Science.,true,32,0,25,1,2023-24
+mgmt_sci,238,196413,Syracuse University,NY,52.1301,Management Science.,true,32,0,16,4,2023-24
+mgmt_sci,239,238032,West Virginia University,WV,52.1301,Management Science.,true,32,0,1,2,2023-24
+mgmt_sci,240,238458,Carroll University,WI,52.1301,Management Science.,true,32,0,0,1,2023-24
+mgmt_sci,241,172644,Wayne State University,MI,52.1301,Management Science.,true,31,0,9,2,2023-24
+mgmt_sci,242,191649,Hofstra University,NY,52.1302,Business Statistics.,true,31,0,24,3,2023-24
+mgmt_sci,243,206941,University of Central Oklahoma,OK,52.1302,Business Statistics.,true,31,0,24,1,2023-24
+mgmt_sci,244,122612,University of San Francisco,CA,52.1301,Management Science.,true,30,0,30,3,2023-24
+mgmt_sci,245,139940,Georgia State University,GA,52.1304,Actuarial Science.,true,30,0,27,3,2023-24
+mgmt_sci,246,139959,University of Georgia,GA,52.1302,Business Statistics.,true,30,0,2,4,2023-24
+mgmt_sci,247,145725,Illinois Institute of Technology,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,30,0,24,3,2023-24
+mgmt_sci,248,195003,Rochester Institute of Technology,NY,52.1301,Management Science.,true,30,0,19,4,2023-24
+mgmt_sci,249,201645,Case Western Reserve University,OH,52.1301,Management Science.,true,30,0,27,2,2023-24
+mgmt_sci,250,224226,Dallas Baptist University,TX,52.1301,Management Science.,true,30,0,17,1,2023-24
+mgmt_sci,251,214713,Pennsylvania State University-Penn State Harrisburg,PA,52.1301,Management Science.,true,29,0,3,2,2023-24
+mgmt_sci,252,137351,University of South Florida,FL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,28,0,3,2,2023-24
+mgmt_sci,253,157809,Thomas More University,KY,52.1301,Management Science.,true,28,0,6,1,2023-24
+mgmt_sci,254,195809,St. John's University-New York,NY,52.1301,Management Science.,true,28,0,13,4,2023-24
+mgmt_sci,255,122755,San Jose State University,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,27,0,0,5,2023-24
+mgmt_sci,256,151263,University of Indianapolis,IN,52.1399,"Management Sciences and Quantitative Methods, Other.",true,27,0,7,2,2023-24
+mgmt_sci,257,167987,University of Massachusetts-Dartmouth,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,27,0,20,3,2023-24
+mgmt_sci,258,178402,University of Missouri-Kansas City,MO,52.1399,"Management Sciences and Quantitative Methods, Other.",true,27,0,4,4,2023-24
+mgmt_sci,259,181002,Creighton University,NE,52.1301,Management Science.,true,27,0,3,1,2023-24
+mgmt_sci,260,186584,Seton Hall University,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,27,0,4,3,2023-24
+mgmt_sci,261,476975,Colorado State University Global,CO,52.1301,Management Science.,true,27,0,0,1,2023-24
+mgmt_sci,262,122597,San Francisco State University,CA,52.1301,Management Science.,true,26,0,19,3,2023-24
+mgmt_sci,263,133951,Florida International University,FL,52.1301,Management Science.,true,26,0,12,3,2023-24
+mgmt_sci,264,191649,Hofstra University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,26,0,15,3,2023-24
+mgmt_sci,265,188429,Adelphi University,NY,52.1302,Business Statistics.,true,25,0,19,2,2023-24
+mgmt_sci,266,193900,New York University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,25,0,16,6,2023-24
+mgmt_sci,267,194824,Rensselaer Polytechnic Institute,NY,52.1302,Business Statistics.,true,25,0,11,3,2023-24
+mgmt_sci,268,209807,Portland State University,OR,52.1399,"Management Sciences and Quantitative Methods, Other.",true,25,0,1,3,2023-24
+mgmt_sci,269,216597,Villanova University,PA,52.1301,Management Science.,true,25,0,0,2,2023-24
+mgmt_sci,270,146719,Loyola University Chicago,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,24,0,8,5,2023-24
+mgmt_sci,271,221999,Vanderbilt University,TN,52.1301,Management Science.,true,24,17,14,3,2023-24
+mgmt_sci,272,129020,University of Connecticut,CT,52.1399,"Management Sciences and Quantitative Methods, Other.",true,23,0,22,6,2023-24
+mgmt_sci,273,130943,University of Delaware,DE,52.1399,"Management Sciences and Quantitative Methods, Other.",true,23,0,21,7,2023-24
+mgmt_sci,274,133881,Florida Institute of Technology,FL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,23,0,12,2,2023-24
+mgmt_sci,275,144962,Elmhurst University,IL,52.1301,Management Science.,true,23,0,0,2,2023-24
+mgmt_sci,276,198516,Elon University,NC,52.1301,Management Science.,true,23,0,11,1,2023-24
+mgmt_sci,277,201441,Bowling Green State University-Main Campus,OH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,23,0,1,4,2023-24
+mgmt_sci,278,155317,University of Kansas,KS,52.1301,Management Science.,true,22,0,12,4,2023-24
+mgmt_sci,279,165820,Fitchburg State University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,22,0,0,1,2023-24
+mgmt_sci,280,167987,University of Massachusetts-Dartmouth,MA,52.1302,Business Statistics.,true,22,0,16,3,2023-24
+mgmt_sci,281,173665,Hamline University,MN,52.1301,Management Science.,true,22,0,12,1,2023-24
+mgmt_sci,282,201195,Baldwin Wallace University,OH,52.1301,Management Science.,true,22,0,2,1,2023-24
+mgmt_sci,283,218663,University of South Carolina-Columbia,SC,52.1302,Business Statistics.,true,22,0,9,4,2023-24
+mgmt_sci,284,230038,Brigham Young University,UT,52.1399,"Management Sciences and Quantitative Methods, Other.",true,22,0,17,3,2023-24
+mgmt_sci,285,236595,Seattle University,WA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,22,0,16,2,2023-24
+mgmt_sci,286,239318,Milwaukee School of Engineering,WI,52.1301,Management Science.,true,22,0,1,1,2023-24
+mgmt_sci,287,413413,Capella University,MN,52.1301,Management Science.,true,22,0,1,1,2023-24
+mgmt_sci,288,145813,Illinois State University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,21,0,6,2,2023-24
+mgmt_sci,289,157085,University of Kentucky,KY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,21,0,10,4,2023-24
+mgmt_sci,290,117946,Loyola Marymount University,CA,52.1301,Management Science.,true,20,0,9,2,2023-24
+mgmt_sci,291,137032,Saint Leo University,FL,52.1301,Management Science.,true,20,0,8,1,2023-24
+mgmt_sci,292,157289,University of Louisville,KY,52.1301,Management Science.,true,20,0,0,2,2023-24
+mgmt_sci,293,193016,Mercy University,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,20,0,19,1,2023-24
+mgmt_sci,294,203517,Kent State University at Kent,OH,52.1301,Management Science.,true,20,0,18,4,2023-24
+mgmt_sci,295,240417,University of Wisconsin-Stout,WI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,20,0,0,1,2023-24
+mgmt_sci,296,110583,California State University-Long Beach,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,19,0,12,3,2023-24
+mgmt_sci,297,126614,University of Colorado Boulder,CO,52.1301,Management Science.,true,19,0,4,2,2023-24
+mgmt_sci,298,164988,Boston University,MA,52.1304,Actuarial Science.,true,19,0,16,8,2023-24
+mgmt_sci,299,171100,Michigan State University,MI,52.1301,Management Science.,true,19,0,16,5,2023-24
+mgmt_sci,300,171571,Oakland University,MI,52.1301,Management Science.,true,19,0,10,2,2023-24
+mgmt_sci,301,200332,North Dakota State University-Main Campus,ND,52.1301,Management Science.,true,19,0,15,2,2023-24
+mgmt_sci,302,207971,University of Tulsa,OK,52.1399,"Management Sciences and Quantitative Methods, Other.",true,19,0,5,3,2023-24
+mgmt_sci,303,221740,The University of Tennessee-Chattanooga,TN,52.1301,Management Science.,true,19,0,4,1,2023-24
+mgmt_sci,304,240444,University of Wisconsin-Madison,WI,52.1301,Management Science.,true,19,0,10,5,2023-24
+mgmt_sci,305,155399,Kansas State University,KS,52.1301,Management Science.,true,18,0,3,3,2023-24
+mgmt_sci,306,164632,Bay Path University,MA,52.1302,Business Statistics.,true,18,0,2,1,2023-24
+mgmt_sci,307,190150,Columbia University in the City of New York,NY,52.1304,Actuarial Science.,true,18,0,17,8,2023-24
+mgmt_sci,308,230728,Utah State University,UT,52.1301,Management Science.,true,18,0,1,3,2023-24
+mgmt_sci,309,106704,University of Central Arkansas,AR,52.1301,Management Science.,true,17,0,9,1,2023-24
+mgmt_sci,310,110370,California College of the Arts,CA,52.1301,Management Science.,true,17,0,6,1,2023-24
+mgmt_sci,311,153603,Iowa State University,IA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,17,0,3,3,2023-24
+mgmt_sci,312,206048,Tiffin University,OH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,17,0,9,1,2023-24
+mgmt_sci,313,209825,University of Portland,OR,52.1301,Management Science.,true,17,0,6,1,2023-24
+mgmt_sci,314,218742,University of South Carolina-Upstate,SC,52.1302,Business Statistics.,true,17,0,1,1,2023-24
+mgmt_sci,315,117946,Loyola Marymount University,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,16,0,3,2,2023-24
+mgmt_sci,316,126818,Colorado State University-Fort Collins,CO,52.1301,Management Science.,true,16,0,0,5,2023-24
+mgmt_sci,317,154095,University of Northern Iowa,IA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,16,0,0,1,2023-24
+mgmt_sci,318,195809,St. John's University-New York,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,16,0,5,4,2023-24
+mgmt_sci,319,214607,Pennsylvania State University-Penn State Great Valley,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,16,0,14,1,2023-24
+mgmt_sci,320,215798,Saint Vincent College,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,16,0,0,1,2023-24
+mgmt_sci,321,224554,East Texas A&M University,TX,52.1301,Management Science.,true,16,0,2,2,2023-24
+mgmt_sci,322,100751,The University of Alabama,AL,52.1301,Management Science.,true,15,0,3,4,2023-24
+mgmt_sci,323,106245,University of Arkansas at Little Rock,AR,52.1301,Management Science.,true,15,0,12,1,2023-24
+mgmt_sci,324,113698,Dominican University of California,CA,52.1302,Business Statistics.,true,15,0,7,2,2023-24
+mgmt_sci,325,121691,University of Redlands,CA,52.1301,Management Science.,true,15,0,1,1,2023-24
+mgmt_sci,326,128744,University of Bridgeport,CT,52.1399,"Management Sciences and Quantitative Methods, Other.",true,15,0,14,2,2023-24
+mgmt_sci,327,144740,DePaul University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,15,0,8,5,2023-24
+mgmt_sci,328,145637,University of Illinois Urbana-Champaign,IL,52.1304,Actuarial Science.,true,15,0,13,6,2023-24
+mgmt_sci,329,172051,Saginaw Valley State University,MI,52.1301,Management Science.,true,15,0,1,1,2023-24
+mgmt_sci,330,178420,University of Missouri-St Louis,MO,52.1301,Management Science.,true,15,0,10,2,2023-24
+mgmt_sci,331,180814,Bellevue University,NE,52.1301,Management Science.,true,15,0,0,3,2023-24
+mgmt_sci,332,207041,East Central University,OK,52.1301,Management Science.,true,15,0,3,1,2023-24
+mgmt_sci,333,227863,University of St Thomas,TX,52.1399,"Management Sciences and Quantitative Methods, Other.",true,15,0,5,1,2023-24
+mgmt_sci,334,437097,University of Management and Technology,VA,52.1301,Management Science.,true,15,0,0,1,2023-24
+mgmt_sci,335,106458,Arkansas State University,AR,52.1399,"Management Sciences and Quantitative Methods, Other.",true,14,0,2,3,2023-24
+mgmt_sci,336,207971,University of Tulsa,OK,52.1302,Business Statistics.,true,14,0,8,3,2023-24
+mgmt_sci,337,228787,The University of Texas at Dallas,TX,52.1399,"Management Sciences and Quantitative Methods, Other.",true,14,0,3,6,2023-24
+mgmt_sci,338,144962,Elmhurst University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,13,0,2,2,2023-24
+mgmt_sci,339,180461,Montana State University,MT,52.1399,"Management Sciences and Quantitative Methods, Other.",true,13,0,3,3,2023-24
+mgmt_sci,340,225399,Houston Christian University,TX,52.1301,Management Science.,true,13,0,9,1,2023-24
+mgmt_sci,341,230782,Weber State University,UT,52.1301,Management Science.,true,13,0,1,2,2023-24
+mgmt_sci,342,180489,The University of Montana,MT,52.1301,Management Science.,true,12,0,2,1,2023-24
+mgmt_sci,343,184603,Fairleigh Dickinson University-Metropolitan Campus,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,12,0,11,1,2023-24
+mgmt_sci,344,212106,Duquesne University,PA,52.1301,Management Science.,true,12,0,7,2,2023-24
+mgmt_sci,345,215293,University of Pittsburgh-Pittsburgh Campus,PA,52.1301,Management Science.,true,12,0,11,4,2023-24
+mgmt_sci,346,445188,University of California-Merced,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,12,0,2,2,2023-24
+mgmt_sci,347,482705,Northeastern University Professional Programs,MA,52.1302,Business Statistics.,true,12,0,1,3,2023-24
+mgmt_sci,348,494551,IE New York College,NY,52.1301,Management Science.,true,12,0,6,1,2023-24
+mgmt_sci,349,113698,Dominican University of California,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,11,0,1,2,2023-24
+mgmt_sci,350,186432,Saint Peter's University,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,11,0,9,5,2023-24
+mgmt_sci,351,213826,Marywood University,PA,52.1301,Management Science.,true,11,0,9,1,2023-24
+mgmt_sci,352,231174,University of Vermont,VT,52.1399,"Management Sciences and Quantitative Methods, Other.",true,11,0,0,2,2023-24
+mgmt_sci,353,238661,Edgewood College,WI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,11,0,2,1,2023-24
+mgmt_sci,354,134945,Jacksonville University,FL,52.1302,Business Statistics.,true,10,0,0,2,2023-24
+mgmt_sci,355,137847,The University of Tampa,FL,52.1301,Management Science.,true,10,1,6,1,2023-24
+mgmt_sci,356,177144,Culver-Stockton College,MO,52.1301,Management Science.,true,10,0,2,1,2023-24
+mgmt_sci,357,184694,Fairleigh Dickinson University-Florham Campus,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,10,0,0,1,2023-24
+mgmt_sci,358,192271,LIM College,NY,52.1302,Business Statistics.,true,10,0,9,1,2023-24
+mgmt_sci,359,127060,University of Denver,CO,52.1301,Management Science.,true,9,0,1,3,2023-24
+mgmt_sci,360,145619,Benedictine University,IL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,9,0,5,1,2023-24
+mgmt_sci,361,146719,Loyola University Chicago,IL,52.1302,Business Statistics.,true,9,0,5,5,2023-24
+mgmt_sci,362,182281,University of Nevada-Las Vegas,NV,52.1301,Management Science.,true,9,0,1,3,2023-24
+mgmt_sci,363,185129,New Jersey City University,NJ,52.1301,Management Science.,true,9,0,4,2,2023-24
+mgmt_sci,364,190664,CUNY Queens College,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,9,0,1,2,2023-24
+mgmt_sci,365,202763,The University of Findlay,OH,52.1302,Business Statistics.,true,9,0,9,1,2023-24
+mgmt_sci,366,206084,University of Toledo,OH,52.1302,Business Statistics.,true,9,0,7,2,2023-24
+mgmt_sci,367,236230,Pacific Lutheran University,WA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,9,0,1,2,2023-24
+mgmt_sci,368,104151,Arizona State University Campus Immersion,AZ,52.1304,Actuarial Science.,true,8,0,0,6,2023-24
+mgmt_sci,369,110468,Alliant International University-San Diego,CA,52.1301,Management Science.,true,8,0,8,1,2023-24
+mgmt_sci,370,111948,Chapman University,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,8,0,0,3,2023-24
+mgmt_sci,371,134945,Jacksonville University,FL,52.1301,Management Science.,true,8,0,2,2,2023-24
+mgmt_sci,372,148584,University of St Francis,IL,52.1301,Management Science.,true,8,0,0,1,2023-24
+mgmt_sci,373,150136,Ball State University,IN,52.1304,Actuarial Science.,true,8,0,7,2,2023-24
+mgmt_sci,374,204194,Mount Vernon Nazarene University,OH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,8,0,0,1,2023-24
+mgmt_sci,375,110413,California Lutheran University,CA,52.1301,Management Science.,true,7,0,1,2,2023-24
+mgmt_sci,376,123554,Saint Mary's College of California,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,7,0,3,2,2023-24
+mgmt_sci,377,137546,Stetson University,FL,52.1399,"Management Sciences and Quantitative Methods, Other.",true,7,0,0,2,2023-24
+mgmt_sci,378,153658,University of Iowa,IA,52.1304,Actuarial Science.,true,7,0,5,4,2023-24
+mgmt_sci,379,189705,Canisius University,NY,52.1301,Management Science.,true,7,0,0,2,2023-24
+mgmt_sci,380,206525,Wittenberg University,OH,52.1301,Management Science.,true,7,0,0,1,2023-24
+mgmt_sci,381,206622,Xavier University,OH,52.1301,Management Science.,true,7,0,1,1,2023-24
+mgmt_sci,382,216339,Temple University,PA,52.1301,Management Science.,true,7,0,5,5,2023-24
+mgmt_sci,383,217484,University of Rhode Island,RI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,7,0,0,2,2023-24
+mgmt_sci,384,228981,Texas Lutheran University,TX,52.1302,Business Statistics.,true,7,0,0,1,2023-24
+mgmt_sci,385,237525,Marshall University,WV,52.1399,"Management Sciences and Quantitative Methods, Other.",true,7,0,0,2,2023-24
+mgmt_sci,386,110705,University of California-Santa Barbara,CA,52.1304,Actuarial Science.,true,6,0,4,5,2023-24
+mgmt_sci,387,128771,Central Connecticut State University,CT,52.1301,Management Science.,true,6,0,0,1,2023-24
+mgmt_sci,388,151263,University of Indianapolis,IN,52.1301,Management Science.,true,6,0,2,2,2023-24
+mgmt_sci,389,168421,Worcester Polytechnic Institute,MA,52.1301,Management Science.,true,6,0,2,4,2023-24
+mgmt_sci,390,170675,Lawrence Technological University,MI,52.1302,Business Statistics.,true,6,0,6,1,2023-24
+mgmt_sci,391,185129,New Jersey City University,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,6,0,2,2,2023-24
+mgmt_sci,392,189705,Canisius University,NY,52.1302,Business Statistics.,true,6,0,2,2,2023-24
+mgmt_sci,393,200800,University of Akron Main Campus,OH,52.1301,Management Science.,true,6,0,2,3,2023-24
+mgmt_sci,394,204796,Ohio State University-Main Campus,OH,52.1304,Actuarial Science.,true,6,0,5,4,2023-24
+mgmt_sci,395,214713,Pennsylvania State University-Penn State Harrisburg,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,6,0,6,2,2023-24
+mgmt_sci,396,219000,Augustana University,SD,52.1301,Management Science.,true,6,0,0,1,2023-24
+mgmt_sci,397,228787,The University of Texas at Dallas,TX,52.1304,Actuarial Science.,true,6,0,1,6,2023-24
+mgmt_sci,398,112251,Claremont Graduate University,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,5,0,2,4,2023-24
+mgmt_sci,399,153603,Iowa State University,IA,52.1301,Management Science.,true,5,0,0,3,2023-24
+mgmt_sci,400,161873,University of Baltimore,MD,52.1399,"Management Sciences and Quantitative Methods, Other.",true,5,0,1,2,2023-24
+mgmt_sci,401,186283,Rider University,NJ,52.1399,"Management Sciences and Quantitative Methods, Other.",true,5,0,5,1,2023-24
+mgmt_sci,402,195809,St. John's University-New York,NY,52.1304,Actuarial Science.,true,5,0,2,4,2023-24
+mgmt_sci,403,196592,Touro University,NY,52.1301,Management Science.,true,5,0,5,1,2023-24
+mgmt_sci,404,202480,University of Dayton,OH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,5,0,3,2,2023-24
+mgmt_sci,405,206604,Wright State University-Main Campus,OH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,5,0,1,4,2023-24
+mgmt_sci,406,210331,Corban University,OR,52.1301,Management Science.,true,5,0,0,1,2023-24
+mgmt_sci,407,211440,Carnegie Mellon University,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,5,0,3,8,2023-24
+mgmt_sci,408,213543,Lehigh University,PA,52.1301,Management Science.,true,5,0,4,5,2023-24
+mgmt_sci,409,230603,Southern Utah University,UT,52.1301,Management Science.,true,5,0,1,1,2023-24
+mgmt_sci,410,112251,Claremont Graduate University,CA,52.1301,Management Science.,true,4,0,4,4,2023-24
+mgmt_sci,411,115083,Golden Gate University,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,4,0,3,3,2023-24
+mgmt_sci,412,120184,Notre Dame de Namur University,CA,52.1301,Management Science.,true,4,0,4,1,2023-24
+mgmt_sci,413,122436,University of San Diego,CA,52.1301,Management Science.,true,4,0,3,3,2023-24
+mgmt_sci,414,130989,Goldey-Beacom College,DE,52.1301,Management Science.,true,4,0,4,2,2023-24
+mgmt_sci,415,150163,Butler University,IN,52.1301,Management Science.,true,4,0,0,2,2023-24
+mgmt_sci,416,162061,Capitol Technology University,MD,52.1302,Business Statistics.,true,4,0,0,1,2023-24
+mgmt_sci,417,166391,Lasell University,MA,52.1301,Management Science.,true,4,0,2,1,2023-24
+mgmt_sci,418,168148,Tufts University,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,4,0,3,4,2023-24
+mgmt_sci,419,169983,Kettering University,MI,52.1301,Management Science.,true,4,0,4,1,2023-24
+mgmt_sci,420,172699,Western Michigan University,MI,52.1399,"Management Sciences and Quantitative Methods, Other.",true,4,0,2,3,2023-24
+mgmt_sci,421,195173,St. Francis College,NY,52.1301,Management Science.,true,4,0,1,1,2023-24
+mgmt_sci,422,195809,St. John's University-New York,NY,52.1302,Business Statistics.,true,4,0,3,4,2023-24
+mgmt_sci,423,204185,University of Mount Union,OH,52.1399,"Management Sciences and Quantitative Methods, Other.",true,4,0,0,1,2023-24
+mgmt_sci,424,217235,Johnson & Wales University-Providence,RI,52.1301,Management Science.,true,4,0,0,1,2023-24
+mgmt_sci,425,239080,Marian University,WI,52.1301,Management Science.,true,4,0,0,1,2023-24
+mgmt_sci,426,446640,Harrisburg University of Science and Technology,PA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,4,0,4,3,2023-24
+mgmt_sci,427,460349,Johnson & Wales University-Online,RI,52.1301,Management Science.,true,4,0,0,1,2023-24
+mgmt_sci,428,493512,San Diego Global Knowledge University,CA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,4,0,3,1,2023-24
+mgmt_sci,429,164076,Towson University,MD,52.1304,Actuarial Science.,true,3,0,1,2,2023-24
+mgmt_sci,430,165936,Gordon College,MA,52.1399,"Management Sciences and Quantitative Methods, Other.",true,3,0,0,1,2023-24
+mgmt_sci,431,166850,Merrimack College,MA,52.1302,Business Statistics.,true,3,0,0,1,2023-24
+mgmt_sci,432,175272,Winona State University,MN,52.1301,Management Science.,true,3,0,1,1,2023-24
+mgmt_sci,433,178059,Maryville University of Saint Louis,MO,52.1304,Actuarial Science.,true,3,0,1,3,2023-24
+mgmt_sci,434,181464,University of Nebraska-Lincoln,NE,52.1304,Actuarial Science.,true,3,0,3,5,2023-24
+mgmt_sci,435,194091,New York Institute of Technology,NY,52.1304,Actuarial Science.,true,3,0,3,3,2023-24
+mgmt_sci,436,212805,Grove City College,PA,52.1302,Business Statistics.,true,3,0,0,1,2023-24
+mgmt_sci,437,220215,Freed-Hardeman University,TN,52.1302,Business Statistics.,true,3,0,0,1,2023-24
+mgmt_sci,438,222628,Amberton University,TX,52.1301,Management Science.,true,3,0,0,2,2023-24
+mgmt_sci,439,228459,Texas State University,TX,52.1399,"Management Sciences and Quantitative Methods, Other.",true,3,0,2,2,2023-24
+mgmt_sci,440,239105,Marquette University,WI,52.1301,Management Science.,true,3,0,1,4,2023-24
+mgmt_sci,441,449870,University of the West,CA,52.1302,Business Statistics.,true,3,0,3,1,2023-24
+mgmt_sci,442,487524,Husson University,ME,52.1399,"Management Sciences and Quantitative Methods, Other.",true,3,0,0,1,2023-24
+mgmt_sci,443,102234,Spring Hill College,AL,52.1301,Management Science.,true,2,0,0,1,2023-24
+mgmt_sci,444,122755,San Jose State University,CA,52.1301,Management Science.,true,2,0,2,5,2023-24
+mgmt_sci,445,148487,Roosevelt University,IL,52.1304,Actuarial Science.,true,2,0,1,1,2023-24
+mgmt_sci,446,157863,Union Commonwealth University,KY,52.1301,Management Science.,true,2,0,1,1,2023-24
+mgmt_sci,447,174899,The College of Saint Scholastica,MN,52.1301,Management Science.,true,2,0,0,1,2023-24
+mgmt_sci,448,183044,University of New Hampshire-Main Campus,NH,52.1301,Management Science.,true,2,0,0,4,2023-24
+mgmt_sci,449,210739,DeSales University,PA,52.1302,Business Statistics.,true,2,0,0,1,2023-24
+mgmt_sci,450,217536,Salve Regina University,RI,52.1301,Management Science.,true,2,0,0,1,2023-24
+mgmt_sci,451,225247,Hardin-Simmons University,TX,52.1301,Management Science.,true,2,0,0,1,2023-24
+mgmt_sci,452,225627,University of the Incarnate Word,TX,52.1301,Management Science.,true,2,0,0,1,2023-24
+mgmt_sci,453,236230,Pacific Lutheran University,WA,52.1301,Management Science.,true,2,0,1,2,2023-24
+mgmt_sci,454,129242,Fairfield University,CT,52.1301,Management Science.,true,1,0,0,4,2023-24
+mgmt_sci,455,133881,Florida Institute of Technology,FL,52.1301,Management Science.,true,1,0,0,2,2023-24
+mgmt_sci,456,169479,Davenport University,MI,52.1301,Management Science.,true,1,0,0,2,2023-24
+mgmt_sci,457,169798,Eastern Michigan University,MI,52.1301,Management Science.,true,1,0,0,4,2023-24
+mgmt_sci,458,175014,Rasmussen University-Minnesota,MN,52.1301,Management Science.,true,1,0,0,1,2023-24
+mgmt_sci,459,194091,New York Institute of Technology,NY,52.1399,"Management Sciences and Quantitative Methods, Other.",true,1,0,0,3,2023-24
+mgmt_sci,460,216339,Temple University,PA,52.1304,Actuarial Science.,true,1,0,0,5,2023-24
+mgmt_sci,461,216852,Widener University,PA,52.1301,Management Science.,true,1,0,0,2,2023-24
+mgmt_sci,462,227331,Our Lady of the Lake University,TX,52.1301,Management Science.,true,1,0,0,1,2023-24
+mgmt_sci,463,230995,Norwich University,VT,52.1301,Management Science.,true,1,0,0,1,2023-24
+econ,1,162928,Johns Hopkins University,MD,45.0603,Econometrics and Quantitative Economics.,true,559,0,473,6,2023-24
+econ,2,190150,Columbia University in the City of New York,NY,45.0603,Econometrics and Quantitative Economics.,true,164,0,143,8,2023-24
+econ,3,123961,University of Southern California,CA,45.0603,Econometrics and Quantitative Economics.,true,153,0,140,6,2023-24
+econ,4,240444,University of Wisconsin-Madison,WI,45.0603,Econometrics and Quantitative Economics.,true,147,0,129,5,2023-24
+econ,5,110662,University of California-Los Angeles,CA,45.0603,Econometrics and Quantitative Economics.,true,133,0,105,6,2023-24
+econ,6,193900,New York University,NY,45.0603,Econometrics and Quantitative Economics.,true,108,0,90,6,2023-24
+econ,7,166027,Harvard University,MA,45.0603,Econometrics and Quantitative Economics.,true,106,0,82,3,2023-24
+econ,8,164988,Boston University,MA,45.0603,Econometrics and Quantitative Economics.,true,102,0,74,8,2023-24
+econ,9,228723,Texas A&M University-College Station,TX,45.0603,Econometrics and Quantitative Economics.,true,99,0,19,4,2023-24
+econ,10,145637,University of Illinois Urbana-Champaign,IL,45.0603,Econometrics and Quantitative Economics.,true,90,0,69,6,2023-24
+econ,11,164924,Boston College,MA,45.0603,Econometrics and Quantitative Economics.,true,82,0,42,3,2023-24
+econ,12,482705,Northeastern University Professional Programs,MA,45.0603,Econometrics and Quantitative Economics.,true,77,0,69,3,2023-24
+econ,13,144050,University of Chicago,IL,45.0603,Econometrics and Quantitative Economics.,true,74,0,52,4,2023-24
+econ,14,198419,Duke University,NC,45.0603,Econometrics and Quantitative Economics.,true,70,0,65,4,2023-24
+econ,15,147767,Northwestern University,IL,45.0603,Econometrics and Quantitative Economics.,true,69,0,68,4,2023-24
+econ,16,190415,Cornell University,NY,45.0603,Econometrics and Quantitative Economics.,true,65,0,43,5,2023-24
+econ,17,130794,Yale University,CT,45.0603,Econometrics and Quantitative Economics.,true,63,0,49,3,2023-24
+econ,18,163286,University of Maryland-College Park,MD,45.0603,Econometrics and Quantitative Economics.,true,59,0,30,6,2023-24
+econ,19,167358,Northeastern University,MA,45.0603,Econometrics and Quantitative Economics.,true,56,0,46,2,2023-24
+econ,20,131496,Georgetown University,DC,45.0603,Econometrics and Quantitative Economics.,true,50,0,39,5,2023-24
+econ,21,165015,Brandeis University,MA,45.0603,Econometrics and Quantitative Economics.,true,48,0,36,2,2023-24
+econ,22,122612,University of San Francisco,CA,45.0603,Econometrics and Quantitative Economics.,true,46,0,27,3,2023-24
+econ,23,228778,The University of Texas at Austin,TX,45.0603,Econometrics and Quantitative Economics.,true,46,0,37,5,2023-24
+econ,24,243780,Purdue University-Main Campus,IN,45.0603,Econometrics and Quantitative Economics.,true,46,0,8,5,2023-24
+econ,25,131469,George Washington University,DC,45.0603,Econometrics and Quantitative Economics.,true,39,0,24,4,2023-24
+econ,26,178396,University of Missouri-Columbia,MO,45.0603,Econometrics and Quantitative Economics.,true,36,0,7,3,2023-24
+econ,27,193654,The New School,NY,45.0603,Econometrics and Quantitative Economics.,true,32,0,9,1,2023-24
+econ,28,134130,University of Florida,FL,45.0603,Econometrics and Quantitative Economics.,true,29,0,1,2,2023-24
+econ,29,139959,University of Georgia,GA,45.0603,Econometrics and Quantitative Economics.,true,29,0,14,4,2023-24
+econ,30,179867,Washington University in St Louis,MO,45.0603,Econometrics and Quantitative Economics.,true,29,0,26,4,2023-24
+econ,31,215062,University of Pennsylvania,PA,45.0603,Econometrics and Quantitative Economics.,true,29,4,12,6,2023-24
+econ,32,174066,University of Minnesota-Twin Cities,MN,45.0603,Econometrics and Quantitative Economics.,true,27,0,17,5,2023-24
+econ,33,110714,University of California-Santa Cruz,CA,45.0603,Econometrics and Quantitative Economics.,true,26,0,14,2,2023-24
+econ,34,121628,RAND School of Public Policy,CA,45.0603,Econometrics and Quantitative Economics.,true,26,0,6,1,2023-24
+econ,35,131159,American University,DC,45.0603,Econometrics and Quantitative Economics.,true,26,0,9,5,2023-24
+econ,36,126775,Colorado School of Mines,CO,45.0603,Econometrics and Quantitative Economics.,true,25,0,16,2,2023-24
+econ,37,215293,University of Pittsburgh-Pittsburgh Campus,PA,45.0603,Econometrics and Quantitative Economics.,true,25,0,14,4,2023-24
+econ,38,191241,Fordham University,NY,45.0603,Econometrics and Quantitative Economics.,true,23,0,11,5,2023-24
+econ,39,110644,University of California-Davis,CA,45.0603,Econometrics and Quantitative Economics.,true,22,0,12,4,2023-24
+econ,40,129020,University of Connecticut,CT,45.0603,Econometrics and Quantitative Economics.,true,22,0,14,6,2023-24
+econ,41,139755,Georgia Institute of Technology-Main Campus,GA,45.0603,Econometrics and Quantitative Economics.,true,22,0,15,4,2023-24
+econ,42,204796,Ohio State University-Main Campus,OH,45.0603,Econometrics and Quantitative Economics.,true,22,0,14,4,2023-24
+econ,43,166683,Massachusetts Institute of Technology,MA,45.0603,Econometrics and Quantitative Economics.,true,21,0,17,3,2023-24
+econ,44,186131,Princeton University,NJ,45.0603,Econometrics and Quantitative Economics.,true,21,0,16,1,2023-24
+econ,45,110422,California Polytechnic State University-San Luis Obispo,CA,45.0603,Econometrics and Quantitative Economics.,true,20,0,2,3,2023-24
+econ,46,186380,Rutgers University-New Brunswick,NJ,45.0603,Econometrics and Quantitative Economics.,true,20,0,15,3,2023-24
+econ,47,190576,CUNY Graduate School and University Center,NY,45.0603,Econometrics and Quantitative Economics.,true,20,0,17,2,2023-24
+econ,48,196088,University at Buffalo,NY,45.0603,Econometrics and Quantitative Economics.,true,20,2,12,2,2023-24
+econ,49,209551,University of Oregon,OR,45.0603,Econometrics and Quantitative Economics.,true,20,0,2,1,2023-24
+econ,50,221999,Vanderbilt University,TN,45.0603,Econometrics and Quantitative Economics.,true,20,0,18,3,2023-24
+econ,51,196060,University at Albany,NY,45.0603,Econometrics and Quantitative Economics.,true,19,0,14,2,2023-24
+econ,52,199139,University of North Carolina at Charlotte,NC,45.0603,Econometrics and Quantitative Economics.,true,18,0,7,2,2023-24
+econ,53,204857,Ohio University-Main Campus,OH,45.0603,Econometrics and Quantitative Economics.,true,18,0,16,2,2023-24
+econ,54,227757,Rice University,TX,45.0603,Econometrics and Quantitative Economics.,true,18,0,13,4,2023-24
+econ,55,230728,Utah State University,UT,45.0603,Econometrics and Quantitative Economics.,true,18,0,1,3,2023-24
+econ,56,238032,West Virginia University,WV,45.0603,Econometrics and Quantitative Economics.,true,18,0,6,2,2023-24
+econ,57,145813,Illinois State University,IL,45.0603,Econometrics and Quantitative Economics.,true,17,0,13,2,2023-24
+econ,58,152080,University of Notre Dame,IN,45.0603,Econometrics and Quantitative Economics.,true,17,0,5,3,2023-24
+econ,59,196079,Binghamton University,NY,45.0603,Econometrics and Quantitative Economics.,true,17,0,3,3,2023-24
+econ,60,139940,Georgia State University,GA,45.0603,Econometrics and Quantitative Economics.,true,16,0,11,3,2023-24
+econ,61,168148,Tufts University,MA,45.0603,Econometrics and Quantitative Economics.,true,16,0,15,4,2023-24
+econ,62,200280,University of North Dakota,ND,45.0603,Econometrics and Quantitative Economics.,true,16,0,2,2,2023-24
+econ,63,228246,Southern Methodist University,TX,45.0603,Econometrics and Quantitative Economics.,true,16,0,10,4,2023-24
+econ,64,229115,Texas Tech University,TX,45.0603,Econometrics and Quantitative Economics.,true,16,0,12,3,2023-24
+econ,65,100751,The University of Alabama,AL,45.0603,Econometrics and Quantitative Economics.,true,15,0,0,4,2023-24
+econ,66,144740,DePaul University,IL,45.0603,Econometrics and Quantitative Economics.,true,15,0,0,5,2023-24
+econ,67,213543,Lehigh University,PA,45.0603,Econometrics and Quantitative Economics.,true,15,0,13,5,2023-24
+econ,68,171100,Michigan State University,MI,45.0603,Econometrics and Quantitative Economics.,true,14,0,3,5,2023-24
+econ,69,194310,Pace University,NY,45.0603,Econometrics and Quantitative Economics.,true,14,0,3,3,2023-24
+econ,70,199193,North Carolina State University at Raleigh,NC,45.0603,Econometrics and Quantitative Economics.,true,14,0,6,3,2023-24
+econ,71,110653,University of California-Irvine,CA,45.0603,Econometrics and Quantitative Economics.,true,13,0,6,4,2023-24
+econ,72,110705,University of California-Santa Barbara,CA,45.0603,Econometrics and Quantitative Economics.,true,13,0,9,5,2023-24
+econ,73,122597,San Francisco State University,CA,45.0603,Econometrics and Quantitative Economics.,true,13,0,4,3,2023-24
+econ,74,149772,Western Illinois University,IL,45.0603,Econometrics and Quantitative Economics.,true,13,0,9,2,2023-24
+econ,75,181394,University of Nebraska at Omaha,NE,45.0603,Econometrics and Quantitative Economics.,true,13,0,3,1,2023-24
+econ,76,204024,Miami University-Oxford,OH,45.0603,Econometrics and Quantitative Economics.,true,13,0,1,3,2023-24
+econ,77,104179,University of Arizona,AZ,45.0603,Econometrics and Quantitative Economics.,true,12,0,6,4,2023-24
+econ,78,126562,University of Colorado Denver/Anschutz Medical Campus,CO,45.0603,Econometrics and Quantitative Economics.,true,12,0,4,3,2023-24
+econ,79,200697,Air Force Institute of Technology-Graduate School of Engineering & Management,OH,45.0603,Econometrics and Quantitative Economics.,true,12,0,0,2,2023-24
+econ,80,201441,Bowling Green State University-Main Campus,OH,45.0603,Econometrics and Quantitative Economics.,true,12,0,9,4,2023-24
+econ,81,217156,Brown University,RI,45.0603,Econometrics and Quantitative Economics.,true,12,0,7,2,2023-24
+econ,82,228787,The University of Texas at Dallas,TX,45.0603,Econometrics and Quantitative Economics.,true,12,0,6,6,2023-24
+econ,83,240727,University of Wyoming,WY,45.0603,Econometrics and Quantitative Economics.,true,12,0,3,2,2023-24
+econ,84,110404,California Institute of Technology,CA,45.0603,Econometrics and Quantitative Economics.,true,11,0,9,1,2023-24
+econ,85,110680,University of California-San Diego,CA,45.0603,Econometrics and Quantitative Economics.,true,11,0,5,5,2023-24
+econ,86,152600,Valparaiso University,IN,45.0603,Econometrics and Quantitative Economics.,true,11,0,8,2,2023-24
+econ,87,179159,Saint Louis University,MO,45.0603,Econometrics and Quantitative Economics.,true,11,0,6,2,2023-24
+econ,88,186432,Saint Peter's University,NJ,45.0603,Econometrics and Quantitative Economics.,true,11,0,4,5,2023-24
+econ,89,196413,Syracuse University,NY,45.0603,Econometrics and Quantitative Economics.,true,11,0,6,4,2023-24
+econ,90,199148,University of North Carolina at Greensboro,NC,45.0603,Econometrics and Quantitative Economics.,true,11,0,0,2,2023-24
+econ,91,201885,University of Cincinnati-Main Campus,OH,45.0603,Econometrics and Quantitative Economics.,true,11,0,6,3,2023-24
+econ,92,207500,University of Oklahoma-Norman Campus,OK,45.0603,Econometrics and Quantitative Economics.,true,11,0,2,1,2023-24
+econ,93,229027,The University of Texas at San Antonio,TX,45.0603,Econometrics and Quantitative Economics.,true,11,0,3,3,2023-24
+econ,94,243744,Stanford University,CA,45.0603,Econometrics and Quantitative Economics.,true,11,0,8,3,2023-24
+econ,95,112251,Claremont Graduate University,CA,45.0603,Econometrics and Quantitative Economics.,true,10,0,5,4,2023-24
+econ,96,155317,University of Kansas,KS,45.0603,Econometrics and Quantitative Economics.,true,10,0,4,4,2023-24
+econ,97,156125,Wichita State University,KS,45.0603,Econometrics and Quantitative Economics.,true,10,0,4,4,2023-24
+econ,98,161253,University of Maine,ME,45.0603,Econometrics and Quantitative Economics.,true,10,0,5,3,2023-24
+econ,99,172699,Western Michigan University,MI,45.0603,Econometrics and Quantitative Economics.,true,10,0,9,3,2023-24
+econ,100,184348,Drew University,NJ,45.0603,Econometrics and Quantitative Economics.,true,10,0,6,1,2023-24
+econ,101,230764,University of Utah,UT,45.0603,Econometrics and Quantitative Economics.,true,10,0,6,2,2023-24
+econ,102,236948,University of Washington-Seattle Campus,WA,45.0603,Econometrics and Quantitative Economics.,true,10,0,8,4,2023-24
+econ,103,110565,California State University-Fullerton,CA,45.0603,Econometrics and Quantitative Economics.,true,9,0,2,2,2023-24
+econ,104,134097,Florida State University,FL,45.0603,Econometrics and Quantitative Economics.,true,9,0,1,5,2023-24
+econ,105,166638,University of Massachusetts-Boston,MA,45.0603,Econometrics and Quantitative Economics.,true,9,0,2,2,2023-24
+econ,106,189088,Bard College,NY,45.0603,Econometrics and Quantitative Economics.,true,9,0,5,1,2023-24
+econ,107,214777,Pennsylvania State University-Main Campus,PA,45.0603,Econometrics and Quantitative Economics.,true,9,0,8,4,2023-24
+econ,108,106397,University of Arkansas,AR,45.0603,Econometrics and Quantitative Economics.,true,8,0,1,3,2023-24
+econ,109,142285,University of Idaho,ID,45.0603,Econometrics and Quantitative Economics.,true,8,0,4,2,2023-24
+econ,110,174783,Saint Cloud State University,MN,45.0603,Econometrics and Quantitative Economics.,true,8,0,4,1,2023-24
+econ,111,195030,University of Rochester,NY,45.0603,Econometrics and Quantitative Economics.,true,8,0,8,3,2023-24
+econ,112,228769,The University of Texas at Arlington,TX,45.0603,Econometrics and Quantitative Economics.,true,8,0,4,3,2023-24
+econ,113,228796,The University of Texas at El Paso,TX,45.0603,Econometrics and Quantitative Economics.,true,8,0,5,2,2023-24
+econ,114,234076,University of Virginia-Main Campus,VA,45.0603,Econometrics and Quantitative Economics.,true,8,0,4,5,2023-24
+econ,115,122755,San Jose State University,CA,45.0603,Econometrics and Quantitative Economics.,true,7,1,2,5,2023-24
+econ,116,151111,Indiana University-Indianapolis,IN,45.0603,Econometrics and Quantitative Economics.,true,7,0,5,1,2023-24
+econ,117,178402,University of Missouri-Kansas City,MO,45.0603,Econometrics and Quantitative Economics.,true,7,0,1,4,2023-24
+econ,118,182281,University of Nevada-Las Vegas,NV,45.0603,Econometrics and Quantitative Economics.,true,7,0,1,3,2023-24
+econ,119,183044,University of New Hampshire-Main Campus,NH,45.0603,Econometrics and Quantitative Economics.,true,7,0,1,4,2023-24
+econ,120,199120,University of North Carolina at Chapel Hill,NC,45.0603,Econometrics and Quantitative Economics.,true,7,0,3,3,2023-24
+econ,121,236939,Washington State University,WA,45.0603,Econometrics and Quantitative Economics.,true,7,0,2,2,2023-24
+econ,122,126818,Colorado State University-Fort Collins,CO,45.0603,Econometrics and Quantitative Economics.,true,6,0,0,5,2023-24
+econ,123,139658,Emory University,GA,45.0603,Econometrics and Quantitative Economics.,true,6,0,3,3,2023-24
+econ,124,145600,University of Illinois Chicago,IL,45.0603,Econometrics and Quantitative Economics.,true,6,0,0,4,2023-24
+econ,125,151351,Indiana University-Bloomington,IN,45.0603,Econometrics and Quantitative Economics.,true,6,0,4,5,2023-24
+econ,126,159391,Louisiana State University and Agricultural & Mechanical College,LA,45.0603,Econometrics and Quantitative Economics.,true,6,0,3,3,2023-24
+econ,127,198464,East Carolina University,NC,45.0603,Econometrics and Quantitative Economics.,true,6,0,1,2,2023-24
+econ,128,203517,Kent State University at Kent,OH,45.0603,Econometrics and Quantitative Economics.,true,6,0,1,4,2023-24
+econ,129,212054,Drexel University,PA,45.0603,Econometrics and Quantitative Economics.,true,6,0,5,6,2023-24
+econ,130,217882,Clemson University,SC,45.0603,Econometrics and Quantitative Economics.,true,6,0,5,1,2023-24
+econ,131,225511,University of Houston,TX,45.0603,Econometrics and Quantitative Economics.,true,6,0,6,5,2023-24
+econ,132,239105,Marquette University,WI,45.0603,Econometrics and Quantitative Economics.,true,6,0,0,4,2023-24
+econ,133,110671,University of California-Riverside,CA,45.0603,Econometrics and Quantitative Economics.,true,5,0,3,3,2023-24
+econ,134,111948,Chapman University,CA,45.0603,Econometrics and Quantitative Economics.,true,5,0,2,3,2023-24
+econ,135,130943,University of Delaware,DE,45.0603,Econometrics and Quantitative Economics.,true,5,0,5,7,2023-24
+econ,136,147703,Northern Illinois University,IL,45.0603,Econometrics and Quantitative Economics.,true,5,0,3,4,2023-24
+econ,137,180461,Montana State University,MT,45.0603,Econometrics and Quantitative Economics.,true,5,0,0,3,2023-24
+econ,138,181464,University of Nebraska-Lincoln,NE,45.0603,Econometrics and Quantitative Economics.,true,5,0,3,5,2023-24
+econ,139,206084,University of Toledo,OH,45.0603,Econometrics and Quantitative Economics.,true,5,0,0,2,2023-24
+econ,140,206604,Wright State University-Main Campus,OH,45.0603,Econometrics and Quantitative Economics.,true,5,0,0,4,2023-24
+econ,141,211440,Carnegie Mellon University,PA,45.0603,Econometrics and Quantitative Economics.,true,5,0,5,8,2023-24
+econ,142,223232,Baylor University,TX,45.0603,Econometrics and Quantitative Economics.,true,5,0,2,3,2023-24
+econ,143,227216,University of North Texas,TX,45.0603,Econometrics and Quantitative Economics.,true,5,0,2,4,2023-24
+econ,144,233921,Virginia Polytechnic Institute and State University,VA,45.0603,Econometrics and Quantitative Economics.,true,5,0,5,3,2023-24
+econ,145,234030,Virginia Commonwealth University,VA,45.0603,Econometrics and Quantitative Economics.,true,5,0,1,2,2023-24
+econ,146,240453,University of Wisconsin-Milwaukee,WI,45.0603,Econometrics and Quantitative Economics.,true,5,0,2,4,2023-24
+econ,147,100830,Auburn University at Montgomery,AL,45.0603,Econometrics and Quantitative Economics.,true,4,0,1,1,2023-24
+econ,148,157951,Western Kentucky University,KY,45.0603,Econometrics and Quantitative Economics.,true,4,0,1,1,2023-24
+econ,149,196097,Stony Brook University,NY,45.0603,Econometrics and Quantitative Economics.,true,4,0,0,1,2023-24
+econ,150,110413,California Lutheran University,CA,45.0603,Econometrics and Quantitative Economics.,true,3,0,0,2,2023-24
+econ,151,110574,California State University-East Bay,CA,45.0603,Econometrics and Quantitative Economics.,true,3,0,1,3,2023-24
+econ,152,141574,University of Hawaii at Manoa,HI,45.0603,Econometrics and Quantitative Economics.,true,3,0,1,1,2023-24
+econ,153,149222,Southern Illinois University-Carbondale,IL,45.0603,Econometrics and Quantitative Economics.,true,3,0,3,2,2023-24
+econ,154,169798,Eastern Michigan University,MI,45.0603,Econometrics and Quantitative Economics.,true,3,0,2,4,2023-24
+econ,155,209807,Portland State University,OR,45.0603,Econometrics and Quantitative Economics.,true,3,0,0,3,2023-24
+econ,156,221759,The University of Tennessee-Knoxville,TN,45.0603,Econometrics and Quantitative Economics.,true,3,0,1,5,2023-24
+econ,157,232982,Old Dominion University,VA,45.0603,Econometrics and Quantitative Economics.,true,3,0,2,2,2023-24
+econ,158,104151,Arizona State University Campus Immersion,AZ,45.0603,Econometrics and Quantitative Economics.,true,2,0,2,6,2023-24
+econ,159,131283,The Catholic University of America,DC,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,1,2023-24
+econ,160,133951,Florida International University,FL,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,3,2023-24
+econ,161,142115,Boise State University,ID,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,1,2023-24
+econ,162,160755,Tulane University of Louisiana,LA,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,4,2023-24
+econ,163,163268,University of Maryland-Baltimore County,MD,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,2,2023-24
+econ,164,178420,University of Missouri-St Louis,MO,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,2,2023-24
+econ,165,182290,University of Nevada-Reno,NV,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,3,2023-24
+econ,166,445188,University of California-Merced,CA,45.0603,Econometrics and Quantitative Economics.,true,2,0,0,2,2023-24
+econ,167,110635,University of California-Berkeley,CA,45.0603,Econometrics and Quantitative Economics.,true,1,0,1,3,2023-24
+econ,168,155399,Kansas State University,KS,45.0603,Econometrics and Quantitative Economics.,true,1,0,0,3,2023-24
+econ,169,166629,University of Massachusetts-Amherst,MA,45.0603,Econometrics and Quantitative Economics.,true,1,0,0,4,2023-24
+econ,170,176017,University of Mississippi,MS,45.0603,Econometrics and Quantitative Economics.,true,1,0,1,3,2023-24
+econ,171,194824,Rensselaer Polytechnic Institute,NY,45.0603,Econometrics and Quantitative Economics.,true,1,0,1,3,2023-24
+econ,172,220862,University of Memphis,TN,45.0603,Econometrics and Quantitative Economics.,true,1,0,0,2,2023-24

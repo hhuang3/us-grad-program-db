@@ -24,3 +24,6 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[project.scripts]
+gradprog = "gradprog.cli:main"

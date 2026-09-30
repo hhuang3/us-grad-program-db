@@ -1,0 +1,491 @@
+unitid,institution_name,state,institution_target_cip_count,cip_codes,completions_ds,completions_analytics,completions_stats,completions_mgmt_sci,completions_econ
+100706,University of Alabama in Huntsville,AL,1,52.1301,0,0,0,58,0
+100751,The University of Alabama,AL,4,27.0601;30.7102;45.0603;52.1301,0,2,11,15,15
+100830,Auburn University at Montgomery,AL,1,45.0603,0,0,0,0,4
+100858,Auburn University,AL,1,27.0501,0,0,9,0,0
+101189,Faulkner University,AL,1,52.1301,0,0,0,58,0
+102234,Spring Hill College,AL,1,52.1301,0,0,0,2,0
+102614,University of Alaska Fairbanks,AK,1,27.0501,0,0,6,0,0
+104151,Arizona State University Campus Immersion,AZ,6,27.0501;30.7101;45.0603;52.1301;52.1304;52.1399,0,1,10,591,2
+104179,University of Arizona,AZ,4,27.0501;30.7001;45.0603;52.1399,43,0,7,102,12
+104717,Grand Canyon University,AZ,2,27.0501;52.1301,0,0,31,103,0
+105330,Northern Arizona University,AZ,2,27.0501;30.7102,0,12,8,0,0
+106245,University of Arkansas at Little Rock,AR,1,52.1301,0,0,0,15,0
+106397,University of Arkansas,AR,3,27.0501;45.0603;52.1301,0,0,14,73,8
+106458,Arkansas State University,AR,3,27.0501;52.1301;52.1399,0,0,3,176,0
+106704,University of Central Arkansas,AR,1,52.1301,0,0,0,17,0
+109785,Azusa Pacific University,CA,1,27.0501,0,0,4,0,0
+110370,California College of the Arts,CA,1,52.1301,0,0,0,17,0
+110404,California Institute of Technology,CA,1,45.0603,0,0,0,0,11
+110413,California Lutheran University,CA,2,45.0603;52.1301,0,0,0,7,3
+110422,California Polytechnic State University-San Luis Obispo,CA,3,27.0501;45.0603;52.1301,0,0,1,51,20
+110468,Alliant International University-San Diego,CA,1,52.1301,0,0,0,8,0
+110529,California State Polytechnic University-Pomona,CA,1,52.1301,0,0,0,35,0
+110565,California State University-Fullerton,CA,2,27.0501;45.0603,0,0,15,0,9
+110574,California State University-East Bay,CA,3,27.0501;45.0603;52.1301,0,0,43,153,3
+110583,California State University-Long Beach,CA,3,27.0599;30.7104;52.1399,0,22,17,19,0
+110635,University of California-Berkeley,CA,3,27.0501;45.0603;52.1301,0,0,42,583,1
+110644,University of California-Davis,CA,4,27.0501;45.0603;52.1301;52.1399,0,0,42,439,22
+110653,University of California-Irvine,CA,4,27.0501;45.0603;52.1301;52.1399,0,0,22,265,13
+110662,University of California-Los Angeles,CA,6,27.0501;27.0599;45.0603;52.1301;52.1304;52.1399,0,0,54,919,133
+110671,University of California-Riverside,CA,3,27.0501;45.0603;52.1399,0,0,3,64,5
+110680,University of California-San Diego,CA,5,27.0501;30.7001;45.0603;52.1301;52.1399,73,0,9,288,11
+110705,University of California-Santa Barbara,CA,5,27.0501;30.7001;45.0603;52.1301;52.1304,28,0,20,49,13
+110714,University of California-Santa Cruz,CA,2,27.0502;45.0603,0,0,3,0,26
+111948,Chapman University,CA,3,45.0603;52.1301;52.1399,0,0,0,60,5
+112251,Claremont Graduate University,CA,4,27.0601;45.0603;52.1301;52.1399,0,0,1,9,10
+113698,Dominican University of California,CA,2,52.1302;52.1399,0,0,0,26,0
+115083,Golden Gate University,CA,3,30.7102;52.1302;52.1399,0,18,0,46,0
+117140,University of La Verne,CA,1,30.7101,0,26,0,0,0
+117946,Loyola Marymount University,CA,2,52.1301;52.1399,0,0,0,36,0
+119605,National University,CA,1,27.0501,0,0,21,0,0
+120184,Notre Dame de Namur University,CA,1,52.1301,0,0,0,4,0
+120883,University of the Pacific,CA,2,30.7001;30.7102,32,63,0,0,0
+121150,Pepperdine University,CA,1,52.1301,0,0,0,108,0
+121628,RAND School of Public Policy,CA,1,45.0603,0,0,0,0,26
+121691,University of Redlands,CA,1,52.1301,0,0,0,15,0
+122409,San Diego State University,CA,2,27.0501;52.1301,0,0,19,41,0
+122436,University of San Diego,CA,3,30.7001;30.7102;52.1301,47,40,0,4,0
+122597,San Francisco State University,CA,3,27.0501;45.0603;52.1301,0,0,11,26,13
+122612,University of San Francisco,CA,3,45.0603;52.1301;52.1399,0,0,0,114,46
+122755,San Jose State University,CA,5,27.0501;30.7001;45.0603;52.1301;52.1399,171,0,9,29,7
+122931,Santa Clara University,CA,1,52.1301,0,0,0,110,0
+123554,Saint Mary's College of California,CA,2,30.7102;52.1399,0,18,0,7,0
+123961,University of Southern California,CA,6,27.0501;30.7102;45.0603;52.1301;52.1302;52.1399,0,208,5,954,153
+125231,Walden University,MN,1,30.7001,2,0,0,0,0
+126562,University of Colorado Denver/Anschutz Medical Campus,CO,3,27.0501;45.0603;52.1301,0,0,8,140,12
+126614,University of Colorado Boulder,CO,2,52.1301;52.1302,0,0,0,102,0
+126775,Colorado School of Mines,CO,2,30.7001;45.0603,20,0,0,0,25
+126818,Colorado State University-Fort Collins,CO,5,27.0501;27.0601;45.0603;52.1301;52.1399,0,0,39,297,6
+127060,University of Denver,CO,3,52.1301;52.1302;52.1399,0,0,0,90,0
+127918,Regis University,CO,1,30.7001,35,0,0,0,0
+128744,University of Bridgeport,CT,2,52.1301;52.1399,0,0,0,109,0
+128771,Central Connecticut State University,CT,1,52.1301,0,0,0,6,0
+129020,University of Connecticut,CT,6,27.0501;30.7001;30.7102;45.0603;52.1301;52.1399,9,216,2,62,22
+129242,Fairfield University,CT,4,30.7001;30.7102;52.1301;52.1302,7,42,0,38,0
+129525,University of Hartford,CT,1,52.1302,0,0,0,45,0
+129941,University of New Haven,CT,1,52.1302,0,0,0,436,0
+130183,Post University,CT,1,30.7102,0,1,0,0,0
+130226,Quinnipiac University,CT,1,30.7102,0,48,0,0,0
+130253,Sacred Heart University,CT,2,52.1302;52.1399,0,0,0,339,0
+130794,Yale University,CT,3,27.0501;45.0603;52.1301,0,0,25,186,63
+130943,University of Delaware,DE,7,27.0501;27.0601;30.7001;30.7102;30.7104;45.0603;52.1399,26,42,41,23,5
+130989,Goldey-Beacom College,DE,2,30.7102;52.1301,0,2,0,4,0
+131113,Wilmington University,DE,1,52.1302,0,0,0,57,0
+131159,American University,DC,5,27.0501;30.7001;30.7104;45.0603;52.1301,31,6,8,88,26
+131283,The Catholic University of America,DC,1,45.0603,0,0,0,0,2
+131469,George Washington University,DC,4,27.0501;45.0603;52.1301;52.1399,0,0,20,169,39
+131496,Georgetown University,DC,5,27.0503;45.0603;52.1301;52.1302;52.1399,0,0,37,382,50
+131520,Howard University,DC,1,30.7001,5,0,0,0,0
+132471,Barry University,FL,1,52.1399,0,0,0,171,0
+132903,University of Central Florida,FL,2,27.0501;30.7104,0,56,16,0,0
+133553,Embry-Riddle Aeronautical University-Daytona Beach,FL,2,30.7001;30.7102,18,3,0,0,0
+133669,Florida Atlantic University,FL,2,30.7001;30.7102,66,61,0,0,0
+133881,Florida Institute of Technology,FL,2,52.1301;52.1399,0,0,0,24,0
+133951,Florida International University,FL,3,27.0501;45.0603;52.1301,0,0,7,26,2
+134079,Florida Southern College,FL,1,30.7102,0,5,0,0,0
+134097,Florida State University,FL,5,27.0501;30.7001;30.7102;45.0603;52.1301,18,11,16,82,9
+134130,University of Florida,FL,2,27.0501;45.0603,0,0,2,0,29
+134945,Jacksonville University,FL,2,52.1301;52.1302,0,0,0,18,0
+135726,University of Miami,FL,2,52.1302;52.1399,0,0,0,165,0
+136172,University of North Florida,FL,1,30.7102,0,41,0,0,0
+136215,Nova Southeastern University,FL,1,52.1301,0,0,0,39,0
+137032,Saint Leo University,FL,1,52.1301,0,0,0,20,0
+137351,University of South Florida,FL,2,27.0501;52.1399,0,0,8,28,0
+137546,Stetson University,FL,2,52.1301;52.1399,0,0,0,78,0
+137847,The University of Tampa,FL,1,52.1301,0,0,0,10,0
+139658,Emory University,GA,3,45.0603;52.1301;52.1399,0,0,0,438,6
+139755,Georgia Institute of Technology-Main Campus,GA,4,27.0501;45.0603;52.1301;52.1399,0,0,17,1614,22
+139940,Georgia State University,GA,3,45.0603;52.1304;52.1399,0,0,0,193,16
+139959,University of Georgia,GA,4,27.0501;45.0603;52.1301;52.1302,0,0,25,136,29
+140447,Mercer University,GA,1,52.1301,0,0,0,55,0
+140951,Savannah College of Art and Design,GA,1,52.1399,0,0,0,128,0
+141334,University of West Georgia,GA,1,30.7102,0,3,0,0,0
+141574,University of Hawaii at Manoa,HI,1,45.0603,0,0,0,0,3
+142115,Boise State University,ID,1,45.0603,0,0,0,0,2
+142285,University of Idaho,ID,2,27.0501;45.0603,0,0,5,0,8
+143358,Bradley University,IL,2,30.7001;30.7102,63,1,0,0,0
+144050,University of Chicago,IL,4,27.0501;30.7101;45.0603;52.1301,0,246,44,1251,74
+144740,DePaul University,IL,5,27.0601;30.7102;45.0603;52.1301;52.1399,0,100,11,68,15
+144962,Elmhurst University,IL,2,52.1301;52.1399,0,0,0,36,0
+145336,Governors State University,IL,1,52.1301,0,0,0,51,0
+145600,University of Illinois Chicago,IL,4,27.0501;45.0603;52.1301;52.1399,0,0,8,166,6
+145619,Benedictine University,IL,1,52.1399,0,0,0,9,0
+145637,University of Illinois Urbana-Champaign,IL,6,27.0501;30.7001;30.7102;45.0603;52.1304;52.1399,21,95,89,1043,90
+145725,Illinois Institute of Technology,IL,3,30.7102;52.1301;52.1399,0,2,0,68,0
+145813,Illinois State University,IL,2,45.0603;52.1399,0,0,0,21,17
+146612,Lewis University,IL,3,30.7001;52.1301;52.1399,122,0,0,174,0
+146719,Loyola University Chicago,IL,5,27.0501;30.7001;52.1301;52.1302;52.1399,5,0,7,146,0
+147703,Northern Illinois University,IL,4,27.0501;45.0603;52.1301;52.1399,0,0,5,89,5
+147767,Northwestern University,IL,4,27.0501;45.0603;52.1301;52.1399,0,0,32,1663,69
+148487,Roosevelt University,IL,1,52.1304,0,0,0,2,0
+148584,University of St Francis,IL,1,52.1301,0,0,0,8,0
+149222,Southern Illinois University-Carbondale,IL,2,45.0603;52.1399,0,0,0,33,3
+149231,Southern Illinois University Edwardsville,IL,1,52.1399,0,0,0,192,0
+149772,Western Illinois University,IL,2,27.0501;45.0603,0,0,65,0,13
+150136,Ball State University,IN,2,27.0501;52.1304,0,0,2,8,0
+150163,Butler University,IN,2,30.7101;52.1301,0,21,0,4,0
+151111,Indiana University-Indianapolis,IN,1,45.0603,0,0,0,0,7
+151263,University of Indianapolis,IN,2,52.1301;52.1399,0,0,0,33,0
+151290,Indiana Institute of Technology,IN,1,52.1301,0,0,0,35,0
+151351,Indiana University-Bloomington,IN,5,27.0501;27.0502;45.0603;52.1302;52.1399,0,0,14,146,6
+152080,University of Notre Dame,IN,3,45.0603;52.1301;52.1399,0,0,0,273,17
+152390,Saint Mary's College,IN,1,30.7001,4,0,0,0,0
+152600,Valparaiso University,IN,2,30.7102;45.0603,0,3,0,0,11
+153269,Drake University,IA,1,30.7101,0,18,0,0,0
+153366,Graceland University-Lamoni,IA,1,27.0503,0,0,5,0,0
+153603,Iowa State University,IA,3,27.0501;52.1301;52.1399,0,0,7,22,0
+153658,University of Iowa,IA,4,27.0501;30.7001;52.1304;52.1399,7,0,7,126,0
+153825,Loras College,IA,1,30.7101,0,4,0,0,0
+154095,University of Northern Iowa,IA,1,52.1399,0,0,0,16,0
+155317,University of Kansas,KS,4,27.0601;30.7001;45.0603;52.1301,2,0,28,22,10
+155335,Newman University,KS,1,30.7001,1,0,0,0,0
+155399,Kansas State University,KS,3,27.0501;45.0603;52.1301,0,0,13,18,1
+155681,Pittsburg State University,KS,1,52.1399,0,0,0,119,0
+156125,Wichita State University,KS,4,30.7001;45.0603;52.1301;52.1399,1,0,0,90,10
+156541,University of the Cumberlands,KY,2,52.1301;52.1399,0,0,0,479,0
+156620,Eastern Kentucky University,KY,1,27.0503,0,0,3,0,0
+157085,University of Kentucky,KY,4,27.0501;27.0601;30.7001;52.1399,7,0,14,21,0
+157289,University of Louisville,KY,2,52.1301;52.1399,0,0,0,157,0
+157809,Thomas More University,KY,1,52.1301,0,0,0,28,0
+157863,Union Commonwealth University,KY,1,52.1301,0,0,0,2,0
+157951,Western Kentucky University,KY,1,45.0603,0,0,0,0,4
+159391,Louisiana State University and Agricultural & Mechanical College,LA,3,27.0501;45.0603;52.1301,0,0,10,295,6
+160755,Tulane University of Louisiana,LA,4,27.0501;45.0603;52.1301;52.1399,0,0,2,157,2
+161253,University of Maine,ME,3,27.0503;45.0603;52.1301,0,0,6,153,10
+161554,University of Southern Maine,ME,1,27.0501,0,0,2,0,0
+161873,University of Baltimore,MD,2,30.7104;52.1399,0,7,0,5,0
+162061,Capitol Technology University,MD,1,52.1302,0,0,0,4,0
+162928,Johns Hopkins University,MD,6,27.0501;27.0601;45.0603;52.1301;52.1302;52.1399,0,0,193,1293,559
+163204,University of Maryland Global Campus,MD,1,52.1302,0,0,0,83,0
+163268,University of Maryland-Baltimore County,MD,2,27.0501;45.0603,0,0,7,0,2
+163286,University of Maryland-College Park,MD,6,27.0501;30.7104;45.0603;52.1301;52.1302;52.1399,0,46,8,618,59
+164076,Towson University,MD,2,52.1304;52.1399,0,0,0,48,0
+164270,McDaniel College,MD,1,52.1301,0,0,0,53,0
+164368,Hult International Business School,MA,1,30.7102,0,250,0,0,0
+164580,Babson College,MA,1,30.7102,0,77,0,0,0
+164632,Bay Path University,MA,1,52.1302,0,0,0,18,0
+164739,Bentley University,MA,2,52.1302;52.1399,0,0,0,104,0
+164924,Boston College,MA,3,30.7101;45.0603;52.1301,0,9,0,32,82
+164988,Boston University,MA,8,27.0501;30.7001;30.7102;30.7104;45.0603;52.1301;52.1304;52.1399,5,379,69,366,102
+165015,Brandeis University,MA,2,45.0603;52.1301,0,0,0,61,48
+165334,Clark University,MA,2,52.1301;52.1399,0,0,0,148,0
+165820,Fitchburg State University,MA,1,52.1399,0,0,0,22,0
+165936,Gordon College,MA,1,52.1399,0,0,0,3,0
+166027,Harvard University,MA,3,27.0501;45.0603;52.1399,0,0,27,1010,106
+166391,Lasell University,MA,1,52.1301,0,0,0,4,0
+166513,University of Massachusetts-Lowell,MA,1,52.1301,0,0,0,36,0
+166629,University of Massachusetts-Amherst,MA,4,27.0501;30.7001;30.7102;45.0603,55,271,11,0,1
+166638,University of Massachusetts-Boston,MA,2,45.0603;52.1301,0,0,0,47,9
+166683,Massachusetts Institute of Technology,MA,3,45.0603;52.1301;52.1399,0,0,0,779,21
+166850,Merrimack College,MA,1,52.1302,0,0,0,3,0
+166869,MGH Institute of Health Professions,MA,1,30.7101,0,2,0,0,0
+167358,Northeastern University,MA,2,45.0603;52.1302,0,0,0,153,56
+167987,University of Massachusetts-Dartmouth,MA,3,30.7101;52.1302;52.1399,0,40,0,49,0
+168005,Suffolk University,MA,3,52.1301;52.1302;52.1399,0,0,0,181,0
+168148,Tufts University,MA,4,30.7001;30.7101;45.0603;52.1399,21,27,0,4,16
+168227,Wentworth Institute of Technology,MA,2,30.7001;30.7102,6,2,0,0,0
+168421,Worcester Polytechnic Institute,MA,4,27.0501;30.7001;30.7102;52.1301,48,10,5,6,0
+169248,Central Michigan University,MI,1,27.0501,0,0,7,0,0
+169479,Davenport University,MI,2,30.7102;52.1301,0,14,0,1,0
+169798,Eastern Michigan University,MI,4,27.0601;30.7102;45.0603;52.1301,0,3,2,1,3
+169910,Ferris State University,MI,1,30.7101,0,4,0,0,0
+169983,Kettering University,MI,1,52.1301,0,0,0,4,0
+170082,Grand Valley State University,MI,2,27.0501;30.7001,40,0,9,0,0
+170675,Lawrence Technological University,MI,1,52.1302,0,0,0,6,0
+170976,University of Michigan-Ann Arbor,MI,7,27.0501;27.0502;27.0601;30.7001;30.7104;52.1301;52.1302,63,76,139,117,0
+171100,Michigan State University,MI,5,27.0501;45.0603;52.1301;52.1302;52.1399,0,0,10,228,14
+171128,Michigan Technological University,MI,3,27.0501;27.0601;30.7001,28,0,22,0,0
+171137,University of Michigan-Dearborn,MI,1,52.1301,0,0,0,32,0
+171492,Northwood University,MI,1,52.1302,0,0,0,49,0
+171571,Oakland University,MI,2,27.0501;52.1301,0,0,3,19,0
+172051,Saginaw Valley State University,MI,1,52.1301,0,0,0,15,0
+172608,Walsh College,MI,2,30.7101;52.1301,0,8,0,42,0
+172644,Wayne State University,MI,2,27.0501;52.1301,0,0,3,31,0
+172699,Western Michigan University,MI,3,27.0501;45.0603;52.1399,0,0,6,4,10
+173328,Concordia University-Saint Paul,MN,1,30.7101,0,68,0,0,0
+173665,Hamline University,MN,1,52.1301,0,0,0,22,0
+173920,Minnesota State University-Mankato,MN,1,27.0599,0,0,4,0,0
+174066,University of Minnesota-Twin Cities,MN,5,27.0501;30.7001;30.7102;45.0603;52.1301,26,78,18,47,27
+174783,Saint Cloud State University,MN,1,45.0603,0,0,0,0,8
+174817,Saint Mary's University of Minnesota,MN,1,30.7102,0,42,0,0,0
+174899,The College of Saint Scholastica,MN,1,52.1301,0,0,0,2,0
+174914,University of St Thomas,MN,1,52.1302,0,0,0,42,0
+175014,Rasmussen University-Minnesota,MN,1,52.1301,0,0,0,1,0
+175272,Winona State University,MN,1,52.1301,0,0,0,3,0
+176017,University of Mississippi,MS,3,30.7101;45.0603;52.1301,0,45,0,106,1
+176080,Mississippi State University,MS,1,27.0501,0,0,4,0,0
+177144,Culver-Stockton College,MO,1,52.1301,0,0,0,10,0
+178059,Maryville University of Saint Louis,MO,3,30.7001;30.7101;52.1304,71,26,0,3,0
+178396,University of Missouri-Columbia,MO,3,27.0501;45.0603;52.1399,0,0,11,173,36
+178402,University of Missouri-Kansas City,MO,4,27.0501;30.7001;45.0603;52.1399,17,0,4,27,7
+178420,University of Missouri-St Louis,MO,2,45.0603;52.1301,0,0,0,15,2
+178615,Truman State University,MO,1,30.7001,16,0,0,0,0
+179043,Rockhurst University,MO,1,30.7102,0,29,0,0,0
+179159,Saint Louis University,MO,2,45.0603;52.1301,0,0,0,78,11
+179867,Washington University in St Louis,MO,4,27.0501;45.0603;52.1301;52.1302,0,0,22,449,29
+180461,Montana State University,MT,3,27.0503;45.0603;52.1399,0,0,5,13,5
+180489,The University of Montana,MT,1,52.1301,0,0,0,12,0
+180814,Bellevue University,NE,3,30.7001;30.7102;52.1301,109,29,0,15,0
+181002,Creighton University,NE,1,52.1301,0,0,0,27,0
+181394,University of Nebraska at Omaha,NE,1,45.0603,0,0,0,0,13
+181464,University of Nebraska-Lincoln,NE,5,27.0501;30.7102;45.0603;52.1304;52.1399,0,11,3,51,5
+182281,University of Nevada-Las Vegas,NV,3,30.7101;45.0603;52.1301,0,12,0,9,7
+182290,University of Nevada-Reno,NV,3,27.0502;30.7102;45.0603,0,12,5,0,2
+182670,Dartmouth College,NH,1,52.1301,0,0,0,122,0
+183026,Southern New Hampshire University,NH,2,52.1302;52.1399,0,0,0,345,0
+183044,University of New Hampshire-Main Campus,NH,4,27.0501;30.7102;45.0603;52.1301,0,16,3,2,7
+184348,Drew University,NJ,1,45.0603,0,0,0,0,10
+184603,Fairleigh Dickinson University-Metropolitan Campus,NJ,1,52.1399,0,0,0,12,0
+184694,Fairleigh Dickinson University-Florham Campus,NJ,1,52.1399,0,0,0,10,0
+185129,New Jersey City University,NJ,2,52.1301;52.1399,0,0,0,15,0
+185572,Monmouth University,NJ,1,30.7001,3,0,0,0,0
+185590,Montclair State University,NJ,4,27.0501;30.7102;52.1301;52.1399,0,4,3,216,0
+185828,New Jersey Institute of Technology,NJ,4,27.0501;30.7001;52.1301;52.1399,201,0,3,173,0
+186131,Princeton University,NJ,1,45.0603,0,0,0,0,21
+186201,Ramapo College of New Jersey,NJ,1,30.7001,6,0,0,0,0
+186283,Rider University,NJ,1,52.1399,0,0,0,5,0
+186371,Rutgers University-Camden,NJ,1,52.1301,0,0,0,47,0
+186380,Rutgers University-New Brunswick,NJ,3,27.0501;45.0603;52.1301,0,0,94,106,20
+186399,Rutgers University-Newark,NJ,3,52.1301;52.1302;52.1399,0,0,0,211,0
+186432,Saint Peter's University,NJ,5,30.7001;30.7102;45.0603;52.1301;52.1399,154,206,0,45,11
+186584,Seton Hall University,NJ,3,30.7001;30.7102;52.1399,1,14,0,27,0
+186867,Stevens Institute of Technology,NJ,2,52.1302;52.1399,0,0,0,241,0
+187046,Thomas Edison State University,NJ,1,27.0599,0,0,14,0,0
+187985,University of New Mexico-Main Campus,NM,1,27.0501,0,0,6,0,0
+188030,New Mexico State University-Main Campus,NM,1,27.0501,0,0,2,0,0
+188429,Adelphi University,NY,2,52.1301;52.1302,0,0,0,63,0
+189088,Bard College,NY,1,45.0603,0,0,0,0,9
+189705,Canisius University,NY,2,52.1301;52.1302,0,0,0,13,0
+190044,Clarkson University,NY,2,30.7001;30.7101,27,8,0,0,0
+190150,Columbia University in the City of New York,NY,8,27.0501;27.0502;30.7001;30.7102;45.0603;52.1302;52.1304;52.1399,203,184,438,1677,164
+190415,Cornell University,NY,5,27.0501;45.0603;52.1301;52.1302;52.1399,0,0,67,432,65
+190512,CUNY Bernard M Baruch College,NY,3,27.0501;30.7102;52.1399,0,149,40,213,0
+190576,CUNY Graduate School and University Center,NY,2,27.0501;45.0603,0,0,23,0,20
+190594,CUNY Hunter College,NY,1,27.0503,0,0,15,0,0
+190664,CUNY Queens College,NY,2,27.0599;52.1399,0,0,14,9,0
+191241,Fordham University,NY,5,27.0501;30.7001;30.7102;45.0603;52.1399,30,130,2,220,23
+191649,Hofstra University,NY,3,52.1301;52.1302;52.1399,0,0,0,238,0
+192271,LIM College,NY,1,52.1302,0,0,0,10,0
+192448,Long Island University,NY,2,30.7101;52.1399,0,17,0,54,0
+192703,Manhattan University,NY,1,52.1301,0,0,0,60,0
+193016,Mercy University,NY,1,52.1399,0,0,0,20,0
+193308,Monroe University,NY,1,30.7001,6,0,0,0,0
+193654,The New School,NY,1,45.0603,0,0,0,0,32
+193900,New York University,NY,6,27.0501;30.7001;30.7102;45.0603;52.1301;52.1399,167,49,31,1159,108
+194091,New York Institute of Technology,NY,3,52.1301;52.1304;52.1399,0,0,0,153,0
+194310,Pace University,NY,3,30.7102;45.0603;52.1399,0,55,0,117,14
+194824,Rensselaer Polytechnic Institute,NY,3,45.0603;52.1302;52.1399,0,0,0,73,1
+195003,Rochester Institute of Technology,NY,4,27.0601;30.7104;52.1301;52.1399,0,16,22,122,0
+195030,University of Rochester,NY,3,27.0501;45.0603;52.1399,0,0,9,631,8
+195164,St Bonaventure University,NY,1,30.7102,0,11,0,0,0
+195173,St. Francis College,NY,1,52.1301,0,0,0,4,0
+195809,St. John's University-New York,NY,4,52.1301;52.1302;52.1304;52.1399,0,0,0,53,0
+196060,University at Albany,NY,2,30.7102;45.0603,0,1,0,0,19
+196079,Binghamton University,NY,3,27.0503;45.0603;52.1301,0,0,2,238,17
+196088,University at Buffalo,NY,2,45.0603;52.1301,0,0,0,81,20
+196097,Stony Brook University,NY,1,45.0603,0,0,0,0,4
+196130,SUNY Buffalo State University,NY,1,30.7101,0,22,0,0,0
+196246,State University of New York at Plattsburgh,NY,1,30.7101,0,12,0,0,0
+196413,Syracuse University,NY,4,27.0501;45.0603;52.1301;52.1399,0,0,1,194,11
+196592,Touro University,NY,1,52.1301,0,0,0,5,0
+197045,Utica University,NY,1,30.7001,12,0,0,0,0
+198419,Duke University,NC,4,27.0501;30.7001;45.0603;52.1399,36,0,52,1062,70
+198464,East Carolina University,NC,2,30.7001;45.0603,12,0,0,0,6
+198516,Elon University,NC,1,52.1301,0,0,0,23,0
+198695,High Point University,NC,1,30.7102,0,14,0,0,0
+199120,University of North Carolina at Chapel Hill,NC,3,27.0502;45.0603;52.1301,0,0,7,954,7
+199139,University of North Carolina at Charlotte,NC,2,45.0603;52.1399,0,0,0,113,18
+199148,University of North Carolina at Greensboro,NC,2,27.0601;45.0603,0,0,2,0,11
+199193,North Carolina State University at Raleigh,NC,3,27.0501;45.0603;52.1301,0,0,52,298,14
+199218,University of North Carolina Wilmington,NC,3,30.7104;52.1301;52.1399,0,50,0,361,0
+199412,Queens University of Charlotte,NC,1,30.7104,0,4,0,0,0
+199847,Wake Forest University,NC,4,27.0501;30.7104;52.1301;52.1399,0,5,9,248,0
+200280,University of North Dakota,ND,2,30.7001;45.0603,5,0,0,0,16
+200332,North Dakota State University-Main Campus,ND,2,27.0501;52.1301,0,0,1,19,0
+200697,Air Force Institute of Technology-Graduate School of Engineering & Management,OH,2,30.7001;45.0603,9,0,0,0,12
+200800,University of Akron Main Campus,OH,3,27.0501;30.7102;52.1301,0,11,4,6,0
+201195,Baldwin Wallace University,OH,1,52.1301,0,0,0,22,0
+201441,Bowling Green State University-Main Campus,OH,4,27.0601;30.7001;45.0603;52.1399,6,0,13,23,12
+201645,Case Western Reserve University,OH,2,27.0501;52.1301,0,0,4,30,0
+201885,University of Cincinnati-Main Campus,OH,3,27.0501;45.0603;52.1301,0,0,3,118,11
+202134,Cleveland State University,OH,1,27.0601,0,0,9,0,0
+202480,University of Dayton,OH,2,52.1301;52.1399,0,0,0,43,0
+202763,The University of Findlay,OH,1,52.1302,0,0,0,9,0
+202806,Franklin University,OH,2,30.7101;30.7102,0,83,0,0,0
+203517,Kent State University at Kent,OH,4,30.7001;30.7102;45.0603;52.1301,29,89,0,20,6
+204024,Miami University-Oxford,OH,3,27.0501;45.0603;52.1302,0,0,12,35,13
+204185,University of Mount Union,OH,1,52.1399,0,0,0,4,0
+204194,Mount Vernon Nazarene University,OH,1,52.1399,0,0,0,8,0
+204796,Ohio State University-Main Campus,OH,4,27.0501;45.0603;52.1301;52.1304,0,0,19,78,22
+204857,Ohio University-Main Campus,OH,2,30.7102;45.0603,0,74,0,0,18
+206048,Tiffin University,OH,1,52.1399,0,0,0,17,0
+206084,University of Toledo,OH,2,45.0603;52.1302,0,0,0,9,5
+206525,Wittenberg University,OH,1,52.1301,0,0,0,7,0
+206604,Wright State University-Main Campus,OH,4,27.0501;30.7102;45.0603;52.1399,0,30,3,5,5
+206622,Xavier University,OH,1,52.1301,0,0,0,7,0
+206941,University of Central Oklahoma,OK,1,52.1302,0,0,0,31,0
+207041,East Central University,OK,1,52.1301,0,0,0,15,0
+207263,Northeastern State University,OK,1,30.7104,0,11,0,0,0
+207324,Oklahoma Christian University,OK,1,52.1301,0,0,0,41,0
+207388,Oklahoma State University-Main Campus,OK,2,27.0501;52.1302,0,0,7,60,0
+207458,Oklahoma City University,OK,2,30.7101;30.7104,0,5,0,0,0
+207500,University of Oklahoma-Norman Campus,OK,1,45.0603,0,0,0,0,11
+207971,University of Tulsa,OK,3,52.1301;52.1302;52.1399,0,0,0,89,0
+209542,Oregon State University,OR,3,27.0501;27.0599;52.1301,0,0,47,68,0
+209551,University of Oregon,OR,1,45.0603,0,0,0,0,20
+209807,Portland State University,OR,3,27.0501;45.0603;52.1399,0,0,4,25,3
+209825,University of Portland,OR,1,52.1301,0,0,0,17,0
+210331,Corban University,OR,1,52.1301,0,0,0,5,0
+210401,Willamette University,OR,1,30.7001,27,0,0,0,0
+210739,DeSales University,PA,1,52.1302,0,0,0,2,0
+211440,Carnegie Mellon University,PA,8,27.0501;30.7001;30.7101;30.7103;30.7199;45.0603;52.1301;52.1399,17,101,12,309,5
+212054,Drexel University,PA,6,30.7001;30.7102;30.7104;45.0603;52.1301;52.1399,57,92,0,146,6
+212106,Duquesne University,PA,2,52.1301;52.1399,0,0,0,49,0
+212133,Eastern University,PA,3,30.7001;30.7101;30.7102,664,19,0,0,0
+212601,Gannon University,PA,1,52.1399,0,0,0,105,0
+212805,Grove City College,PA,1,52.1302,0,0,0,3,0
+213020,Indiana University of Pennsylvania-Main Campus,PA,1,52.1301,0,0,0,87,0
+213367,La Salle University,PA,1,30.7102,0,21,0,0,0
+213543,Lehigh University,PA,5,27.0501;30.7001;30.7102;45.0603;52.1301,10,42,2,5,15
+213826,Marywood University,PA,1,52.1301,0,0,0,11,0
+214157,Moravian University,PA,1,30.7101,0,2,0,0,0
+214607,Pennsylvania State University-Penn State Great Valley,PA,1,52.1399,0,0,0,16,0
+214713,Pennsylvania State University-Penn State Harrisburg,PA,2,52.1301;52.1399,0,0,0,35,0
+214777,Pennsylvania State University-Main Campus,PA,4,27.0501;45.0603;52.1301;52.1399,0,0,13,223,9
+215062,University of Pennsylvania,PA,6,27.0501;30.7102;30.7104;45.0603;52.1301;52.1399,0,257,32,202,29
+215293,University of Pittsburgh-Pittsburgh Campus,PA,4,27.0501;30.7102;45.0603;52.1301,0,50,12,12,25
+215770,Saint Joseph's University - Philadelphia,PA,1,52.1301,0,0,0,82,0
+215798,Saint Vincent College,PA,1,52.1399,0,0,0,16,0
+215929,University of Scranton,PA,1,52.1301,0,0,0,73,0
+215947,Seton Hill University,PA,1,30.7102,0,4,0,0,0
+216339,Temple University,PA,5,27.0501;52.1301;52.1302;52.1304;52.1399,0,0,4,109,0
+216597,Villanova University,PA,2,27.0601;52.1301,0,0,15,25,0
+216764,West Chester University of Pennsylvania,PA,1,27.0501,0,0,20,0,0
+216852,Widener University,PA,2,30.7101;52.1301,0,5,0,1,0
+217059,York College of Pennsylvania,PA,1,30.7102,0,9,0,0,0
+217156,Brown University,RI,2,30.7001;45.0603,45,0,0,0,12
+217165,Bryant University,RI,1,52.1301,0,0,0,51,0
+217235,Johnson & Wales University-Providence,RI,1,52.1301,0,0,0,4,0
+217484,University of Rhode Island,RI,2,27.0501;52.1399,0,0,7,7,0
+217536,Salve Regina University,RI,1,52.1301,0,0,0,2,0
+217819,College of Charleston,SC,1,30.7001,4,0,0,0,0
+217882,Clemson University,SC,1,45.0603,0,0,0,0,6
+218663,University of South Carolina-Columbia,SC,4,27.0501;27.0601;30.7199;52.1302,0,2,2,22,0
+218742,University of South Carolina-Upstate,SC,1,52.1302,0,0,0,17,0
+219000,Augustana University,SD,1,52.1301,0,0,0,6,0
+219356,South Dakota State University,SD,2,27.0501;30.7001,20,0,4,0,0
+219471,University of South Dakota,SD,1,30.7102,0,11,0,0,0
+219833,Christian Brothers University,TN,1,30.7001,9,0,0,0,0
+220075,East Tennessee State University,TN,1,30.7001,2,0,0,0,0
+220215,Freed-Hardeman University,TN,1,52.1302,0,0,0,3,0
+220631,Lincoln Memorial University,TN,1,30.7102,0,2,0,0,0
+220792,Meharry Medical College,TN,2,30.7001;30.7099,15,0,0,0,0
+220862,University of Memphis,TN,2,30.7001;45.0603,98,0,0,0,1
+220978,Middle Tennessee State University,TN,1,30.7001,9,0,0,0,0
+221740,The University of Tennessee-Chattanooga,TN,1,52.1301,0,0,0,19,0
+221759,The University of Tennessee-Knoxville,TN,5,27.0501;45.0603;52.1301;52.1302;52.1399,0,0,10,374,3
+221999,Vanderbilt University,TN,3,45.0603;52.1301;52.1399,0,0,0,101,20
+222628,Amberton University,TX,2,30.7102;52.1301,0,4,0,3,0
+222831,Angelo State University,TX,1,30.7102,0,29,0,0,0
+223232,Baylor University,TX,3,27.0601;30.7102;45.0603,0,4,9,0,5
+224226,Dallas Baptist University,TX,1,52.1301,0,0,0,30,0
+224323,University of Dallas,TX,1,52.1301,0,0,0,35,0
+224554,East Texas A&M University,TX,2,30.7102;52.1301,0,257,0,16,0
+225247,Hardin-Simmons University,TX,1,52.1301,0,0,0,2,0
+225399,Houston Christian University,TX,1,52.1301,0,0,0,13,0
+225414,University of Houston-Clear Lake,TX,2,27.0501;30.7104,0,3,3,0,0
+225432,University of Houston-Downtown,TX,1,30.7101,0,58,0,0,0
+225511,University of Houston,TX,5,27.0503;30.7102;30.7104;45.0603;52.1301,0,149,20,44,6
+225627,University of the Incarnate Word,TX,1,52.1301,0,0,0,2,0
+226091,Lamar University,TX,1,30.7104,0,24,0,0,0
+226833,Midwestern State University,TX,1,30.7102,0,44,0,0,0
+227216,University of North Texas,TX,4,27.0503;30.7001;30.7102;45.0603,344,356,431,0,5
+227331,Our Lady of the Lake University,TX,1,52.1301,0,0,0,1,0
+227368,The University of Texas Rio Grande Valley,TX,2,27.0503;30.7102,0,59,10,0,0
+227757,Rice University,TX,4,27.0501;30.7001;45.0603;52.1399,52,0,25,539,18
+227863,University of St Thomas,TX,1,52.1399,0,0,0,15,0
+227881,Sam Houston State University,TX,1,27.0501,0,0,5,0,0
+228246,Southern Methodist University,TX,4,27.0501;30.7001;45.0603;52.1301,69,0,3,524,16
+228431,Stephen F Austin State University,TX,1,27.0503,0,0,3,0,0
+228459,Texas State University,TX,2,30.7102;52.1399,0,49,0,3,0
+228705,Texas A&M University-Kingsville,TX,1,27.0503,0,0,4,0,0
+228723,Texas A&M University-College Station,TX,4,27.0501;30.7001;45.0603;52.1302,28,0,90,49,99
+228769,The University of Texas at Arlington,TX,3,30.7101;30.7102;45.0603,0,105,0,0,8
+228778,The University of Texas at Austin,TX,5,27.0501;30.7001;30.7102;45.0603;52.1301,174,184,9,39,46
+228787,The University of Texas at Dallas,TX,6,27.0501;30.7102;45.0603;52.1301;52.1304;52.1399,0,1033,26,267,12
+228796,The University of Texas at El Paso,TX,2,27.0503;45.0603,0,0,8,0,8
+228875,Texas Christian University,TX,2,30.7102;52.1399,0,40,0,44,0
+228981,Texas Lutheran University,TX,1,52.1302,0,0,0,7,0
+229027,The University of Texas at San Antonio,TX,3,27.0501;30.7101;45.0603,0,29,16,0,11
+229115,Texas Tech University,TX,3,27.0501;30.7001;45.0603,107,0,10,0,16
+229160,Texas Wesleyan University,TX,1,30.7102,0,18,0,0,0
+230038,Brigham Young University,UT,3,27.0501;52.1301;52.1399,0,0,14,175,0
+230603,Southern Utah University,UT,1,52.1301,0,0,0,5,0
+230728,Utah State University,UT,3,27.0501;45.0603;52.1301,0,0,10,18,18
+230764,University of Utah,UT,2,45.0603;52.1301,0,0,0,71,10
+230782,Weber State University,UT,2,30.7001;52.1301,1,0,0,13,0
+230995,Norwich University,VT,1,52.1301,0,0,0,1,0
+231174,University of Vermont,VT,2,27.0501;52.1399,0,0,5,11,0
+231420,Averett University,VA,1,30.7102,0,1,0,0,0
+231624,William & Mary,VA,1,52.1301,0,0,0,104,0
+231651,Regent University,VA,1,30.7102,0,4,0,0,0
+232186,George Mason University,VA,1,27.0501,0,0,7,0,0
+232982,Old Dominion University,VA,2,30.7001;45.0603,8,0,0,0,3
+233541,Shenandoah University,VA,1,52.1301,0,0,0,101,0
+233921,Virginia Polytechnic Institute and State University,VA,3,27.0501;27.0601;45.0603,0,0,15,0,5
+234030,Virginia Commonwealth University,VA,2,30.7101;45.0603,0,47,0,0,5
+234076,University of Virginia-Main Campus,VA,5,27.0501;30.7001;45.0603;52.1301;52.1399,120,0,22,175,8
+234915,City University of Seattle,WA,1,30.7001,2,0,0,0,0
+235316,Gonzaga University,WA,1,30.7102,0,1,0,0,0
+236230,Pacific Lutheran University,WA,2,52.1301;52.1399,0,0,0,11,0
+236595,Seattle University,WA,2,52.1301;52.1399,0,0,0,81,0
+236939,Washington State University,WA,2,27.0501;45.0603,0,0,9,0,7
+236948,University of Washington-Seattle Campus,WA,4,27.0501;45.0603;52.1301;52.1399,0,0,46,234,10
+237312,University of Charleston,WV,1,30.7102,0,26,0,0,0
+237525,Marshall University,WV,2,30.7001;52.1399,1,0,0,7,0
+238032,West Virginia University,WV,2,45.0603;52.1301,0,0,0,32,18
+238458,Carroll University,WI,1,52.1301,0,0,0,32,0
+238616,Concordia University-Wisconsin,WI,1,30.7102,0,3,0,0,0
+238661,Edgewood College,WI,1,52.1399,0,0,0,11,0
+239080,Marian University,WI,1,52.1301,0,0,0,4,0
+239105,Marquette University,WI,4,27.0601;30.7199;45.0603;52.1301,0,4,3,3,6
+239318,Milwaukee School of Engineering,WI,1,52.1301,0,0,0,22,0
+240189,University of Wisconsin-Whitewater,WI,1,30.7102,0,24,0,0,0
+240268,University of Wisconsin-Eau Claire,WI,1,30.7001,16,0,0,0,0
+240277,University of Wisconsin-Green Bay,WI,1,30.7001,22,0,0,0,0
+240329,University of Wisconsin-La Crosse,WI,2,27.0601;30.7001,17,0,5,0,0
+240365,University of Wisconsin-Oshkosh,WI,1,30.7001,15,0,0,0,0
+240417,University of Wisconsin-Stout,WI,1,52.1399,0,0,0,20,0
+240426,University of Wisconsin-Superior,WI,1,30.7001,4,0,0,0,0
+240444,University of Wisconsin-Madison,WI,5,27.0501;30.7001;45.0603;52.1301;52.1399,2,0,79,179,147
+240453,University of Wisconsin-Milwaukee,WI,4,30.7001;30.7102;45.0603;52.1399,7,32,0,125,5
+240480,University of Wisconsin-Stevens Point,WI,1,30.7001,5,0,0,0,0
+240727,University of Wyoming,WY,2,27.0501;45.0603,0,0,4,0,12
+243744,Stanford University,CA,3,27.0501;45.0603;52.1301,0,0,60,511,11
+243780,Purdue University-Main Campus,IN,5,27.0501;27.0502;45.0603;52.1301;52.1399,0,0,30,179,46
+377564,University of Washington-Tacoma Campus,WA,1,52.1399,0,0,0,47,0
+413413,Capella University,MN,1,52.1301,0,0,0,22,0
+414878,Trine University-Regional/Non-Traditional Campuses,IN,1,30.7102,0,737,0,0,0
+437097,University of Management and Technology,VA,1,52.1301,0,0,0,15,0
+445188,University of California-Merced,CA,2,45.0603;52.1399,0,0,0,12,2
+446640,Harrisburg University of Science and Technology,PA,3,30.7102;52.1301;52.1399,0,4,0,306,0
+449339,American Public University System,WV,1,52.1301,0,0,0,46,0
+449870,University of the West,CA,1,52.1302,0,0,0,3,0
+459727,Touro University Worldwide,CA,1,30.7102,0,6,0,0,0
+460349,Johnson & Wales University-Online,RI,1,52.1301,0,0,0,4,0
+476975,Colorado State University Global,CO,1,52.1301,0,0,0,27,0
+479956,Pennsylvania State University-World Campus,PA,2,27.0501;52.1399,0,0,49,146,0
+482149,Augusta University,GA,1,30.7001,2,0,0,0,0
+482705,Northeastern University Professional Programs,MA,3,45.0603;52.1301;52.1302,0,0,0,1144,77
+482936,Florida Polytechnic University,FL,1,30.7001,12,0,0,0,0
+483124,Arizona State University Digital Immersion,AZ,2,27.0601;52.1301,0,0,28,147,0
+484613,University of Phoenix-Arizona,AZ,1,30.7001,34,0,0,0,0
+486840,Kennesaw State University,GA,1,30.7001,12,0,0,0,0
+487524,Husson University,ME,1,52.1399,0,0,0,3,0
+489779,Purdue University Global,IN,1,30.7101,0,23,0,0,0
+489937,Carolina University,NC,1,30.7001,14,0,0,0,0
+490133,Westcliff University,CA,1,30.7101,0,82,0,0,0
+493512,San Diego Global Knowledge University,CA,1,52.1399,0,0,0,4,0
+494551,IE New York College,NY,1,52.1301,0,0,0,12,0
+498571,Pennsylvania Western University,PA,1,30.7001,6,0,0,0,0

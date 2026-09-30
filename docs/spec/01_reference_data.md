@@ -27,8 +27,8 @@
 | 标题 | Update to the Department of Homeland Security STEM Designated Degree Program List |
 | 公布日期 / 引用 | 2024-07-23，**89 FR 59748**（pp. 59748–59750），FR Doc 2024-16127，Docket ICEB-2023-0018 |
 | 页面 | https://www.federalregister.gov/documents/2024/07/23/2024-16127/update-to-the-department-of-homeland-security-stem-designated-degree-program-list |
-| 下载（纯文本，入 manifest） | https://www.federalregister.gov/documents/full_text/text/2024/07/23/2024-16127.txt |
-| 官方 PDF | https://www.govinfo.gov/content/pkg/FR-2024-07-23/pdf/2024-16127.pdf |
+| 下载（入 manifest） | **官方 PDF** https://www.govinfo.gov/content/pkg/FR-2024-07-23/pdf/2024-16127.pdf （229,422 字节） |
+| 纯文本版（不使用） | https://www.federalregister.gov/documents/full_text/text/2024/07/23/2024-16127.txt ——2026-09-30 实测返回的是包着 `<pre>` 的 HTML 页面，被下载器的 HTML 校验拒绝，因此改用官方 PDF |
 | 内容要点 | 生效日为 2024-07-23；新增 1 个 CIP：03.0204 Environmental/Natural Resource Economics；未删除任何代码。重申 14/26/27/40 四个核心系列按 2 位代码认定，“any new additions to those areas are automatically included” |
 | 更早的公告 | 88 FR 44381（2023-07-12，FR Doc 2023-14807）；87 FR 3317（2022-01-21，FR Doc 2022-01188）；2016 年最终规则 81 FR 13040（FR Doc 2016-04828） |
 | 核对方式 | 2026-09-30 查询 Federal Register API：检索词 “STEM Designated Degree Program List”，以及 2024-08-01 之后的 “STEM list”，均未发现晚于 2024-07-23 的清单更新公告 |
@@ -156,6 +156,7 @@
 派生表 `data/ref/scorecard_fos_masters_target.csv`：保留 `CREDLEV == "5"` 且 4 位 CIP 属于目标 CIP 的 4 位父级的行（见 `04_candidate_selection.md` §6）。
 
 - 所有行的 `CIPCODE` 都先经 `normalize_cip4` 处理，格式错误即报错；数值列只在保留下来的行上解析。
+- `UNITID = NA` 的行（2026-06-10 版中共 7,020 行，其中目标父级 × 硕士 57 行；几乎都是参与 Title IV 的外国机构，另有少数已关闭的美国学校）：**排除**，不进入派生表。它们无法关联 IPEDS 和候选清单，也不在美国范围内；排除的数量和示例写入 1e 报告，原始文件不动（2026-09-30 确认）。`UNITID` 既不是整数也不是 `NA` 时报错。
 - 列顺序：`unitid, opeid6, instnm, control, cip4, cipdesc, credlev, creddesc, cip4_broader_than_target`，然后按 `ipedscount1, ipedscount2, earn_mdn_1yr, earn_mdn_4yr, earn_mdn_5yr, earn_count_wne_1yr, debt_all_stgp_eval_mdn` 的顺序，每个数值列后面紧跟它的 `_status` 列。`cip4`（`"NN.NN"`）取代原始的 `CIPCODE`。
 - 标识列（`unitid, opeid6` 等）保持字符串，保留前导零。
 - 行序：`unitid` 升序（按整数比较）→ `cip4` 升序。
@@ -202,7 +203,10 @@
 
 - User-Agent：`gradprog-refdata/<版本> (+mailto:<GRADPROG_CONTACT_EMAIL>)`；环境变量未设置则报错退出。
 - 单线程；两次请求间隔 ≥ 3 秒；超时 120 秒；跟随重定向；非 2xx 状态码直接报错，不重试超过 2 次。
-- 下载后校验文件类型：`.pdf` 必须以 `%PDF-` 开头，`.zip` 必须以 `PK\x03\x04` 开头。不符（例如拿到了 HTML 错误页）则删除文件并报错，不写 manifest。
+- 下载后校验文件类型：`.pdf` 必须以 `%PDF-` 开头，`.zip`、`.xlsx` 必须以 `PK\x03\x04` 开头；其他后缀（`.csv`、`.txt`）不得以 `<!doctype html` 或 `<html` 开头（不区分大小写）。不符（例如拿到了 HTML 错误页）则删除文件并报错，不写 manifest。
+- 5xx 或网络错误最多重试 2 次（每次仍遵守 3 秒间隔）；4xx 不重试。
+- 目标路径已存在：内容相同则复用并照常追加 manifest 行；内容不同则报错，不覆盖。
+- 要下载的 URL 集中写在 `src/gradprog/ref/sources.py`，与本文件 §1–§5 一一对应。
 
 ### 7.2 人工登记（method = `manual`）
 

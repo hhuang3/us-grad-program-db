@@ -12,7 +12,7 @@ stem_list:
   core_series_headers: 4
   core_series: ["14", "26", "27", "40"]
   expansion_only_codes: []       # 03 §4.3 哨兵：系列展开规则在该版本上不改变任何判断
-  title_mismatches: null         # PDF 标题与 CIP 2020 标题不一致的代码数；1d 首次解析后填入并人工确认
+  title_mismatches: 2            # PDF 标题与 CIP 2020 标题不一致的代码数（30.4801 缺句点；45.0102 多 "Social Sciences, " 前缀）；2026-09-30 人工确认
 
 cip2020:
   valid_six_digit: 2173

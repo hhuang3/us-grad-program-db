@@ -6,3 +6,4 @@ UNITID,OPEID6,INSTNM,CONTROL,MAIN,CIPCODE,CIPDESC,CREDLEV,CREDDESC,IPEDSCOUNT1,I
 100004,000004,Delta Institute of Technology,2,1,1107,Computer Science.,5,Master's Degree,200,210,1,99000,120000,130000,150,40000
 100005,000005,Epsilon University,1,1,2706,Applied Statistics.,5,Master's Degree,10,12,1,NA,NA,NA,NA,NA
 100006,000006,Zeta University,2,1,5213,Management Sciences and Quantitative Methods.,5,Master's Degree,60,65,1,70000,81000,90000,44,27000
+NA,009999,Foreign University Without UNITID,2,1,3070,Data Science.,5,Master's Degree,NA,NA,1,PS,72000,PS,PS,PS

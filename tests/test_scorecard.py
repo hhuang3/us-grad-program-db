@@ -101,3 +101,16 @@ def test_malformed_cipcode_raises(fixtures, targets, cip2020):
     raw.loc[0, "CIPCODE"] = "370"
     with pytest.raises(CipFormatError):
         build_scorecard_fos_target(raw, targets, cip2020)
+
+
+def test_rows_without_unitid_are_excluded(fos):
+    # 01 §5: UNITID == "NA" rows (mostly foreign institutions) are dropped and counted in the report.
+    assert "NA" not in set(fos["unitid"])
+    assert "Foreign University Without UNITID" not in set(fos["instnm"])
+
+
+def test_other_non_numeric_unitid_raises(fixtures, targets, cip2020):
+    raw = read_str_csv(fixtures / "scorecard_fos_sample.csv")
+    raw.loc[0, "UNITID"] = "abc"
+    with pytest.raises(ScorecardValueError, match="abc"):
+        build_scorecard_fos_target(raw, targets, cip2020)
