@@ -1,0 +1,20 @@
+# Python / uv
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Raw downloads are large and reproducible from data/manifest/ — never commit
+data/raw/
+
+# Secrets (SCORECARD_API_KEY, contact email, etc. come from the environment)
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
