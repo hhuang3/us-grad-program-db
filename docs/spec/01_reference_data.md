@@ -153,7 +153,12 @@
 - ④ **缺失编码与文档不一致**：技术文档（“Privacy protection” 一节末尾）写的是隐私抑制用 “PrivacySuppressed” 表示；而 2026-06-10 的 CSV 中，上述数值列实际出现的非数值只有 `PS` 和 `NA`，没有 “PrivacySuppressed”。数据字典的 Glossary 中也没有找到 `PS`/`NA` 的定义。`PS` → `privacy_suppressed`、`NA` → `not_available` 是按字面含义做的对应。
 - ⑤ 技术文档版本（2025-09）早于数据发布（2026-06），可能没有随新数据更新。
 
-派生表 `data/ref/scorecard_fos_masters_target.csv`：保留 `CREDLEV == "5"` 且 4 位 CIP 属于目标 CIP 的 4 位父级的行（见 `04_candidate_selection.md` §6）。列为上述字段（改为小写）加上各数值列的 `_status` 列，另加 `cip4`（`"NN.NN"`）和 `cip4_broader_than_target`。
+派生表 `data/ref/scorecard_fos_masters_target.csv`：保留 `CREDLEV == "5"` 且 4 位 CIP 属于目标 CIP 的 4 位父级的行（见 `04_candidate_selection.md` §6）。
+
+- 所有行的 `CIPCODE` 都先经 `normalize_cip4` 处理，格式错误即报错；数值列只在保留下来的行上解析。
+- 列顺序：`unitid, opeid6, instnm, control, cip4, cipdesc, credlev, creddesc, cip4_broader_than_target`，然后按 `ipedscount1, ipedscount2, earn_mdn_1yr, earn_mdn_4yr, earn_mdn_5yr, earn_count_wne_1yr, debt_all_stgp_eval_mdn` 的顺序，每个数值列后面紧跟它的 `_status` 列。`cip4`（`"NN.NN"`）取代原始的 `CIPCODE`。
+- 标识列（`unitid, opeid6` 等）保持字符串，保留前导零。
+- 行序：`unitid` 升序（按整数比较）→ `cip4` 升序。
 
 ---
 

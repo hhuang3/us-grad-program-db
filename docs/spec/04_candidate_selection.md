@@ -26,6 +26,8 @@
 - `prefix`（格式 `NN.NN`）：展开为 CIP 2020 中所有以它开头的**有效 6 位代码**（有效性定义见 `01` §2）。
 - `exact`（格式 `NN.NNNN`）：必须是有效的 CIP 2020 6 位代码。
 - 同一个 6 位代码不能被展开到两个不同的 `cip_group`；出现就报错。
+- 同一个 6 位代码被同一 `cip_group` 的多行命中时只保留一行，`label` 取第一次出现的那一行。
+- 输出 `cip_code, cip_group, label`，按 `cip_code` 升序。
 
 ### 1.2 存在性检查（`check_targets`）
 
