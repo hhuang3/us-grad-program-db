@@ -1,6 +1,6 @@
 # 05 数据模型（设计，Phase 1 不实现）
 
-> 状态：v1.1（Phase 1b，已按 2026-09-30 的逐项答复修订）。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.1），STEM 规则见 `03_stem_logic.md`。
+> 状态：v1.2（Phase 2a：全量重抽日期暂定 8 月 15 日；页面与项目的登记见 `06_source_registry.md`）。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
 
 ## 1. 四层数据状态
 
@@ -45,7 +45,7 @@
 ## 3. 项目身份
 
 - `program_id` 在 Phase 2 的**登记表**中分配（slug），并绑定 IPEDS `unitid`。抓取和抽取的所有结果都挂在 `program_id` 上，抓取器和抽取器不创建 program_id。
-- 页面与项目是多对多关系：表 `page_program(page_id, program_id)`。例如研究生院统一的语言要求页会服务多个项目。
+- 页面与项目是多对多关系：表 `program_pages(program_id, page_id)`（结构见 `06_source_registry.md` §3.3）。例如研究生院统一的语言要求页会服务多个项目。`page_id` 与 snapshot 中的 `page_id` 是同一个键。
 - 一个 snapshot 属于一个 page；一条 observation 属于一个 `(snapshot, program)` 组合。
 
 ## 4. `value_status`：取值状态的唯一权威表达
@@ -70,6 +70,6 @@
 |---|---|
 | 页面变化（`normalized_text_sha256` 变了） | 对该页面关联的所有 program 重抽 |
 | `schema_version` 或 `prompt_version` 升级 | 全量重抽 |
-| 每个申请季开始时（日期待定） | 全量重抓 + 重抽一次 |
+| 每个申请季开始时：**暂定每年 8 月 15 日**（2026-10-01 定，可在 P4 调整） | 全量重抓 + 重抽一次 |
 
 重抽只产生新的 observation，不直接改 fact。进入审核的规则见 §1.3。

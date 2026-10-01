@@ -224,3 +224,42 @@ uv run gradprog register-manual --source dhs_stem \
 - 做同样的文件类型校验（§7.1）。
 - 把文件**复制**（不移动）到 `data/raw/<source>/<日期>/<URL 最后一段>`，计算 sha256 和字节数，追加一行 manifest，`method = manual`。
 - 目标路径已存在且内容不同 → 报错，不覆盖。
+
+---
+
+## 8. 期望值锁定：`config/expected_counts.yaml`（Phase 2a 设计）
+
+目的：官方数据换版时，测试能第一时间失败，并明确提示“可能是官方数据更新，请人工确认”，与代码 bug 区分开。
+
+### 8.1 原则
+
+- 只锁定**能从已提交文件重新算出来**的数字，即 `data/ref/*.csv` 和 `data/manifest/*.csv`。原始文件的行数（如 IPEDS 原始 307,825 行、Scorecard 原始 227,980 行）不在 git 中，不锁定，只写进报告。
+- **按数据版本分条记录，旧版本不删除**：新版本加一条新键，旧键保留，作为历史。
+- 测试**从已提交的数据推出“当前版本”**，再取对应键比较；YAML 里不写 `current` 字段，避免两处不一致：
+  - IPEDS：`ipeds_masters_target_cip.csv` 的 `data_year`（如 `2023-24`）→ 找 `data_year` 相同的条目（键名 `C2024`）。
+  - Scorecard：`derived.csv` 中 `scorecard_fos_masters_target.csv` 的输入 sha256 → manifest 中对应的 URL → 从文件名 `_MMDDYYYY.zip` 取发布日期（如 `2026-06-10`）作为键。
+- 当前版本在 YAML 中没有条目时，测试失败并提示：“新数据版本 X 尚未登记期望值，请人工确认后在 expected_counts.yaml 中新增条目”。
+
+### 8.2 新增结构（数值为 Phase 1 已确认的结果）
+
+```yaml
+ipeds:
+  C2024:
+    data_year: "2023-24"
+    release: final                       # 来自 c2024_a_rv.csv
+    masters_target_rows: 1061
+    masters_target_institutions: 492
+    excluded_states: {PR: 2}             # 参考表中不属于 50 州 + DC 的行数，按州统计
+    candidates_rows: 1059
+    candidates_institutions: 490
+    candidates_by_group: {ds: 96, analytics: 144, stats: 184, mgmt_sci: 463, econ: 172}
+
+scorecard_fos:
+  "2026-06-10":
+    masters_target_rows: 1034
+    rows_by_cip4: {"27.05": 180, "27.06": 21, "30.70": 90, "30.71": 123, "45.06": 251, "52.13": 369}
+    earnings_reported: {earn_mdn_1yr: 170, earn_mdn_4yr: 132, earn_mdn_5yr: 62}
+```
+
+- `release` 只作记录，测试不重新验证：构建时已经只接受 `_rv.csv`（§3），原始 zip 也不在 git 里。
+- 已有的 `stem_list`、`cip2020`、`targets` 三段保持不变。
