@@ -1,0 +1,4 @@
+domain,robots_url,robots_checked_at,robots_status,robots_allows_registered_paths,tos_url,tos_status,tos_note
+datascience.alpha.edu,https://datascience.alpha.edu/robots.txt,2026-10-01T12:00:00Z,fetched,yes,https://www.alpha.edu/terms,no_restriction,
+grad.alpha.edu,https://grad.alpha.edu/robots.txt,2026-10-01T12:00:03Z,not_found,yes,https://www.alpha.edu/terms,no_restriction,
+business.alpha.edu,https://business.alpha.edu/robots.txt,2026-10-01T12:00:06Z,fetched,partial,https://business.alpha.edu/legal,unclear,Terms mention scraping without detail

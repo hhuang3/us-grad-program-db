@@ -239,6 +239,9 @@ uv run gradprog register-manual --source dhs_stem \
   - IPEDS：`ipeds_masters_target_cip.csv` 的 `data_year`（如 `2023-24`）→ 找 `data_year` 相同的条目（键名 `C2024`）。
   - Scorecard：`derived.csv` 中 `scorecard_fos_masters_target.csv` 的输入 sha256 → manifest 中对应的 URL → 从文件名 `_MMDDYYYY.zip` 取发布日期（如 `2026-06-10`）作为键。
 - 当前版本在 YAML 中没有条目时，测试失败并提示：“新数据版本 X 尚未登记期望值，请人工确认后在 expected_counts.yaml 中新增条目”。
+- 推出当前版本的逻辑放在 `gradprog.ref.versions`：
+  - `ipeds_version(data_year) -> str`：`"2023-24"` → `"C2024"`（取结束年份）。格式不是 `YYYY-YY`，或者结束年份不等于开始年份 + 1 时报错。
+  - `scorecard_release(manifest_path, derived_path) -> str`：取 `scorecard_fos_masters_target.csv` 在 derived.csv 中最新一行的输入 sha256，在 manifest 中找到对应的 `.zip` URL，从文件名末尾的 `_MMDDYYYY.zip` 解析出 ISO 日期。找不到、有多个，或文件名不符时报错。
 
 ### 8.2 新增结构（数值为 Phase 1 已确认的结果）
 

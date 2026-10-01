@@ -1,0 +1,6 @@
+program_id,unitid,cip_code,cip_group,institution_name,program_name,degree_type,department,delivery_mode,status,exclusion_reason,selection_note,batch,added_at
+alpha-ms-datascience,200001,30.7001,ds,Alpha University,Master of Science in Data Science,ms,Department of Statistics,on_campus,selected,,High nonresident share,pilot,2026-10-01
+alpha-ms-businessanalytics,200001,30.7102,analytics,Alpha University,MS in Business Analytics,ms,School of Business,hybrid,selected,,Largest analytics program in sample,pilot,2026-10-01
+delta-other-mbaanalytics,200004,52.1301,mgmt_sci,Delta University,MBA with Analytics Concentration,other,Business School,on_campus,excluded,mba,MBA degree with analytics track,main,2026-10-01
+epsilon-none-307099,200005,30.7099,ds,Epsilon College,,,,unknown,excluded,not_found,No master's program found on the official site,main,2026-10-01
+gamma-ms-statistics,200003,27.0501,stats,Gamma Institute,MS in Statistics,ms,Department of Statistics,unknown,backlog,,,main,2026-10-01

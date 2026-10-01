@@ -140,7 +140,7 @@
 | `robots_url` | robots.txt 地址 | `https://{domain}/robots.txt` |
 | `robots_checked_at` | 检查时间 | UTC ISO 8601；未检查时为空 |
 | `robots_status` | 结果 | `fetched / not_found / error`；未检查时为空 |
-| `robots_allows_registered_paths` | 汇总：该域名下已登记页面的 `robots_allowed` | `yes / no / partial`；未检查时为空 |
+| `robots_allows_registered_paths` | 汇总：该域名下已登记页面的 `robots_allowed` | `yes / no / partial / no_pages`；未检查时为空 |
 | `tos_url` | 使用条款页面 | 可空；Claude Code 找到后填入 |
 | `tos_status` | 条款判断（由你填写） | `no_restriction / prohibits_automated_access / unclear / not_checked`；新域名默认 `not_checked` |
 | `tos_note` | 备注 | 可空 |
@@ -182,7 +182,7 @@ RFC 9309 规定其他 4xx 视为“可以抓取”，`urllib.robotparser` 也是
 - 每个已登记页面的 `robots_allowed`（写回 pages.csv）：
   - `fetched`：`can_fetch("gradprog-refdata", url)` 为真 → `yes`，否则 → `no`；
   - `not_found` → `yes`；`error` → `no`。
-- 域名汇总 `robots_allows_registered_paths`（写回 domains.csv）：该域名下已登记页面全部 `yes` → `yes`；全部 `no` → `no`；有 `yes` 也有 `no` → `partial`。该域名下没有已登记页面时 → `yes`（没有可禁止的路径）。
+- 域名汇总 `robots_allows_registered_paths`（写回 domains.csv）：该域名下已登记页面全部 `yes` → `yes`；全部 `no` → `no`；有 `yes` 也有 `no` → `partial`。该域名下没有已登记页面时 → `no_pages`（2026-10-01 确认，不记为 `yes`）。
 - 同时写回 `robots_checked_at`、`robots_status`，并重算 pages.csv 的 `crawl_allowed`。robots.txt 的内容**不保存**。
 - 检查之后再登记的新页面，`robots_allowed = not_checked`，`crawl_allowed = false`，直到下次运行 `check-robots`。
 - 重定向：跟随（最多 5 次）。最终落在其他域名时，仍按最终响应判断，并把重定向信息打印到命令输出，不写进表里。
@@ -232,10 +232,12 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | `program_name` 或 `degree_type` 疑似 MBA：大小写不敏感地匹配 `\bMBA\b`、`M.B.A.`（带句点，末尾句点可省略）或 `master of business administration` | warning（由你确认） | warning |
 | 至少关联一个 `page_type = program_home` 页面，以及一个 `admissions` 或 `requirements` 页面 | error | error |
 | 所有关联页面 `url_status = confirmed` | warning | error |
-| 关联页面中 `crawl_allowed = false` 的 | – | **列出报告**（页面、所属域名、原因：robots / tos / 未检查） |
+| 关联页面中 `crawl_allowed = false` 的 | – | **列出报告**（页面、所属域名、原因） |
 | 关联的 `program_home` 页面 `crawl_allowed = true` | – | error |
 
 `--ready --batch pilot` 是 Phase 3 的准入检查：只检查 `batch = pilot` 的 selected 项目。2d 过程中允许出现 proposed 页面（只给 warning），否则提议阶段就无法通过校验。
+
+`crawl_allowed = false` 的原因按以下顺序取第一个成立的：`robots_allowed = not_checked` → `not_checked`；`robots_allowed = no` → `robots`；`tos_status ≠ no_restriction` → `tos`。
 
 ### 5.3 报告（不报错）
 
@@ -261,11 +263,11 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 ## 7. 挑选工作表 `selection_worksheet.csv`
 
-- 输入：`data/ref/candidates.csv`、`data/ref/candidates_by_institution.csv`。
+- 输入：`data/ref/candidates.csv`。
 - 每个候选行一行，按 §2.4 排序。列：
   `cip_group, worksheet_rank, unitid, institution_name, state, cip_code, cip_title, on_stem_list, completions_masters_nonresident, completions_masters, institution_group_count, decision, note`
   - `worksheet_rank`：组内按 §2.4 排序后从 1 开始的序号。
-  - `institution_group_count`：该校出现在几个组（1–5）。
+  - `institution_group_count`：该校在 candidates.csv 中出现在几个不同的 `cip_group`（1–5）。
   - `decision`、`note`：留空，给你填写（例如 `pilot` / `main` / `skip`）。
 - 这份工作表**不是校验输入**，`validate` 不读它。
 - 已存在时拒绝覆盖（防止你填写的内容丢失），需要 `--force` 才覆盖。

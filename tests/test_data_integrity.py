@@ -98,3 +98,45 @@ def test_stem_list_built_from_expected_pdf():
     assert set(stem_rows["sha256"]) & set(latest["input_sha256"].split(";")), (
         "stem_list.csv was not built from the PDF named in config/expected_counts.yaml"
     )
+
+
+# --- per-version counts for IPEDS and Scorecard (01 §8) -------------------------
+
+def _version_entry(section, version):
+    entries = load_expected()[section]
+    assert version in entries, (
+        f"[expected_counts] 新数据版本 {version} 尚未登记期望值（{section}）。"
+        "请人工确认后在 config/expected_counts.yaml 中新增条目。"
+    )
+    return f"{section}.{version}"
+
+
+def test_real_ipeds_counts():
+    from gradprog.ref.ipeds import ALLOWED_STATES
+    from gradprog.ref.versions import ipeds_version
+
+    table = read_str_csv(REF / "ipeds_masters_target_cip.csv")
+    cands = read_str_csv(REF / "candidates.csv")
+    years = sorted(set(table["data_year"]))
+    assert len(years) == 1, f"ipeds_masters_target_cip.csv mixes data years {years}"
+    key = _version_entry("ipeds", ipeds_version(years[0]))
+    assert_expected(f"{key}.data_year", years[0])
+    assert_expected(f"{key}.masters_target_rows", len(table))
+    assert_expected(f"{key}.masters_target_institutions", table["unitid"].nunique())
+    excluded = table[~table["state"].isin(ALLOWED_STATES)]["state"].value_counts().to_dict()
+    assert_expected(f"{key}.excluded_states", excluded)
+    assert_expected(f"{key}.candidates_rows", len(cands))
+    assert_expected(f"{key}.candidates_institutions", cands["unitid"].nunique())
+    assert_expected(f"{key}.candidates_by_group", cands["cip_group"].value_counts().to_dict())
+
+
+def test_real_scorecard_counts():
+    from gradprog.ref.versions import scorecard_release
+
+    table = read_str_csv(REF / "scorecard_fos_masters_target.csv")
+    key = _version_entry("scorecard_fos", scorecard_release(MANIFEST, DERIVED))
+    assert_expected(f"{key}.masters_target_rows", len(table))
+    assert_expected(f"{key}.rows_by_cip4", table["cip4"].value_counts().to_dict())
+    reported = {m: int((table[f"{m}_status"] == "reported").sum())
+                for m in ["earn_mdn_1yr", "earn_mdn_4yr", "earn_mdn_5yr"]}
+    assert_expected(f"{key}.earnings_reported", reported)

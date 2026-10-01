@@ -1,0 +1,10 @@
+cip_group,rank_in_group,unitid,institution_name,state,cip_code,cip_title,on_stem_list,completions_masters,completions_masters_second_major,completions_masters_nonresident,institution_target_cip_count,data_year
+ds,1,200006,Zeta University,OH,30.7001,"Data Science, General.",true,400,0,100,1,2023-24
+ds,2,200001,Alpha University,MA,30.7001,"Data Science, General.",true,300,0,100,2,2023-24
+ds,3,200002,Beta State University,CA,30.7001,"Data Science, General.",true,250,0,200,1,2023-24
+ds,4,200007,Eta University,WA,30.7001,"Data Science, General.",true,250,0,200,1,2023-24
+ds,5,200005,Epsilon College,TX,30.7099,"Data Science, Other.",false,6,0,6,1,2023-24
+analytics,1,200001,Alpha University,MA,30.7102,Business Analytics.,true,400,0,350,2,2023-24
+stats,1,200003,Gamma Institute,NY,27.0501,"Statistics, General.",true,90,0,80,1,2023-24
+mgmt_sci,1,200004,Delta University,IL,52.1301,Management Science.,true,900,5,300,2,2023-24
+econ,1,200004,Delta University,IL,45.0603,Econometrics and Quantitative Economics.,true,100,0,90,2,2023-24
