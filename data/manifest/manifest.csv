@@ -1,0 +1,10 @@
+source,url,method,retrieved_at,sha256,bytes,notes
+dhs_stem,https://www.ice.gov/doclib/sevis/pdf/stemList2024.pdf,manual,2026-09-30T13:31:00Z,b8346f30cd6ab7702510f4837b339438323a96adfbd8133b6cb9d565e90b4336,428790,automated request returned HTTP 403; browser download by user at 2026-09-30 22:31 Asia/Tokyo (minute precision)
+federal_register,https://www.govinfo.gov/content/pkg/FR-2024-07-23/pdf/2024-16127.pdf,http,2026-09-30T14:05:14Z,9da1b913831c32a27e978792a4d8b82a2dfb5c2895b5f8506d5407f00b8e8858,229422,
+cip2020,https://nces.ed.gov/ipeds/cipcode/Files/CIPCode2020.csv,http,2026-09-30T14:05:19Z,6cf0882c1f5beb94981d0a1a72285ab5cf633759f45433fb909afbfb6d6b2657,1099448,
+ipeds_completions,https://nces.ed.gov/ipeds/complete-data-files/C2024_A.zip,http,2026-09-30T14:08:17Z,2a18c4f335630fdfc6c53c2290b69b096e32ef314c211d3b980aa8dedb8b78a0,8703011,
+ipeds_completions,https://nces.ed.gov/ipeds/complete-data-files/C2024_A_Dict.zip,http,2026-09-30T14:08:24Z,26752aec66ea7ca814b3255795138880e96d2b229757c2503d1a13acdd1f988d,126517,
+ipeds_hd,https://nces.ed.gov/ipeds/complete-data-files/HD2024.zip,http,2026-09-30T14:08:39Z,b03acd261382fc92fe793aecac084820eec7a0e543dc9541c271b55d712331d3,1033802,
+scorecard_fos,https://ed-public-download.scorecard.network/downloads/Most-Recent-Cohorts-Field-of-Study_06102026.zip,http,2026-09-30T14:10:05Z,9c4339d65f0699a60d6078fe54fc3bf03fded30a65079222d9221952b8578165,17188590,
+scorecard_fos,https://collegescorecard.ed.gov/files/FieldOfStudyDataDocumentation.pdf,http,2026-09-30T14:10:10Z,c8f47222641ef6c439e0088946a63276b6f560edc9a5192ff0fa5baeacc52377,891575,
+scorecard_fos,https://collegescorecard.ed.gov/files/CollegeScorecardDataDictionary.xlsx,http,2026-09-30T14:10:14Z,2f314d1d02d4ce7e8ca29feffaaa69860b18b2812cbb407adc014c6792fa1740,727278,

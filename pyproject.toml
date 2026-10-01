@@ -1,0 +1,29 @@
+[project]
+name = "gradprog"
+version = "0.1.0"
+description = "Structured database of US graduate program application requirements"
+authors = [
+    { name = "hhuang3", email = "140606208+hhuang3@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "pandas>=3.0.6",
+    "pdfplumber>=0.11.10",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pyyaml>=6.0.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[project.scripts]
+gradprog = "gradprog.cli:main"

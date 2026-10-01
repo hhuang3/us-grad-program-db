@@ -1,0 +1,9 @@
+UNITID,OPEID6,INSTNM,CONTROL,MAIN,CIPCODE,CIPDESC,CREDLEV,CREDDESC,IPEDSCOUNT1,IPEDSCOUNT2,DISTANCE,EARN_MDN_1YR,EARN_MDN_4YR,EARN_MDN_5YR,EARN_COUNT_WNE_1YR,DEBT_ALL_STGP_EVAL_MDN
+100001,000001,Alpha University,2,1,3070,Data Science.,5,Master's Degree,40,50,1,NA,95000,NA,PS,PS
+100001,000001,Alpha University,2,1,3070,Data Science.,3,Bachelor's Degree,90,110,1,51000,70000,NA,120,21000
+100002,000002,Beta State University,1,1,3071,Data Analytics.,5,Master's Degree,NA,12,2,PS,88000.5,NA,15,32000
+100003,000003,Gamma College,1,1,4506,Economics.,5,Master's Degree,8,9,1,61000,PS,72000,30,NA
+100004,000004,Delta Institute of Technology,2,1,1107,Computer Science.,5,Master's Degree,200,210,1,99000,120000,130000,150,40000
+100005,000005,Epsilon University,1,1,2706,Applied Statistics.,5,Master's Degree,10,12,1,NA,NA,NA,NA,NA
+100006,000006,Zeta University,2,1,5213,Management Sciences and Quantitative Methods.,5,Master's Degree,60,65,1,70000,81000,90000,44,27000
+NA,009999,Foreign University Without UNITID,2,1,3070,Data Science.,5,Master's Degree,NA,NA,1,PS,72000,PS,PS,PS

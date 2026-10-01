@@ -1,0 +1,24 @@
+# Expected values for the committed real reference tables (tests/test_data_integrity.py).
+#
+# 这些是“已人工确认的官方数据事实”，不是代码参数。
+# 测试不符时：先确认是否官方数据更新（STEM 清单、CIP、IPEDS、Scorecard 发布了新版本）；
+# 确认后再改本文件，并在提交说明里写明依据。官方数据未变而测试不符，则是代码 bug。
+
+stem_list:
+  # DHS STEM Designated Degree Program List, PDF 首页 "Last Updated"
+  version_date: "2024-07-22"
+  source_url: "https://www.ice.gov/doclib/sevis/pdf/stemList2024.pdf"
+  six_digit_codes: 466
+  core_series_headers: 4
+  core_series: ["14", "26", "27", "40"]
+  expansion_only_codes: []       # 03 §4.3 哨兵：系列展开规则在该版本上不改变任何判断
+  title_mismatches: 2            # PDF 标题与 CIP 2020 标题不一致的代码数（30.4801 缺句点；45.0102 多 "Social Sciences, " 前缀）；2026-09-30 人工确认
+
+cip2020:
+  valid_six_digit: 2173
+  valid_four_digit: 464
+  valid_two_digit: 50
+
+targets:
+  total: 17
+  not_on_stem_list: ["30.7099"]

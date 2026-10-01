@@ -1,0 +1,7 @@
+pattern,kind,cip_group,label
+30.70,prefix,ds,Data Science series
+30.71,prefix,analytics,Data Analytics series
+27.05,prefix,stats,Statistics series
+27.0601,exact,stats,"Applied Statistics, General"
+52.13,prefix,mgmt_sci,Management Sciences and Quantitative Methods series
+45.0603,exact,econ,Econometrics and Quantitative Economics
