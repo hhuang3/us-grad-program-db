@@ -229,9 +229,15 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | `broken` | 最终状态码 404 或 410 | **失效** |
 | `error` | 其他非 2xx 状态码、网络错误、超时、重定向次数超限 | 请求失败（附状态码或错误类型） |
 | `redirected` | 2xx，且 `normalize_url(最终 URL) ≠ 登记的 url`（最终 URL 无法规范化时也算） | **已跳转，建议改用最终网址** |
+| `redirected_other` | 2xx，最终 URL 与登记的 url 不同，且最终页面明显不是同一页面（规则见下） | **跳转到不同页面，需人工确认**（不建议直接改用） |
 | `ok` | 2xx，且最终 URL 规范化后等于登记的 url | 正常 |
 
 - 输出：`data/registry/url_check.csv`（不提交进 git），列为 `page_id, url, result, http_status, final_url, checked_at`；`http_status` 在未请求或网络错误时为空，`final_url` 只在发生跳转时填写。按 `page_id` 排序。
+- “明显不是同一页面”（`redirected_other`，2026-10-03 新增），满足任一条即是：
+  1. 登记的路径不是 `/`，而最终路径是 `/`（跳到首页）；
+  2. 最终路径的最后一段是 `index.*`、`default.*` 或 `home.*`，且去掉这一段后最多只剩 1 级目录（如 `/index.php`、`/programs/index.php`，即站点或栏目的列表页）；
+  3. 最终 URL 的查询参数中有名称包含 `redirect` 的参数（不区分大小写，如 `redirectid=103`）。
+  实例：WashU Olin 旧网址跳到 `olin.washu.edu/programs/index.php?redirectid=103`（通用项目列表，HTTP 200）。
 - 核对清单 `review_pilot.md` 读取 `url_check.csv`，在每个页面旁标注上表的结果。
 - 是否改用最终网址、是否删除失效页面，由你决定；命令本身不改任何登记表。
 
