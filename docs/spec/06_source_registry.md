@@ -21,6 +21,7 @@
 ### 2.1 项目的定义
 
 - **一个申请入口 = 一个 `program_id`**。同一学位下的 track / concentration：共用同一个申请入口的，算一个项目；分别申请、要求不同的，拆成多个项目。（同时关闭 02 §7 第 3 项）
+- **“申请入口”的判定**（2026-10-02 确认）：在学校申请系统中是**独立的项目选项**（各自录取、各自要求）的，即为不同项目；在同一项目选项下选择方向（track / concentration）或上课方式（面授 / 线上），或入学后再选择的，算**一个**项目。
 - 一个候选行（`unitid × cip_code`）可以对应 0 个、1 个或多个项目；一个项目只对应一个候选行。
 - **“0 个项目”也要留记录**：候选行经检查确实找不到对应的硕士项目时，登记一行 `status = excluded`、`exclusion_reason = not_found` 的占位记录，用来表明“查过了”。占位记录的规则：
   - `program_id` = `{学校简称}-none-{CIP 去掉点}`，如 `meharry-none-307099`；
@@ -39,6 +40,7 @@
 | 双学位中的非独立部分 | 排除 | `out_of_scope` |
 | 与已登记项目重复 | 排除 | `duplicate` |
 | 查不到对应项目 | 排除（占位记录，见 2.1） | `not_found` |
+| 停招（含暂停招生） | 排除，`selection_note` 中写明依据和起始学期（2026-10-03 新增） | `not_admitting` |
 | 其他 | 排除，`selection_note` 中写明 | `other` |
 
 只收 `delivery_mode ∈ {on_campus, hybrid}` 的项目；`unknown` 可以先选入，但进入 Phase 3 前必须确认（见 §5.2）。
@@ -75,6 +77,13 @@
 | track / concentration 是否拆分 | 按 2.1 处理，已关闭 |
 | 全量重抽日期（05 §5） | 暂定每年 **8 月 15 日**，已写入 05，可在 P4 调整 |
 
+### 2.7 页面登记规则（2026-10-02 确认）
+
+1. **一个规范网址**：同一项目、同一 `page_type` 只登记一个规范网址。指向同一内容的其他网址（别名、旧路径、门户站的介绍页等）不登记。
+   **选法**：优先选学校招生流程实际链接到的页面，例如申请系统中的 Apply 链接、研究生院项目目录中的项目链接（2026-10-02 确认）。
+2. **不借用其他项目的页面**：不得把其他项目的页面登记给本项目，**包括同一项目的线上版**。例如线上版专用的 admissions 页不能用于住校版。只有面向多个项目的共用页面（如研究生院统一的国际学生要求页、学院统一的申请页）可以由多个项目共用，并按其层级填写 `owner_level`。
+3. **`hybrid` 的定义**：项目可以完全在校面授完成，同时提供线上课程或线上完成的选项。只能线上完成的是 `online`；只有面授的是 `on_campus`。
+
 ---
 
 ## 3. 登记表结构
@@ -97,7 +106,7 @@
 | `department` | 院系 | 原样；可空 |
 | `delivery_mode` | 授课形式（初步判断） | `on_campus / hybrid / online / unknown` |
 | `status` | 状态 | `selected / excluded / backlog` |
-| `exclusion_reason` | 排除原因 | `mba / online_only / certificate / out_of_scope / duplicate / not_found / other`；`status = excluded` 时必填，否则必须为空 |
+| `exclusion_reason` | 排除原因 | `mba / online_only / certificate / out_of_scope / duplicate / not_found / not_admitting / other`；`status = excluded` 时必填，否则必须为空 |
 | `selection_note` | 选入或排除的理由 | 自由文本；`status ∈ {selected, excluded}` 时必填 |
 | `batch` | 批次 | `pilot / main` |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
@@ -129,8 +138,9 @@
 |---|---|
 | `program_id` | 关联 programs.csv |
 | `page_id` | 关联 pages.csv |
+| `scope_note` | 可空。该页面对**这个项目**的适用范围说明，单行文本（不含换行）。例如共用页面同时包含其他版本的内容时写明“页面同时包含线上版内容，抽取时只取面授版”。Phase 3/4 抽取时按此说明限定范围（2026-10-02 新增） |
 
-`(program_id, page_id)` 组合唯一。一个页面可以服务多个项目（例如研究生院统一的国际学生语言要求页）。
+`(program_id, page_id)` 组合唯一（与 `scope_note` 无关）。一个页面可以服务多个项目（例如研究生院统一的国际学生语言要求页）。
 
 ### 3.4 `domains.csv`（每个域名检查一次）
 
@@ -239,6 +249,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 `crawl_allowed = false` 的原因按以下顺序取第一个成立的：`robots_allowed = not_checked` → `not_checked`；`robots_allowed = no` → `robots`；`tos_status ≠ no_restriction` → `tos`。
 
+- `program_pages.scope_note` 不得包含换行符。
 ### 5.3 报告（不报错）
 
 - 各组 selected 数量与 §2.3 名额的对比（含 pilot / main 分开计数）。

@@ -68,6 +68,19 @@ def test_duplicate_program_page_link(registry, registry_candidates):
     assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "pg-0001")
 
 
+def test_duplicate_link_ignores_scope_note(registry, registry_candidates):
+    pp = registry.program_pages
+    dup = pp.iloc[[0]].copy()
+    dup["scope_note"] = "different note"
+    registry.program_pages = pd.concat([pp, dup], ignore_index=True)
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "pg-0001")
+
+
+def test_scope_note_must_be_single_line(registry, registry_candidates):
+    registry.program_pages.loc[0, "scope_note"] = "line one\nline two"
+    assert_error(run(registry, registry_candidates), "scope_note", "pg-0001")
+
+
 def test_unitid_cip_not_in_candidates(registry, registry_candidates):
     set_cell(registry.programs, "program_id", "gamma-ms-statistics", "cip_code", "27.0599")
     assert_error(run(registry, registry_candidates), "gamma-ms-statistics")
@@ -143,6 +156,11 @@ def test_unchecked_domain_columns_may_be_empty(registry, registry_candidates):
 def test_status_combinations(registry, registry_candidates, program_id, col, value):
     set_cell(registry.programs, "program_id", program_id, col, value)
     assert_error(run(registry, registry_candidates), program_id)
+
+
+def test_not_admitting_is_a_valid_exclusion_reason(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "delta-other-mbaanalytics", "exclusion_reason", "not_admitting")
+    assert run(registry, registry_candidates).errors == []
 
 
 def test_backlog_without_note_is_fine(registry, registry_candidates):

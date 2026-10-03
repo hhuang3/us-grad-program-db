@@ -17,7 +17,7 @@ HEADERS = {
                     "delivery_mode,status,exclusion_reason,selection_note,batch,added_at",
     "pages.csv": "page_id,url,domain,page_type,owner_level,url_status,content_format,robots_allowed,crawl_allowed,"
                  "added_at",
-    "program_pages.csv": "program_id,page_id",
+    "program_pages.csv": "program_id,page_id,scope_note",
     "domains.csv": "domain,robots_url,robots_checked_at,robots_status,robots_allows_registered_paths,tos_url,"
                    "tos_status,tos_note",
 }
@@ -56,6 +56,12 @@ def test_save_round_trip_is_byte_identical(registry, tmp_path):
         assert (out / name).read_bytes() == (REGISTRY_FIXTURES / name).read_bytes(), name
 
 
+def test_scope_note_round_trips(registry):
+    pp = registry.program_pages
+    note = pp.loc[(pp["program_id"] == "alpha-ms-businessanalytics") & (pp["page_id"] == "pg-0002"), "scope_note"]
+    assert note.iloc[0] == "Shared graduate school page; use only the business school sections"
+
+
 def test_load_rejects_wrong_columns(registry_dir):
     p = registry_dir / "domains.csv"
     p.write_text(p.read_text(encoding="utf-8").replace("tos_note", "notes"), encoding="utf-8")
@@ -75,7 +81,7 @@ def test_add_page_allocates_next_id_and_links(registry):
     assert (row["url_status"], row["robots_allowed"], row["crawl_allowed"]) == ("proposed", "not_checked", "false")
     assert row["added_at"] == "2026-10-03"
     links = set(map(tuple, registry.program_pages.values.tolist()))
-    assert ("alpha-ms-datascience", pid) in links
+    assert ("alpha-ms-datascience", pid, "") in links   # new links have an empty scope_note
 
 
 def test_add_page_adds_new_domain_row(registry):

@@ -13,7 +13,7 @@ COLUMNS = {
                  "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "added_at"],
     "pages": ["page_id", "url", "domain", "page_type", "owner_level", "url_status", "content_format",
               "robots_allowed", "crawl_allowed", "added_at"],
-    "program_pages": ["program_id", "page_id"],
+    "program_pages": ["program_id", "page_id", "scope_note"],
     "domains": ["domain", "robots_url", "robots_checked_at", "robots_status", "robots_allows_registered_paths",
                 "tos_url", "tos_status", "tos_note"],
 }
@@ -22,7 +22,8 @@ TABLES = list(COLUMNS)
 DEGREE_TYPES = ("ms", "ma", "mps", "meng", "msc", "other")
 DELIVERY_MODES = ("on_campus", "hybrid", "online", "unknown")
 STATUSES = ("selected", "excluded", "backlog")
-EXCLUSION_REASONS = ("mba", "online_only", "certificate", "out_of_scope", "duplicate", "not_found", "other")
+EXCLUSION_REASONS = ("mba", "online_only", "certificate", "out_of_scope", "duplicate", "not_found", "not_admitting",
+                     "other")
 BATCHES = ("pilot", "main")
 PAGE_TYPES = ("program_home", "admissions", "deadlines", "requirements", "tuition", "funding", "faq",
               "grad_school_intl", "isso_stem_list", "other")
@@ -151,7 +152,8 @@ def add_page(registry, url, page_type, owner_level, content_format, program_ids,
     linked = set(map(tuple, registry.program_pages[["program_id", "page_id"]].values.tolist()))
     for pid in dict.fromkeys(program_ids):
         if (pid, page_id) not in linked:
-            registry.program_pages = _append(registry.program_pages, {"program_id": pid, "page_id": page_id})
+            registry.program_pages = _append(registry.program_pages,
+                                             {"program_id": pid, "page_id": page_id, "scope_note": ""})
     return page_id
 
 

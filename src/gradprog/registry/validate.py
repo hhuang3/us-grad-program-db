@@ -87,7 +87,7 @@ def _check_keys(registry, errors):
     pages = registry.pages
     for u in sorted(set(pages.loc[pages["url"].duplicated(), "url"])):
         errors.append(f"pages: duplicate url {u}")
-    pp = registry.program_pages
+    pp = registry.program_pages[["program_id", "page_id"]]
     for pid, page in pp[pp.duplicated()].drop_duplicates().itertuples(index=False):
         errors.append(f"program_pages: duplicate link {pid} -> {page}")
 
@@ -108,6 +108,10 @@ def _check_values(registry, errors):
         for k, v in zip(df[key], df["added_at"]):
             if not t.is_date(v):
                 errors.append(f"{name}: {k}: added_at={v!r} is not a valid YYYY-MM-DD date")
+    pp = registry.program_pages
+    for pid, page, note in zip(pp["program_id"], pp["page_id"], pp["scope_note"]):
+        if "\n" in note or "\r" in note:
+            errors.append(f"program_pages: {pid} -> {page}: scope_note must be a single line")
     d = registry.domains
     for k, v in zip(d["domain"], d["robots_checked_at"]):
         if v and not UTC_TIMESTAMP.match(v):
@@ -174,7 +178,7 @@ def _check_pages(registry, errors):
             errors.append(f"pages: {pid}: crawl_allowed={have} is stale (expected {want}); "
                           "run `gradprog registry derive`")
     programs, pages = set(registry.programs["program_id"]), set(registry.pages["page_id"])
-    for pid, page in registry.program_pages.itertuples(index=False):
+    for pid, page in registry.program_pages[["program_id", "page_id"]].itertuples(index=False):
         if pid not in programs:
             errors.append(f"program_pages: program_id {pid} is not in programs.csv")
         if page not in pages:
