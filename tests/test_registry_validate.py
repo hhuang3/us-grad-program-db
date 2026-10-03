@@ -295,9 +295,72 @@ def test_ready_pilot_reports_blocked_pages_with_reasons(registry, registry_candi
     blocked = {(b["page_id"], b["domain"], b["reason"]) for b in r.report["ready_crawl_blocked"]}
     assert blocked == {
         ("pg-0003", "business.alpha.edu", "tos"),
-        ("pg-0004", "business.alpha.edu", "robots"),
+        ("pg-0004", "business.alpha.edu", "robots_disallowed"),
         ("pg-0005", "grad.alpha.edu", "not_checked"),
     }
+
+
+# --- crawl reasons, site blocking and fetch_method (06 §5.2, 2026-10-03) -------
+
+def url_check(*rows):
+    return pd.DataFrame([{"page_id": p, "url": "", "result": r, "http_status": c, "final_url": "",
+                          "checked_at": "2026-10-03T00:00:00Z"} for p, r, c in rows])
+
+
+def test_robots_unavailable_is_its_own_reason(registry, registry_candidates):
+    set_cell(registry.domains, "domain", "datascience.alpha.edu", "robots_status", "error")
+    set_cell(registry.pages, "page_id", "pg-0001", "robots_allowed", "no")
+    set_cell(registry.pages, "page_id", "pg-0001", "crawl_allowed", "false")
+    r = run(registry, registry_candidates, ready=True, batch="pilot")
+    reasons = {b["page_id"]: b["reason"] for b in r.report["ready_crawl_blocked"]}
+    assert reasons["pg-0001"] == "robots_unavailable"
+    assert reasons["pg-0004"] == "robots_disallowed"
+    assert_error(r, "alpha-ms-datascience", "pg-0001", "robots_unavailable")
+
+
+def test_site_blocked_403_makes_page_not_crawlable(registry, registry_candidates):
+    checks = url_check(("pg-0001", "error", "403"), ("pg-0002", "ok", "200"))
+    r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=checks)
+    reasons = {b["page_id"]: b["reason"] for b in r.report["ready_crawl_blocked"]}
+    assert reasons["pg-0001"] == "site_blocked_403"
+    assert "pg-0002" not in reasons
+    assert_error(r, "alpha-ms-datascience", "pg-0001", "site_blocked_403")
+
+
+def test_other_check_errors_are_not_site_blocking(registry, registry_candidates):
+    checks = url_check(("pg-0001", "error", "500"), ("pg-0002", "broken", "404"))
+    r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=checks)
+    assert not any(b["page_id"] in ("pg-0001", "pg-0002") for b in r.report["ready_crawl_blocked"])
+
+
+def test_without_url_check_site_blocking_is_unknown(registry, registry_candidates):
+    r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=None)
+    assert any("url_check" in w for w in r.warnings)
+
+
+def test_fetch_method_rules(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "fetch_method", "")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "fetch_method")
+
+
+@pytest.mark.parametrize("program_id, value", [("alpha-ms-datascience", "crawler"),
+                                                ("gamma-ms-statistics", "auto")])
+def test_fetch_method_invalid_or_on_unselected(registry, registry_candidates, program_id, value):
+    set_cell(registry.programs, "program_id", program_id, "fetch_method", value)
+    assert_error(run(registry, registry_candidates), program_id, "fetch_method")
+
+
+def test_manual_program_does_not_need_crawlable_home(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "fetch_method", "manual")
+    set_cell(registry.pages, "page_id", "pg-0004", "url_status", "confirmed")
+    r = run(registry, registry_candidates, ready=True, batch="pilot")
+    assert not any("alpha-ms-businessanalytics" in e for e in r.errors)
+    assert r.report["ready_manual_programs"] == ["alpha-ms-businessanalytics"]
+
+
+def test_manual_program_still_needs_confirmed_pages(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "fetch_method", "manual")
+    assert_error(run(registry, registry_candidates, ready=True, batch="pilot"), "alpha-ms-businessanalytics", "pg-0004")
 
 
 def test_ready_only_checks_requested_batch(registry, registry_candidates):
@@ -324,7 +387,7 @@ def test_status_and_reason_counts(registry, registry_candidates):
 def test_crawl_and_sharing_report(registry, registry_candidates):
     rep = run(registry, registry_candidates).report
     assert {(b["page_id"], b["reason"]) for b in rep["crawl_blocked_pages"]} == {
-        ("pg-0003", "tos"), ("pg-0004", "robots"), ("pg-0005", "not_checked")}
+        ("pg-0003", "tos"), ("pg-0004", "robots_disallowed"), ("pg-0005", "not_checked")}
     assert rep["tos_not_ok_domains"] == ["business.alpha.edu"]
     assert rep["shared_pages"] == 1
     assert rep["graduate_school_pages"] == 2

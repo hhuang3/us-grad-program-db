@@ -109,6 +109,7 @@
 | `exclusion_reason` | 排除原因 | `mba / online_only / certificate / out_of_scope / duplicate / not_found / not_admitting / other`；`status = excluded` 时必填，否则必须为空 |
 | `selection_note` | 选入或排除的理由 | 自由文本；`status ∈ {selected, excluded}` 时必填 |
 | `batch` | 批次 | `pilot / main` |
+| `fetch_method` | Phase 3 取得页面的方式（2026-10-03 新增） | `auto / manual`；`status = selected` 时必填，其他状态必须为空。`auto`：由抓取器自动抓取；`manual`：页面无法自动抓取（条款、robots.txt 或网站防护），由人工取得，具体流程在 P3 设计 |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
 
 **`program_id` 格式**：`{学校简称}-{学位}-{方向}`，如 `uwmadison-ms-statistics`。
@@ -228,16 +229,16 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | `robots_disallowed` | robots.txt 已读取且明确禁止该页 | robots 禁止，未请求 |
 | `broken` | 最终状态码 404 或 410 | **失效** |
 | `error` | 其他非 2xx 状态码、网络错误、超时、重定向次数超限 | 请求失败（附状态码或错误类型） |
-| `redirected` | 2xx，且 `normalize_url(最终 URL) ≠ 登记的 url`（最终 URL 无法规范化时也算） | **已跳转，建议改用最终网址** |
 | `redirected_other` | 2xx，最终 URL 与登记的 url 不同，且最终页面明显不是同一页面（规则见下） | **跳转到不同页面，需人工确认**（不建议直接改用） |
+| `redirected` | 2xx，且 `normalize_url(最终 URL) ≠ 登记的 url`（最终 URL 无法规范化时也算） | **已跳转，建议改用最终网址** |
 | `ok` | 2xx，且最终 URL 规范化后等于登记的 url | 正常 |
 
-- 输出：`data/registry/url_check.csv`（不提交进 git），列为 `page_id, url, result, http_status, final_url, checked_at`；`http_status` 在未请求或网络错误时为空，`final_url` 只在发生跳转时填写。按 `page_id` 排序。
 - “明显不是同一页面”（`redirected_other`，2026-10-03 新增），满足任一条即是：
   1. 登记的路径不是 `/`，而最终路径是 `/`（跳到首页）；
   2. 最终路径的最后一段是 `index.*`、`default.*` 或 `home.*`，且去掉这一段后最多只剩 1 级目录（如 `/index.php`、`/programs/index.php`，即站点或栏目的列表页）；
   3. 最终 URL 的查询参数中有名称包含 `redirect` 的参数（不区分大小写，如 `redirectid=103`）。
   实例：WashU Olin 旧网址跳到 `olin.washu.edu/programs/index.php?redirectid=103`（通用项目列表，HTTP 200）。
+- 输出：`data/registry/url_check.csv`（不提交进 git），列为 `page_id, url, result, http_status, final_url, checked_at`；`http_status` 在未请求或网络错误时为空，`final_url` 只在发生跳转时填写。按 `page_id` 排序。
 - 核对清单 `review_pilot.md` 读取 `url_check.csv`，在每个页面旁标注上表的结果。
 - 是否改用最终网址、是否删除失效页面，由你决定；命令本身不改任何登记表。
 
@@ -275,12 +276,21 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | `program_name` 或 `degree_type` 疑似 MBA：大小写不敏感地匹配 `\bMBA\b`、`M.B.A.`（带句点，末尾句点可省略）或 `master of business administration` | warning（由你确认） | warning |
 | 至少关联一个 `page_type = program_home` 页面，以及一个 `admissions` 或 `requirements` 页面 | error | error |
 | 所有关联页面 `url_status = confirmed` | warning | error |
-| 关联页面中 `crawl_allowed = false` 的 | – | **列出报告**（页面、所属域名、原因） |
-| 关联的 `program_home` 页面 `crawl_allowed = true` | – | error |
+| 关联页面中“不可抓取”的（见下） | – | **列出报告**（页面、所属域名、原因） |
+| `fetch_method` 为空 | error | error |
+| `fetch_method = auto`：关联的 `program_home` 页面可抓取 | – | error |
+| `fetch_method = manual`：不要求可抓取（仍要求页面全部 `confirmed`） | – | 在报告中单独列出（`ready_manual_programs`） |
 
 `--ready --batch pilot` 是 Phase 3 的准入检查：只检查 `batch = pilot` 的 selected 项目。2d 过程中允许出现 proposed 页面（只给 warning），否则提议阶段就无法通过校验。
 
-`crawl_allowed = false` 的原因按以下顺序取第一个成立的：`robots_allowed = not_checked` → `not_checked`；`robots_allowed = no` → `robots`；`tos_status ≠ no_restriction` → `tos`。
+**“可抓取”**（准入检查与报告使用，2026-10-03 修订）：`crawl_allowed = true`，**且**该页在 `data/registry/url_check.csv` 中最近一次的检查结果不是 HTTP 403（`result = error` 且 `http_status = 403`，即网站防护拦截）。`url_check.csv` 不存在时无法判断网站防护，给出一条 warning，只按 `crawl_allowed` 判断。
+
+“不可抓取”的原因按以下顺序取第一个成立的：
+1. `robots_allowed = not_checked` → `not_checked`（未检查）
+2. `robots_allowed = no` 且所属域名 `robots_status = error` → `robots_unavailable`（robots.txt 无法读取）
+3. `robots_allowed = no` → `robots_disallowed`（robots.txt 明确禁止）
+4. `tos_status ≠ no_restriction` → `tos`（条款）
+5. url_check 中最近一次为 HTTP 403 → `site_blocked_403`（网站防护 403）
 
 ### 5.3 报告（不报错）
 

@@ -10,7 +10,7 @@ from gradprog.registry.urls import domain_of, normalize_url
 
 COLUMNS = {
     "programs": ["program_id", "unitid", "cip_code", "cip_group", "institution_name", "program_name", "degree_type",
-                 "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "added_at"],
+                 "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "fetch_method", "added_at"],
     "pages": ["page_id", "url", "domain", "page_type", "owner_level", "url_status", "content_format",
               "robots_allowed", "crawl_allowed", "added_at"],
     "program_pages": ["program_id", "page_id", "scope_note"],
@@ -25,6 +25,7 @@ STATUSES = ("selected", "excluded", "backlog")
 EXCLUSION_REASONS = ("mba", "online_only", "certificate", "out_of_scope", "duplicate", "not_found", "not_admitting",
                      "other")
 BATCHES = ("pilot", "main")
+FETCH_METHODS = ("auto", "manual")
 PAGE_TYPES = ("program_home", "admissions", "deadlines", "requirements", "tuition", "funding", "faq",
               "grad_school_intl", "isso_stem_list", "other")
 OWNER_LEVELS = ("program", "department", "graduate_school", "university")

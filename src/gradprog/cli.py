@@ -89,7 +89,10 @@ def cmd_registry(args):
     elif args.registry_command == "validate":
         candidates = pd.read_csv(CANDIDATES, dtype=str, keep_default_na=False)
         previous = load_head_tables(REPO)
-        result = validate(reg, candidates, previous=previous, ready=args.ready, batch=args.batch)
+        uc_path = REGISTRY / "url_check.csv"
+        url_check = pd.read_csv(uc_path, dtype=str, keep_default_na=False) if uc_path.exists() else None
+        result = validate(reg, candidates, previous=previous, ready=args.ready, batch=args.batch,
+                          url_check=url_check)
         if previous is None:
             result.warnings.append("not inside a git work tree: skipped the no-deletion check")
         _print_validation(result)
@@ -113,10 +116,14 @@ def _print_validation(result):
               f"graduate_school pages: {rep['graduate_school_pages']}")
         print("domains with tos_status != no_restriction:", rep["tos_not_ok_domains"] or "none")
         blocked = rep.get("ready_crawl_blocked", rep["crawl_blocked_pages"])
-        label = "pilot pages not crawl_allowed" if "ready_crawl_blocked" in rep else "pages not crawl_allowed"
+        label = "pilot pages not crawlable" if "ready_crawl_blocked" in rep else "pages not crawlable"
         print(f"{label}: {len(blocked)}")
         for b in blocked:
             print(f"  {b['page_id']} {b['domain']} ({b['reason']})")
+        if "ready_manual_programs" in rep:
+            print(f"pilot programs with fetch_method=manual: {len(rep['ready_manual_programs'])}")
+            for pid in rep["ready_manual_programs"]:
+                print(f"  {pid}")
     print(f"\n{len(result.errors)} error(s), {len(result.warnings)} warning(s)")
 
 
