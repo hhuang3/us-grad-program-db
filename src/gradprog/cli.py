@@ -75,6 +75,17 @@ def cmd_registry(args):
         d = reg.domains
         for row in d.itertuples(index=False):
             print(f"{row.domain}: {row.robots_status}, registered paths: {row.robots_allows_registered_paths}")
+    elif args.registry_command == "check-urls":
+        from collections import Counter
+
+        from gradprog.registry.url_check import check_urls, merge_url_check, write_url_check
+
+        result = check_urls(reg, page_ids=args.page)
+        path = REGISTRY / "url_check.csv"
+        write_url_check(merge_url_check(path, result) if args.page else result, path)
+        print(f"wrote {path.relative_to(REPO)}: {dict(Counter(result['result']))}")
+        for r in result[result["result"] != "ok"].itertuples(index=False):
+            print(f"  {r.page_id} {r.result} {r.http_status} {r.final_url}")
     elif args.registry_command == "validate":
         candidates = pd.read_csv(CANDIDATES, dtype=str, keep_default_na=False)
         previous = load_head_tables(REPO)
@@ -144,6 +155,8 @@ def main(argv=None):
     a.add_argument("--added-at", help="YYYY-MM-DD (default: today, UTC)")
     rsub.add_parser("derive", help="recompute derived columns (domain, crawl_allowed)")
     rsub.add_parser("check-robots", help="check robots.txt for every domain")
+    cu = rsub.add_parser("check-urls", help="status codes and redirects of proposed pages (writes url_check.csv)")
+    cu.add_argument("--page", action="append", help="only check this page_id (repeatable)")
     v = rsub.add_parser("validate", help="validate the registry")
     v.add_argument("--ready", action="store_true", help="Phase 3 readiness checks")
     v.add_argument("--batch", choices=["pilot", "main"], help="batch for --ready")

@@ -189,6 +189,8 @@
 
 RFC 9309 规定其他 4xx 视为“可以抓取”，`urllib.robotparser` 也是这样处理的。这里刻意更保守：只有 404/410 视为允许，其余 4xx 一律按禁止处理（2026-10-01 确认）。
 
+区分两种“不允许”（2026-10-03 确认）：`robots_status = error` 表示 **robots.txt 本身无法读取**（4xx 中除 404/410 外、5xx、网络错误），与 `fetched` 后 robots.txt **明确禁止**不同。两者在抓取许可上同样视为不允许（`robots_allowed = no`），但在命令输出和报告中分开显示。
+
 - 每个已登记页面的 `robots_allowed`（写回 pages.csv）：
   - `fetched`：`can_fetch("gradprog-refdata", url)` 为真 → `yes`，否则 → `no`；
   - `not_found` → `yes`；`error` → `no`。
@@ -209,6 +211,30 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 其余一律 `false`（包括 `not_checked`、`no`、`unclear`、`prohibits_automated_access`）。domains.csv 不再有 `crawl_allowed`；`robots_allows_registered_paths` 只是汇总，不参与推导。
 
+### 4.4 `gradprog registry check-urls`（2026-10-03 新增）
+
+目的：在你核对之前，先把失效网址和旧网址找出来。**只记录状态，不保存页面内容，不修改 pages.csv**。
+
+- 对象：pages.csv 中 `url_status = proposed` 的页面（`confirmed` 的不检查）。可以用 `--page pg-0021 --page pg-0023 …` 只检查指定页面（仍然只限 proposed）；指定了不存在或非 proposed 的 page_id 时报错。
+- 只检查部分页面时，`url_check.csv` 中这些页面的行被替换，其他页面的行保留。
+- 礼貌规则与 §4.1 相同：单线程，所有请求（含 robots.txt）之间间隔 ≥ 3 秒，User-Agent 与 Phase 1 下载器相同，未设置 `GRADPROG_CONTACT_EMAIL` 则拒绝运行。
+- **先遵守 robots.txt**：对涉及的每个域名先读一次 robots.txt，按 §4.1 的规则判断（含 404/410 视为允许、其他错误视为禁止）。被禁止的页面**不请求**，结果记为 `robots_disallowed`。
+- 请求方式：`GET`，跟随重定向（最多 5 次），**不读取响应正文**（流式请求，只取状态码和最终 URL 后立即关闭）。超时 120 秒。
+- 结果分类（按顺序取第一个成立的）：
+
+| result | 条件 | 核对清单中的标注 |
+|---|---|---|
+| `robots_unavailable` | robots.txt 本身无法读取（§4.1 的 `error`：除 404/410 外的 4xx、5xx、网络错误） | robots.txt 无法读取，未请求 |
+| `robots_disallowed` | robots.txt 已读取且明确禁止该页 | robots 禁止，未请求 |
+| `broken` | 最终状态码 404 或 410 | **失效** |
+| `error` | 其他非 2xx 状态码、网络错误、超时、重定向次数超限 | 请求失败（附状态码或错误类型） |
+| `redirected` | 2xx，且 `normalize_url(最终 URL) ≠ 登记的 url`（最终 URL 无法规范化时也算） | **已跳转，建议改用最终网址** |
+| `ok` | 2xx，且最终 URL 规范化后等于登记的 url | 正常 |
+
+- 输出：`data/registry/url_check.csv`（不提交进 git），列为 `page_id, url, result, http_status, final_url, checked_at`；`http_status` 在未请求或网络错误时为空，`final_url` 只在发生跳转时填写。按 `page_id` 排序。
+- 核对清单 `review_pilot.md` 读取 `url_check.csv`，在每个页面旁标注上表的结果。
+- 是否改用最终网址、是否删除失效页面，由你决定；命令本身不改任何登记表。
+
 ---
 
 ## 5. 校验（`gradprog registry validate`）
@@ -223,6 +249,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
   - `(unitid, cip_code)` ∈ candidates.csv；`cip_group`、`institution_name` 与 candidates.csv 一致；
   - `pages.domain` ∈ domains.csv；
   - program_pages 的两端都存在。
+- `program_pages.scope_note` 不得包含换行符。
 - 枚举值合法；日期、时间格式合法。
 - `status` 与 `exclusion_reason`、`selection_note` 的组合合法（§3.1）。
 - `program_id` 格式合法（§3.1）；占位记录规则（§2.1）。
@@ -249,7 +276,6 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 `crawl_allowed = false` 的原因按以下顺序取第一个成立的：`robots_allowed = not_checked` → `not_checked`；`robots_allowed = no` → `robots`；`tos_status ≠ no_restriction` → `tos`。
 
-- `program_pages.scope_note` 不得包含换行符。
 ### 5.3 报告（不报错）
 
 - 各组 selected 数量与 §2.3 名额的对比（含 pilot / main 分开计数）。
@@ -268,6 +294,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | `gradprog registry add-page` | 登记一个页面：规范化 URL、分配 `page_id`、导出 `domain`、需要时补 domains 行、写入 program_pages 关联 |
 | `gradprog registry derive` | 重算导出列（§4.2） |
 | `gradprog registry check-robots` | §4.1 |
+| `gradprog registry check-urls` | §4.4：检查 proposed 页面的状态码与跳转，写 `url_check.csv`，不改登记表 |
 | `gradprog registry validate [--ready --batch pilot]` | §5 |
 
 ---
