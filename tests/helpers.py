@@ -9,6 +9,8 @@ TESTS = Path(__file__).parent
 FIXTURES = TESTS / "fixtures"
 REPO = TESTS.parent
 EXPECTED_COUNTS = REPO / "config" / "expected_counts.yaml"
+REGISTRY_FIXTURES = FIXTURES / "registry"
+REGISTRY_TABLES = ["programs.csv", "pages.csv", "program_pages.csv", "domains.csv"]
 
 
 def read_str_csv(path):
@@ -41,3 +43,13 @@ def assert_expected(key, actual):
         "请人工确认后修改 config/expected_counts.yaml；"
         "如果官方数据没有变化，则是代码 bug。"
     )
+
+
+def copy_registry(dest):
+    """Copy the hand-made valid registry fixture into dest and return dest."""
+    import shutil
+
+    dest.mkdir(parents=True, exist_ok=True)
+    for name in REGISTRY_TABLES:
+        shutil.copy(REGISTRY_FIXTURES / name, dest / name)
+    return dest

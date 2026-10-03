@@ -1,0 +1,6 @@
+page_id,url,domain,page_type,owner_level,url_status,content_format,robots_allowed,crawl_allowed,added_at
+pg-0001,https://datascience.alpha.edu/ms,datascience.alpha.edu,program_home,program,confirmed,html,yes,true,2026-10-01
+pg-0002,https://grad.alpha.edu/admissions/international,grad.alpha.edu,admissions,graduate_school,confirmed,html,yes,true,2026-10-01
+pg-0003,https://business.alpha.edu/msba,business.alpha.edu,program_home,program,confirmed,html,yes,false,2026-10-01
+pg-0004,https://business.alpha.edu/msba/admissions?term=fall,business.alpha.edu,requirements,program,proposed,html,no,false,2026-10-01
+pg-0005,https://grad.alpha.edu/tuition.pdf,grad.alpha.edu,tuition,graduate_school,confirmed,pdf,not_checked,false,2026-10-02

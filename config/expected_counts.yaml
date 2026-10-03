@@ -22,3 +22,21 @@ cip2020:
 targets:
   total: 17
   not_on_stem_list: ["30.7099"]
+
+# 按数据版本分条记录（01 §8）；新版本新增一条，旧条目保留。当前版本由测试从已提交数据推出。
+ipeds:
+  C2024:
+    data_year: "2023-24"
+    release: final                       # c2024_a_rv.csv
+    masters_target_rows: 1061
+    masters_target_institutions: 492
+    excluded_states: {PR: 2}
+    candidates_rows: 1059
+    candidates_institutions: 490
+    candidates_by_group: {ds: 96, analytics: 144, stats: 184, mgmt_sci: 463, econ: 172}
+
+scorecard_fos:
+  "2026-06-10":
+    masters_target_rows: 1034
+    rows_by_cip4: {"27.05": 180, "27.06": 21, "30.70": 90, "30.71": 123, "45.06": 251, "52.13": 369}
+    earnings_reported: {earn_mdn_1yr: 170, earn_mdn_4yr: 132, earn_mdn_5yr: 62}

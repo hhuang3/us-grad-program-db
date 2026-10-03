@@ -18,3 +18,7 @@ data/raw/
 .DS_Store
 .idea/
 .vscode/
+
+# Phase 2 working checklist (regenerated each batch, not tracked)
+data/registry/review_pilot.md
+data/registry/url_check.csv

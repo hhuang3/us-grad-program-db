@@ -1,4 +1,4 @@
-# 字段定义 draft v0.1
+# 字段定义 draft v0.2
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -57,7 +57,7 @@
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
 | tuition_basis | 学费计费方式 | enum：per_credit / per_term / program_total | Bursar / Cost 页 | |
-| tuition_amount_usd | 学费金额 | float，可空 | 同上 | 与 tuition_basis 配套 |
+| tuition_amount_usd | 学费金额 | float，可空 | 同上 | 与 tuition_basis 配套；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
 | credits_required | 总学分 | int，可空 | Curriculum | per_credit 时用于估算总额 |
 | tuition_year | 学费适用年度 | str，如 "2026-27" | 同上 | |
 | funding | 资助情况 | enum：none_typical / partial_scholarship / ta_ra_possible | Funding / FAQ | |
@@ -89,12 +89,13 @@
 
 ## 7. 待定事项
 
-- 同一项目在研究生院页与系页数值冲突时的优先规则（先记录两者 + 进审核，规则待定）
-- 学费是否区分州内/州外（公立校），目前只存国际学生适用的金额
-- 多个专业方向（track/concentration）是否拆成多个 program_id
+- 同一项目在研究生院页与系页数值冲突时的优先规则：P2 只要求两个页面都登记（`06_source_registry.md` 的 `owner_level` 区分层级），并记录两者 + 进审核；**优先规则在 P4 决定**。
+- ~~学费是否区分州内/州外~~：**已关闭**（2026-10-01）。只记录国际学生适用的金额，公立校即州外学费（见 §4 `tuition_amount_usd`）。
+- ~~多个专业方向（track/concentration）是否拆成多个 program_id~~：**已关闭**（2026-10-01）。一个申请入口 = 一个 `program_id`：共用申请入口的 track 算一个项目，分别申请、要求不同的拆开（见 `06_source_registry.md` §2.1）。
 
 ## 8. 修订记录
 
+- v0.2（2026-10-01，Phase 2a）：学费只记国际学生适用金额（公立校即州外学费）；§7 关闭“学费是否区分州内/州外”与“track/concentration 是否拆分”两项，“研究生院页与系页冲突”改为 P2 两页都登记、P4 定优先规则。
 - v0.1（2026-09-30，Phase 1b，按逐项答复修订）：
   - 新增元数据 `value_status`（found / not_mentioned / extraction_failed / page_unavailable），作为所有字段的权威状态；从各枚举中删除 `not_mentioned`（delivery_mode、gre_policy、gmat_policy、toefl_scale_on_page、fee_waiver、three_year_bachelor、interview、tuition_basis、funding）。
   - `stem_status` 改为五个值，新增 `cip_not_on_list_unconfirmed`；真值表见 `03_stem_logic.md` §5。
