@@ -62,14 +62,40 @@ def load_head_tables(repo_root, registry_rel="data/registry"):
     return out
 
 
-def _crawl_reason(robots_allowed, tos_status):
+def site_blocked_pages(url_check):
+    """Page ids whose latest check-urls result was HTTP 403 (06 §5.2)."""
+    if url_check is None or url_check.empty:
+        return set()
+    latest = url_check.drop_duplicates("page_id", keep="last")
+    return set(latest.loc[(latest["result"] == "error") & (latest["http_status"] == "403"), "page_id"])
+
+
+def _crawl_reason(robots_allowed, robots_status, tos_status, blocked_403):
     if robots_allowed == "not_checked":
         return "not_checked"
     if robots_allowed == "no":
-        return "robots"
+        return "robots_unavailable" if robots_status == "error" else "robots_disallowed"
     if tos_status != "no_restriction":
         return "tos"
+    if blocked_403:
+        return "site_blocked_403"
     return "stale"
+
+
+class _Crawl:
+    """Effective crawlability: crawl_allowed and not blocked with HTTP 403 by check-urls."""
+
+    def __init__(self, registry, url_check):
+        self.tos = dict(zip(registry.domains["domain"], registry.domains["tos_status"]))
+        self.robots = dict(zip(registry.domains["domain"], registry.domains["robots_status"]))
+        self.blocked = site_blocked_pages(url_check)
+
+    def ok(self, page_id, page):
+        return page["crawl_allowed"] == "true" and page_id not in self.blocked
+
+    def reason(self, page_id, page):
+        return _crawl_reason(page["robots_allowed"], self.robots.get(page["domain"]), self.tos.get(page["domain"]),
+                             page_id in self.blocked)
 
 
 def _check_columns(registry, errors):
@@ -138,6 +164,11 @@ def _check_programs(registry, candidates, errors):
             errors.append(f"programs: {pid}: exclusion_reason must be empty when status={r.status}")
         if r.status in ("selected", "excluded") and not r.selection_note.strip():
             errors.append(f"programs: {pid}: selection_note is required when status={r.status}")
+        if r.status == "selected":
+            if r.fetch_method not in t.FETCH_METHODS:
+                errors.append(f"programs: {pid}: fetch_method={r.fetch_method!r} must be one of {list(t.FETCH_METHODS)}")
+        elif r.fetch_method:
+            errors.append(f"programs: {pid}: fetch_method must be empty when status={r.status}")
 
         placeholder = r.status == "excluded" and r.exclusion_reason == "not_found"
         if not PROGRAM_ID.match(pid):
@@ -201,10 +232,9 @@ def _check_previous(registry, previous, errors):
                 errors.append(f"pages: {pid}: added_at changed from {added} to {now[pid]}")
 
 
-def _check_selected(registry, ready, batch, errors, warnings, blocked):
+def _check_selected(registry, ready, batch, errors, warnings, blocked, crawl, manual):
     # Duplicate page_ids are reported by _check_keys; look up the first occurrence here.
     pages = registry.pages.drop_duplicates("page_id").set_index("page_id")
-    tos = dict(zip(registry.domains["domain"], registry.domains["tos_status"]))
     links = registry.program_pages.groupby("program_id")["page_id"].apply(list).to_dict()
     for r in registry.programs[registry.programs["status"] == "selected"].itertuples(index=False):
         pid = r.program_id
@@ -225,14 +255,17 @@ def _check_selected(registry, ready, batch, errors, warnings, blocked):
             page = pages.loc[p]
             if page["url_status"] != "confirmed":
                 (errors if strict else warnings).append(f"programs: {pid}: page {p} is still {page['url_status']}")
-            if strict and page["crawl_allowed"] != "true":
-                reason = _crawl_reason(page["robots_allowed"], tos.get(page["domain"]))
+            if strict and not crawl.ok(p, page):
+                reason = crawl.reason(p, page)
                 blocked[p] = {"page_id": p, "domain": page["domain"], "reason": reason}
-                if page["page_type"] == "program_home":
-                    errors.append(f"programs: {pid}: program_home page {p} is not crawl_allowed ({reason})")
+                if page["page_type"] == "program_home" and r.fetch_method == "auto":
+                    errors.append(f"programs: {pid}: program_home page {p} is not crawlable ({reason}); "
+                                  "fetch_method=auto requires it")
+        if strict and r.fetch_method == "manual":
+            manual.append(pid)
 
 
-def _report(registry):
+def _report(registry, crawl):
     progs = registry.programs
     sel = progs[progs["status"] == "selected"]
     quota = {g: {"target": QUOTAS[g], "selected": int((sel["cip_group"] == g).sum()),
@@ -241,11 +274,10 @@ def _report(registry):
     status_counts = {g: {s: int(((progs["cip_group"] == g) & (progs["status"] == s)).sum()) for s in t.STATUSES}
                      for g in GROUP_ORDER}
     reasons = dict(Counter(progs.loc[progs["status"] == "excluded", "exclusion_reason"]))
-    tos = dict(zip(registry.domains["domain"], registry.domains["tos_status"]))
+    tos = crawl.tos
     pages = registry.pages
-    blocked = [{"page_id": p, "domain": d, "reason": _crawl_reason(r, tos.get(d))}
-               for p, d, r, c in zip(pages["page_id"], pages["domain"], pages["robots_allowed"],
-                                     pages["crawl_allowed"]) if c != "true"]
+    blocked = [{"page_id": row.page_id, "domain": row.domain, "reason": crawl.reason(row.page_id, row._asdict())}
+               for row in pages.itertuples(index=False) if not crawl.ok(row.page_id, row._asdict())]
     link_counts = registry.program_pages.groupby("page_id")["program_id"].nunique()
     return {
         "quota": quota,
@@ -258,7 +290,7 @@ def _report(registry):
     }
 
 
-def validate(registry, candidates, previous=None, ready=False, batch=None):
+def validate(registry, candidates, previous=None, ready=False, batch=None, url_check=None):
     result = ValidationResult()
     _check_columns(registry, result.errors)
     if result.errors:
@@ -269,9 +301,14 @@ def validate(registry, candidates, previous=None, ready=False, batch=None):
     _check_pages(registry, result.errors)
     if previous:
         _check_previous(registry, previous, result.errors)
-    blocked = {}
-    _check_selected(registry, ready, batch, result.errors, result.warnings, blocked)
-    result.report = _report(registry)
+    crawl = _Crawl(registry, url_check)
+    if ready and url_check is None:
+        result.warnings.append("url_check.csv not available: site blocking (HTTP 403) was not checked; "
+                               "run `gradprog registry check-urls`")
+    blocked, manual = {}, []
+    _check_selected(registry, ready, batch, result.errors, result.warnings, blocked, crawl, manual)
+    result.report = _report(registry, crawl)
     if ready:
         result.report["ready_crawl_blocked"] = list(blocked.values())
+        result.report["ready_manual_programs"] = manual
     return result

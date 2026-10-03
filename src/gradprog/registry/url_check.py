@@ -4,8 +4,10 @@ Only status codes and final URLs are recorded; response bodies are never read.
 """
 
 import os
+import re
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+from urllib.parse import urlsplit
 
 import httpx
 import pandas as pd
@@ -41,6 +43,21 @@ class _Polite:
             self.last = self.clock()
 
 
+LISTING_PAGE = re.compile(r"^(index|default|home)\.[a-z0-9]+$", re.IGNORECASE)
+
+
+def is_different_page(url, final):
+    """06 §4.4: the redirect target is obviously not the same page (home, listing, redirect parameter)."""
+    old, new = urlsplit(url), urlsplit(final)
+    if old.path not in ("", "/") and new.path in ("", "/"):
+        return True
+    parts = PurePosixPath(new.path).parts[1:]
+    if parts and LISTING_PAGE.match(parts[-1]) and len(parts) - 1 <= 1:
+        return True
+    names = [p.split("=", 1)[0] for p in new.query.split("&") if p]
+    return any("redirect" in n.lower() for n in names)
+
+
 def _classify(url, resp):
     final = str(resp.url)
     moved = final if final != url else ""
@@ -53,7 +70,11 @@ def _classify(url, resp):
         same = normalize_url(final) == url
     except UrlError:
         same = False
-    return ("ok" if same else "redirected"), str(code), moved
+    if same:
+        return "ok", str(code), moved
+    if is_different_page(url, final):
+        return "redirected_other", str(code), moved
+    return "redirected", str(code), moved
 
 
 def check_urls(registry, contact_email=None, client=None, min_interval=3.0, clock=None, sleep=None, now=None,

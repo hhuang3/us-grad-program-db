@@ -247,6 +247,45 @@ def test_redirect_loop_is_error(proposed):
     assert by_page(run(proposed, pages)[0])["pg-0005"].result == "error"
 
 
+@pytest.mark.parametrize(
+    "final",
+    [
+        "https://grad.alpha.edu/",                                  # home page
+        "https://grad.alpha.edu/programs/index.php",               # section listing
+        "https://grad.alpha.edu/default.aspx",
+        "https://grad.alpha.edu/programs/index.php?redirectid=103",  # WashU-style
+        "https://grad.alpha.edu/fees/tuition-2027.pdf?RedirectFrom=old",
+    ],
+)
+def test_redirect_to_a_different_page_needs_review(proposed, final):
+    def pages(request):
+        if str(request.url) == "https://grad.alpha.edu/tuition.pdf":
+            return httpx.Response(301, headers={"Location": final})
+        if str(request.url) == final:
+            return httpx.Response(200)
+        return default_pages(request)
+    row = by_page(run(proposed, pages)[0])["pg-0005"]
+    assert (row.result, row.final_url) == ("redirected_other", final)
+
+
+@pytest.mark.parametrize(
+    "final",
+    [
+        "https://grad.alpha.edu/fees/tuition.pdf",                  # moved deeper
+        "https://grad.alpha.edu/programs/ms/index.php",            # index page two levels down
+        "https://www.grad.alpha.edu/tuition.pdf",                  # host change only
+    ],
+)
+def test_ordinary_redirect_still_suggests_final_url(proposed, final):
+    def pages(request):
+        if str(request.url) == "https://grad.alpha.edu/tuition.pdf":
+            return httpx.Response(301, headers={"Location": final})
+        if str(request.url) == final:
+            return httpx.Response(200)
+        return default_pages(request)
+    assert by_page(run(proposed, pages)[0])["pg-0005"].result == "redirected"
+
+
 def test_redirect_to_http_is_redirected(proposed):
     def pages(request):
         if str(request.url) == "https://grad.alpha.edu/tuition.pdf":
