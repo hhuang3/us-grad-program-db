@@ -1,0 +1,3 @@
+# Thresholds for suspected_redesign (docs/spec/07_snapshots.md §7.1).
+char_drop: 0.5        # (prev_chars - new_chars) / prev_chars > char_drop
+min_similarity: 0.3   # line ratio < min_similarity

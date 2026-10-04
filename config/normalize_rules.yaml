@@ -1,0 +1,6 @@
+# Extra normalization rules per domain (docs/spec/07_snapshots.md §6.3).
+# domain:
+#   - {remove_selector: "<CSS selector>"}       # removed after the generic rules of step 3
+#   - {remove_line_regex: "<Python regex>"}     # after step 5, remove whole lines that match
+# Any change here requires bumping NORMALIZER_VERSION (enforced by tests).
+{}

@@ -30,6 +30,7 @@
 
 - **自动抓取**：页面“可抓取”，即 `crawl_allowed = true`，**且**不在 `url_check.csv` 最近一次为 HTTP 403 的名单中（06 §5.2 的定义），**且**至少关联一个 `status = selected` 的项目。项目的 `fetch_method` 不影响页面能否自动抓取。
 - **人工取得**：关联 `fetch_method = manual` 的项目、且**不可抓取**的页面。
+- 关联 `fetch_method = auto` 项目、但**不可抓取**的页面（例如 robots 未检查或条款不明的非首页页面）：两边都不纳入，在每次运行报告中列为“未纳入取得”，建议运行 `registry check-robots` 或把项目改为 manual（2026-10-04 补充）。
 - 一个页面不会同时出现在两边；同一项目的页面可以分属两边（例如 NYU MS DS 的 pg-0006 自动抓取，其余 3 页人工取得）。`fetch_method` 继续表示“项目的首页能否自动抓取”（06 §3.1），不改它的定义。
 
 ## 4. 存储结构
@@ -142,40 +143,40 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 1. **取得 HTML**：
    - HTML：按 `Content-Type` 的 charset 解码；没有时按 `<meta charset>`；都没有时按 UTF-8，无法解码的字节替换为 U+FFFD。
    - MHTML：解出 `text/html` 主部分（与 `Snapshot-Content-Location` 对应的部分，没有对应时取第一个 `text/html` 部分），处理 quoted-printable 和 base64 编码。
-   - PDF：用 pdfplumber 逐页 `extract_text()`，页与页之间用一个空行分隔；然后跳到第 4 步。
-2. **删除元素**：
+   - PDF：用 pdfplumber 逐页 `extract_text()`，页与页之间用一个空行分隔；然后跳到第 5 步。
+2. **只处理 `<body>`**：`<head>` 中的内容（`title`、`meta` 等）不进入正文；没有 `<body>` 时处理整个文档。
+3. **删除元素**：
    - 标签：`script`、`style`、`noscript`、`template`、`svg`、`iframe`、`header`、`nav`、`footer`、`form`、HTML 注释。
    - ARIA 角色：`role` 为 `banner`、`navigation`、`contentinfo`、`search` 的元素。
-   - 隐藏元素：带 `hidden` 属性的元素；内联样式含 `display:none` 或 `visibility:hidden` 的元素（不区分大小写、忽略空格）。
-     **不删除 `aria-hidden="true"` 的元素**。招生页常用手风琴（accordion）折叠 FAQ 和要求，折叠的面板通常标 `aria-hidden="true"`，删了会丢掉正文。
+   - **不按可见性删除任何元素**（2026-10-04 确认）：`aria-hidden="true"`、`hidden` 属性、内联 `display:none` 或 `visibility:hidden` 的元素一律保留。招生页常用折叠面板（accordion）收起 FAQ、申请要求和截止日期，收起的内容就是靠这些方式隐藏的；我们不执行 JavaScript，拿到的是全部收起的状态，按可见性删除会丢掉正文。只按结构删除（本步其余各条）。可见性造成的噪音，3e 按域名在 §6.3 的规则中处理。
    - Cookie 提示：`id` 或 `class` 中含有 `cookie`、`consent`、`gdpr`（不区分大小写）的元素。这是按名称猜的，误删时用 §6.3 的规则覆盖。
    - `config/normalize_rules.yaml` 中该域名的额外规则（§6.3）。
-3. **转为文本**：
+4. **转为文本**：
    - 块级元素（`p`、`div`、`li`、`h1`–`h6`、`section`、`article`、`br`、`dt`、`dd` 等）前后换行。
    - 表格：每个 `<tr>` 一行，单元格按文档顺序用 ` | ` 连接，保留单元格顺序。
    - 链接只保留文字，不保留 href。
-4. **统一空白**：
+5. **统一空白**：
    - 换行统一为 `\n`。
    - 每行内的连续空白（含不换行空格）合并为一个空格，去掉行首行尾空白。
    - 删除空行（连续空行也全部删除，所以“空行”不承载信息）。
    - 文件以一个 `\n` 结尾。
    - Unicode 做 NFC 规范化。
-5. **已知噪音**：
-   - v1 **不做**通用的时间戳或令牌删除。会话令牌、版本号参数之类的噪音都在 URL（href、src）里，第 3 步已经丢掉了 href，不会进入正文。
+6. **已知噪音**：
+   - v1 **不做**通用的时间戳或令牌删除。会话令牌、版本号参数之类的噪音都在 URL（href、src）里，第 4 步已经丢掉了 href，不会进入正文。
    - 正文里的时间戳（例如“Last updated …”）可能是有意义的信息，按域名在 §6.3 中处理，3e 根据实际噪音再补。
 - **确定性**：同一个原始文件、同一个 normalizer_version，必须得到逐字节相同的输出。依赖库的版本锁在 uv.lock 中。
 
 ### 6.3 按域名的额外规则 `config/normalize_rules.yaml`
 
 ```yaml
-# domain: list of rules; applied after the generic rules of step 2
-# - {remove_selector: "<CSS selector>"}       # remove matching elements
-# - {remove_line_regex: "<Python regex>"}     # after step 4, remove whole lines that match
+# domain: list of rules; applied after the generic rules of step 3
+# - {remove_selector: "<CSS selector>"}       # remove matching elements (step 3)
+# - {remove_line_regex: "<Python regex>"}     # after step 5, remove whole lines that match
 {}
 ```
 
 - 初始为空（`{}`）。键是完整域名（与 domains.csv 一致）。
-- 只有两种规则：`remove_selector`（第 2 步删除元素）、`remove_line_regex`（第 4 步之后删除整行）。
+- 只有两种规则：`remove_selector`（第 3 步删除元素）、`remove_line_regex`（第 5 步之后删除整行）。
 - 规则内容（或任何会改变输出的代码、依赖库）变化时，**必须升 `normalizer_version`**。测试会检查：规则文件内容的哈希写在代码中，和当前版本号对应；规则变了而版本号没变，测试失败。
 
 ### 6.4 重新规范化 `gradprog snapshot renormalize`
@@ -253,6 +254,7 @@ min_similarity: 0.3   # line ratio < min_similarity
 - 有变化的页面：page_id、项目、增删行数。
 - 链接发现的候选。
 - 人工取得的待办数量（同 manual-due 的规则）。
+- “未纳入取得”的页面（§3）：page_id、项目、不可抓取的原因。
 - 普通跳转与“补登”的提示。
 - 报告不得含页面正文；`runs.csv` 同时追加一行。
 
