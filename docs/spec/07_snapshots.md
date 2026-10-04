@@ -69,7 +69,7 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 | `classification` | 见 §7 |
 | `prev_snapshot_id` | 用于比较的上一版（§7.2）；没有可比较的上一版时为空 |
 | `added_lines`、`removed_lines` | 与上一版相比增删的行数（只有 `changed` / `suspected_redesign` 时填写）。指令要求报告写增删行数，这两个数放进索引，报告就能由索引生成 |
-| `note` | 自由文本，**不得含页面正文**；固定标记有 `time_unknown`、`retrieved_at_from_mtime`、`renormalized`、`redirected`（见 §7.1） |
+| `note` | 自由文本，**不得含页面正文**；固定标记有 `time_unknown`、`retrieved_at_from_mtime`、`renormalized`、`redirected`（见 §7.1），以及 `charset=<名称>`：自动抓取的 HTML 在 HTTP 头中声明了字符集时记录下来，重新规范化（§6.4）时按它解码，保证结果一致（2026-10-04 补充）。多个标记用 `; ` 分隔 |
 
 - **键**：`(snapshot_id, normalizer_version)` 唯一。同一个原始快照在重新规范化后会出现第二行，两行的 `snapshot_id` 相同、`normalizer_version` 不同（§6.4）。
 - 同一页面同一秒内出现两次取得时，`snapshot_id` 会重复，这时报错，不写入。

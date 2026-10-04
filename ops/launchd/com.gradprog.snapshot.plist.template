@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Template: replace __REPO_DIR__ with the absolute path of this repository, then install by hand (see README.md). -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.gradprog.snapshot</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>__REPO_DIR__/ops/launchd/run-snapshot.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>__REPO_DIR__</string>
+  <!-- Every Monday 07:00 in the Mac's system time zone (Asia/Tokyo on the owner's Mac). -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>7</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>__REPO_DIR__/data/snapshots/logs/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>__REPO_DIR__/data/snapshots/logs/launchd.err.log</string>
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>

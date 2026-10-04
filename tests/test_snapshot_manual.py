@@ -75,6 +75,8 @@ def test_location_matches_known_redirect_target(reg, store, tmp_path):
     ix.update(snapshot_id="snap-20261007T000000Z-pg-0003", retrieved_at="2026-10-07T00:00:00Z",
               final_url="https://business.alpha.edu/programs/msba", method="auto", classification="unchanged")
     store.append_index(ix)
+    first = store.norm_path("pg-0003", store.read_index().iloc[0]["snapshot_id"], 1)
+    store.norm_path("pg-0003", ix["snapshot_id"], 1).write_bytes(first.read_bytes())   # a real row has its text
     row = reg_one(reg, store, write(tmp_path, "moved.mhtml", make_mhtml("https://business.alpha.edu/programs/msba", BODY)),
                   when="2026-10-21T00:00:00Z")
     assert row["final_url"] == "https://business.alpha.edu/programs/msba"
