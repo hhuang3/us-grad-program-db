@@ -173,3 +173,46 @@ def test_render_manual_due(reg, store):
     assert "alpha-ms-businessanalytics" in md
     assert f"[{URL4}]({URL4})" in md
     assert "从未" in md and "2" in md.splitlines()[-1]
+
+
+# --- redirected saves and --known-redirect -------------------------------------
+
+MOVED = "https://business.alpha.edu/programs/msba-admissions"
+
+
+def test_known_redirect_registers_the_new_address(reg, store, tmp_path):
+    src = write(tmp_path, "moved.mhtml", make_mhtml(MOVED, BODY))
+    with pytest.raises(SnapshotError):
+        reg_one(reg, store, src, page="pg-0004")
+    row = register_manual(reg, store, "pg-0004", src, retrieved_at="2026-10-06T10:00:00Z", known_redirect=MOVED,
+                          now=lambda: "2026-10-06T12:00:00Z", thresholds=T, rules={})
+    assert (row["requested_url"], row["final_url"]) == (URL4, MOVED)
+    assert "redirected" in row["note"].split("; ")
+    assert list(reg.pages.loc[reg.pages.page_id == "pg-0004", "url"]) == [URL4]       # registry untouched
+    # later captures recognise the address without the option, also via --from-dir
+    (tmp_path / "later").mkdir()
+    (tmp_path / "later" / "again.mhtml").write_bytes(make_mhtml(MOVED, BODY))
+    registered, unmatched = register_from_dir(reg, store, tmp_path / "later", retrieved_at="2026-10-20T10:00:00Z",
+                                              now=lambda: "2026-10-20T12:00:00Z", thresholds=T, rules={})
+    assert [(r["page_id"], r["classification"]) for r in registered] == [("pg-0004", "unchanged")] and not unmatched
+
+
+@pytest.mark.parametrize("target", ["https://other.edu/msba", "http://business.alpha.edu/x", "not a url"])
+def test_known_redirect_must_be_same_site_https(reg, store, tmp_path, target):
+    src = write(tmp_path, "moved.mhtml", make_mhtml(MOVED, BODY))
+    with pytest.raises(SnapshotError):
+        register_manual(reg, store, "pg-0004", src, retrieved_at="2026-10-06", known_redirect=target,
+                        now=lambda: "2026-10-06T12:00:00Z", thresholds=T, rules={})
+    assert not (store.root / "index.csv").exists()
+
+
+def test_known_redirect_does_not_accept_other_addresses(reg, store, tmp_path):
+    src = write(tmp_path, "else.mhtml", make_mhtml("https://business.alpha.edu/elsewhere", BODY))
+    with pytest.raises(SnapshotError, match="elsewhere"):
+        register_manual(reg, store, "pg-0004", src, retrieved_at="2026-10-06", known_redirect=MOVED,
+                        now=lambda: "2026-10-06T12:00:00Z", thresholds=T, rules={})
+
+
+def test_saved_registered_address_has_no_redirect_note(reg, store, tmp_path):
+    row = reg_one(reg, store, write(tmp_path, "a.mhtml", make_mhtml(URL3, BODY)))
+    assert "redirected" not in row["note"]

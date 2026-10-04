@@ -173,8 +173,8 @@ def cmd_snapshot(args):
         from gradprog.snapshot.manual import register_from_dir, register_manual
 
         if args.from_dir:
-            if args.page or args.file:
-                raise ValueError("--from-dir cannot be combined with --page/--file")
+            if args.page or args.file or args.known_redirect:
+                raise ValueError("--from-dir cannot be combined with --page/--file/--known-redirect")
             rows, unmatched = register_from_dir(reg, store, args.from_dir, retrieved_at=args.retrieved_at,
                                                 url_check=_url_check())
             print(f"registered {len(rows)} file(s): {dict(Counter(r['classification'] for r in rows))}")
@@ -184,7 +184,7 @@ def cmd_snapshot(args):
             if not (args.page and args.file):
                 raise ValueError("use --page and --file, or --from-dir")
             row = register_manual(reg, store, args.page, args.file, retrieved_at=args.retrieved_at,
-                                  url_check=_url_check())
+                                  url_check=_url_check(), known_redirect=args.known_redirect)
             print(f"{row['snapshot_id']}: {row['classification']} {row['note']}")
     elif args.snapshot_command == "renormalize":
         from gradprog.snapshot.renormalize import renormalize
@@ -246,6 +246,7 @@ def main(argv=None):
     sm.add_argument("--file", type=Path)
     sm.add_argument("--from-dir", type=Path)
     sm.add_argument("--retrieved-at", help="UTC YYYY-MM-DDTHH:MM:SSZ or YYYY-MM-DD; default: file time")
+    sm.add_argument("--known-redirect", help="new address the site redirects this page to (07 §5.2)")
     ssub.add_parser("renormalize", help="re-normalize stored snapshots under the current normalizer version")
     sb = ssub.add_parser("backup", help="incremental copy of data/snapshots")
     sb.add_argument("--dest", required=True, type=Path)

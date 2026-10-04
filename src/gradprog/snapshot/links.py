@@ -7,6 +7,7 @@ import yaml
 from bs4 import BeautifulSoup
 
 from gradprog.registry.urls import UrlError, normalize_url
+from gradprog.snapshot.normalize import strip_structure
 
 KEYWORDS_FILE = Path(__file__).resolve().parents[3] / "config" / "link_keywords.yaml"
 
@@ -26,8 +27,9 @@ def load_keywords(path=KEYWORDS_FILE):
     return [w.lower() for w in words]
 
 
-def discover_links(raw_html, base_url, registered_urls, keywords):
+def discover_links(raw_html, base_url, registered_urls, keywords, domain=None, rules=None):
     soup = BeautifulSoup(raw_html, "lxml")
+    strip_structure(soup.body or soup, domain, rules or {})   # 07 §8: only links in the content area
     home = registrable_domain(urlsplit(base_url).hostname)
     registered = set()
     for u in registered_urls:
@@ -42,6 +44,8 @@ def discover_links(raw_html, base_url, registered_urls, keywords):
         except (UrlError, ValueError):
             continue
         parts = urlsplit(url)
+        if "@" in parts.path:   # e-mail address written as a relative link
+            continue
         if registrable_domain(parts.hostname) != home or url in registered or url in seen:
             continue
         text = " ".join(a.get_text(" ").split())

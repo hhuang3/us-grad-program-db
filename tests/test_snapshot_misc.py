@@ -82,6 +82,30 @@ def test_keywords_from_config():
         "visa"]
 
 
+def test_discover_links_ignores_navigation_regions_and_email_paths():
+    html = ('<header><a href="/apply">Header apply</a></header>'
+            '<nav><a href="/admissions/undergraduate">Undergraduate Admission</a></nav>'
+            '<div role="navigation"><a href="/phd/admission">PhD Admission</a></div>'
+            '<div id="cookie-banner"><a href="/privacy-faq">Cookie FAQ</a></div>'
+            '<main><a href="/ms/apply">Apply to the MS</a> <a href="visp-msds@stat.alpha.edu">Email admissions</a>'
+            '<a href="/ms/tuition">Tuition</a></main>'
+            '<footer><a href="/deadlines">Footer deadlines</a></footer>'
+            '<div class="site-menu"><a href="/fees">Menu fees</a></div>')
+    got = discover_links(html, "https://datascience.alpha.edu/ms/", set(), ["apply", "admission", "faq", "deadline",
+                                                                           "tuition", "fee"])
+    assert [c["url"] for c in got] == ["https://datascience.alpha.edu/ms/apply",
+                                       "https://datascience.alpha.edu/ms/tuition",
+                                       "https://datascience.alpha.edu/fees"]
+
+
+def test_discover_links_applies_domain_remove_selector():
+    html = '<main><a href="/ms/apply">Apply</a></main><div class="site-menu"><a href="/fees">Menu fees</a></div>'
+    rules = {"datascience.alpha.edu": [{"remove_selector": ".site-menu"}]}
+    got = discover_links(html, "https://datascience.alpha.edu/ms/", set(), ["apply", "fee"],
+                         domain="datascience.alpha.edu", rules=rules)
+    assert [c["url"] for c in got] == ["https://datascience.alpha.edu/ms/apply"]
+
+
 def test_discover_links():
     html = ('<a href="/ms/apply">Apply</a> <a href="https://gsas.alpha.edu/x">Deadlines and fees</a> '
             '<a href="https://datascience.alpha.edu/ms/apply">Apply again</a> '

@@ -152,7 +152,7 @@ def _anomalies(rows, before, registry):
     return out
 
 
-def _links(rows, store, registry, keywords):
+def _links(rows, store, registry, keywords, rules):
     pages = registry.pages.drop_duplicates("page_id").set_index("page_id")
     found, seen = [], set()
     for r in rows:
@@ -165,7 +165,8 @@ def _links(rows, store, registry, keywords):
             pp = registry.program_pages
             registered = set(pages.loc[[p for p in pp.loc[pp["program_id"] == program, "page_id"] if p in pages.index],
                                        "url"])
-            for c in discover_links(raw, r["final_url"] or r["requested_url"], registered, keywords):
+            for c in discover_links(raw, r["final_url"] or r["requested_url"], registered, keywords,
+                                    domain=pages.loc[r["page_id"], "domain"], rules=rules):
                 if (program, c["url"]) not in seen:
                     seen.add((program, c["url"]))
                     found.append({"program_id": program, "page_id": r["page_id"], **c})
@@ -234,7 +235,7 @@ def run_auto(registry, store, contact_email=None, client=None, clock=None, sleep
     result = RunResult(run_id=run_id, planned=planned, rows=rows,
                        counts={c: sum(r["classification"] == c for r in rows) for c in CLASSES},
                        anomalies=_anomalies(rows, before, registry),
-                       link_candidates=_links(rows, store, registry, keywords),
+                       link_candidates=_links(rows, store, registry, keywords, rules),
                        not_included=not_included(registry, url_check),
                        manual_due=len(manual_due(registry, store, today=now()[:10], url_check=url_check)))
     finished = now()

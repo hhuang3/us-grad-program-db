@@ -3,12 +3,14 @@
 import re
 from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import pandas as pd
 
 from gradprog.registry.urls import UrlError, normalize_url
 from gradprog.snapshot.classify import load_thresholds
 from gradprog.snapshot.ingest import ingest, join_note
+from gradprog.snapshot.links import registrable_domain
 from gradprog.snapshot.normalize import load_rules, mhtml_location
 from gradprog.snapshot.store import CLASSES, SUCCESS, SnapshotError, make_run_id
 from gradprog.snapshot.targets import page_sets, programs_of
@@ -61,9 +63,22 @@ def _retrieved_at(value, file):
         raise SnapshotError(str(e)) from e
 
 
-def _allowed_urls(registry, store, page_id):
+def _known_redirect(url, target):
+    """07 §5.2 --known-redirect: an https URL on the same registrable domain as the registered URL."""
+    try:
+        target = normalize_url(target)
+    except UrlError as e:
+        raise SnapshotError(f"--known-redirect {target!r} is not a valid https URL") from e
+    if registrable_domain(urlsplit(target).hostname) != registrable_domain(urlsplit(url).hostname):
+        raise SnapshotError(f"--known-redirect {target} is not on the same site as {url}")
+    return target
+
+
+def _allowed_urls(registry, store, page_id, known_redirect=None):
     url = registry.pages.loc[registry.pages["page_id"] == page_id, "url"].iloc[0]
     allowed = {url}
+    if known_redirect:
+        allowed.add(_known_redirect(url, known_redirect))
     ix = store.read_index()
     for final in ix.loc[ix["page_id"] == page_id, "final_url"]:
         try:
@@ -88,12 +103,13 @@ def _read_file(file):
     raise SnapshotError(f"{file.name}: only .mhtml and .pdf files can be registered")
 
 
-def _register(registry, store, page_id, file, retrieved_at, run_id, thresholds, rules, url_check):
+def _register(registry, store, page_id, file, retrieved_at, run_id, thresholds, rules, url_check,
+              known_redirect=None):
     _, manual = page_sets(registry, url_check)
     if page_id not in manual:
         raise SnapshotError(f"{page_id} is not a manually captured page (07 §3)")
     raw, kind, location = _read_file(file)
-    url, allowed = _allowed_urls(registry, store, page_id)
+    url, allowed = _allowed_urls(registry, store, page_id, known_redirect)
     final = url
     if kind == "mhtml":
         if not location:
@@ -106,6 +122,7 @@ def _register(registry, store, page_id, file, retrieved_at, run_id, thresholds, 
             raise SnapshotError(f"{Path(file).name}: saved page address {location} does not match {page_id} ({url})")
         final = loc
     at, note = _retrieved_at(retrieved_at, file)
+    note = join_note(note, "" if final == url else "redirected")
     return ingest(store, registry, page_id=page_id, run_id=run_id, method="manual", retrieved_at=at,
                   requested_url=url, final_url=final, http_status="", raw=raw, content_type=kind, note=note,
                   rules=rules, thresholds=thresholds)
@@ -120,13 +137,14 @@ def _record_run(store, run_id, started, finished, rows):
 
 
 def register_manual(registry, store, page_id, file, retrieved_at=None, now=None, thresholds=None, rules=None,
-                    url_check=None):
+                    url_check=None, known_redirect=None):
     now = now or utc_now
     thresholds = thresholds or load_thresholds()
     rules = load_rules() if rules is None else rules
     started = now()
     run_id = make_run_id(started, "manual")
-    row = _register(registry, store, page_id, file, retrieved_at, run_id, thresholds, rules, url_check)
+    row = _register(registry, store, page_id, file, retrieved_at, run_id, thresholds, rules, url_check,
+                    known_redirect)
     _record_run(store, run_id, started, now(), [row])
     return row
 

@@ -93,7 +93,8 @@ def _is_cookie(tag):
     return bool(ident.strip()) and bool(COOKIE.search(ident))
 
 
-def _strip(root, domain, rules):
+def strip_structure(root, domain, rules):
+    """07 §6.2 step 3: remove comments, structural elements, navigation roles, cookie notices, domain selectors."""
     for c in root.find_all(string=lambda s: isinstance(s, Comment)):
         c.extract()
     for tag in root.find_all(REMOVE_TAGS):
@@ -158,7 +159,7 @@ def _finish(text, domain, rules):
 def _html_text(text, domain, rules):
     soup = BeautifulSoup(text, "lxml")
     root = soup.body or soup
-    _strip(root, domain, rules)
+    strip_structure(root, domain, rules)
     out = []
     _emit(root, out)
     return "".join(out)

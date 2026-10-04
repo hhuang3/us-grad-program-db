@@ -114,6 +114,11 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 - 接受 `.mhtml` 和 `.pdf`，其他扩展名报错。
 - `.mhtml`：用标准库 `email` 解析，读取文件头中的 `Snapshot-Content-Location`；没有时，读主 HTML 部分的 `Content-Location`。两者都没有就报错。
   - 地址规范化（06 §3.5）后，必须等于该 page_id 登记的 URL，或等于该页面在 index.csv 中出现过的某个 `final_url`（“已知的跳转目标”）。不一致就报错，不登记。
+  - 地址与登记的 URL 不同时（即保存的是跳转后的页面），`final_url` 记为该地址，note 加 `redirected`，与自动取得一致；报告中建议“确认后在登记表中改用最终网址”。
+- **`--known-redirect <URL>`**（只能与 `--page`、`--file` 一起用；2026-10-05 补充）：网站把登记的网址跳转到新地址、而 index.csv 里还没有这个地址时，由所有者确认后用它把新地址加为该页面的已知跳转目标。
+  - URL 必须能规范化（06 §3.5），且与登记 URL 属于同一个可注册域名（§8 的规则），否则报错。
+  - 文件中的地址必须等于这个 URL（或原有的允许地址）。登记成功后该地址写进 index.csv 的 `final_url`，以后的登记（包括 `--from-dir`）自动认得它，不需要再给这个选项。
+  - 不修改登记表（pages.csv）；改网址由所有者另行决定。
 - `.pdf`：文件头必须是 `%PDF-`；没有地址可核对，以 `--page` 为准。
 - 复制文件（不移动），写入 `raw/`，再规范化、比较、写索引。
 - `--retrieved-at`：
@@ -229,7 +234,8 @@ min_similarity: 0.3   # line ratio < min_similarity
 ## 8. 链接发现
 
 - 对象：本次成功取得（分类为 4–7）的 `page_type = program_home` 页面。
-- 从**原始 HTML**（不是规范化正文）中提取 `<a href>`，解析为绝对 URL，再规范化（06 §3.5）。规范化失败的（例如 http、mailto）忽略。
+- 从**原始 HTML**（不是规范化正文）中提取 `<a href>`。提取前先按 §6.2 **第 3 步的结构规则**删除页头、导航、页脚等区域：`header`、`nav`、`footer`、`form` 等标签，`role` 为 `banner` / `navigation` / `contentinfo` / `search` 的元素，Cookie 提示，以及该域名在 `config/normalize_rules.yaml` 中的 `remove_selector`。这样只留正文区域内的链接（2026-10-04 修订：第一次运行中，87 个候选大多来自导航菜单）。
+- 解析为绝对 URL，再规范化（06 §3.5）。规范化失败的（例如 http、mailto）忽略。**路径中含 `@` 的链接忽略**：这通常是邮箱地址被误写成相对链接，例如 `visp-msds@stat.wisc.edu`。
 - 范围（2026-10-04 修订）：与该首页属于**同一所大学注册域名**的链接，包括所有子域名（例如首页在 `cds.nyu.edu`，`gsas.nyu.edu` 上的链接也算）。注册域名 = 主机名以 `.edu` 结尾时取最后两段（如 `nyu.edu`、`utdallas.edu`）；不以 `.edu` 结尾时退回为完全相同的主机名。理由：申请和截止日期页面常在研究生院子域名上。
 - 筛选：链接文字或 URL 路径中含 `config/link_keywords.yaml` 的任一关键词（不区分大小写）。初始关键词：admission、apply、deadline、requirement、tuition、cost、fee、faq、international、i-20、visa。
 - 与该项目在 program_pages 中已登记页面的 URL 比较；**没有登记的列为候选**，写进运行报告（项目、链接文字、URL），同一候选在同一报告中只列一次。
