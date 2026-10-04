@@ -1,6 +1,6 @@
 # 05 数据模型（设计，Phase 1 不实现）
 
-> 状态：v1.2（Phase 2a：全量重抽日期暂定 8 月 15 日；页面与项目的登记见 `06_source_registry.md`）。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
+> 状态：v1.3（Phase 3a：snapshot 层以 `07_snapshots.md` 为准）。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
 
 ## 1. 四层数据状态
 
@@ -8,7 +8,7 @@
 
 | 层 | 是什么 | 主键 | 关键字段 | 谁写入 |
 |---|---|---|---|---|
-| `snapshot` | 一次原始抓取 | `snapshot_id` | `page_id, url, fetched_at (UTC), http_status, fetch_status, content_sha256, normalized_text, normalized_text_sha256` | 抓取器 |
+| `snapshot` | 一次原始取得（自动抓取或人工保存） | `snapshot_id` | **以 `07_snapshots.md` §4.2 为准**：`page_id, method, retrieved_at, requested_url, final_url, http_status, content_type, raw_sha256, normalizer_version, norm_sha256, classification, prev_snapshot_id` 等 | 抓取器 / 人工登记 |
 | `observation` | 一次抽取的结果（每个字段一行） | `observation_id` | `snapshot_id, program_id, field, value, value_status, valid_for_term, evidence_text, confidence, model_name, prompt_version, schema_version, extracted_at` | 抽取器 |
 | `fact` | 经人工审核确认的当前值 | `(program_id, field, valid_for_term)` 的当前版本 + `fact_version` | `value, value_status, source_observation_id, review_status, reviewer, reviewed_at, evidence_url` | 人工审核 |
 | `release` | 对外发布的数据集版本 | `release_id`（如 `v2027.1`） | `released_at, version, fact 版本集合` | 发布流程 |
@@ -16,8 +16,9 @@
 ### 1.1 snapshot
 
 - `normalized_text`：去掉脚本、样式、导航等噪声后的正文，用于变化检测。只在内部保存，不发布（见 00 §2）。
-- `fetch_status` 枚举：`ok / http_error / timeout / blocked / not_html`。页面不可访问时也要写一条 snapshot，记录失败本身。
-- 变化检测以 `normalized_text_sha256` 为准，不用原始 HTML 的 hash（页面上的时间戳、广告会让 HTML 每次都不同）。
+- 取得结果由 07 §7.1 的 `classification` 表示（`first_capture / unchanged / changed / suspected_redesign / unavailable / blocked / fetch_error`），取代原先的 `fetch_status`。页面不可访问时也要写一条 snapshot，记录失败本身。
+- 正文规范化与变化检测的规则见 07 §6–§7；规范化正文和原始文件只保存在本地，不进 git。
+- 变化检测以 `normalized_text_sha256`（07 中的 `norm_sha256`）为准，不用原始 HTML 的 hash（页面上的时间戳、广告会让 HTML 每次都不同）。
 
 ### 1.2 observation
 
@@ -57,7 +58,7 @@
 | `found` | 页面可访问，且找到了该字段 | 有值（符合 02 中的类型或枚举） |
 | `not_mentioned` | 页面可访问，抽取成功，且页面确实没写 | null |
 | `extraction_failed` | 页面可访问，但抽取失败（模型报错、输出不合 schema、校验不通过） | null |
-| `page_unavailable` | 页面不可访问（snapshot `fetch_status ≠ ok`） | null |
+| `page_unavailable` | 页面不可访问（snapshot `classification ∈ {blocked, unavailable, fetch_error}`，见 07 §7.1） | null |
 
 - 约束：`value_status = found` ⇔ `value` 非空。违反时校验报错，不写入。
 - 抓取失败时，同样要为该 page 关联的每个 `(program_id, field)` 写一条 observation，`value_status = page_unavailable`，关联那条失败的 snapshot。这样“没有数据”也有记录可查。
