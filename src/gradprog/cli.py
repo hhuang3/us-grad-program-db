@@ -11,6 +11,7 @@ RAW = REPO / "data" / "raw"
 MANIFEST = REPO / "data" / "manifest" / "manifest.csv"
 REGISTRY = REPO / "data" / "registry"
 CANDIDATES = REPO / "data" / "ref" / "candidates.csv"
+SNAPSHOTS = REPO / "data" / "snapshots"
 
 
 def cmd_register_manual(args):
@@ -127,6 +128,71 @@ def _print_validation(result):
     print(f"\n{len(result.errors)} error(s), {len(result.warnings)} warning(s)")
 
 
+def _url_check():
+    import pandas as pd
+
+    path = REGISTRY / "url_check.csv"
+    return pd.read_csv(path, dtype=str, keep_default_na=False) if path.exists() else None
+
+
+def cmd_snapshot(args):
+    from collections import Counter
+
+    from gradprog.registry.tables import load_registry
+    from gradprog.snapshot.store import SnapshotStore
+
+    store = SnapshotStore(SNAPSHOTS)
+    if args.snapshot_command == "backup":
+        from gradprog.snapshot.backup import backup
+
+        print(backup(SNAPSHOTS, args.dest))
+        return
+    reg = load_registry(REGISTRY)
+    if args.snapshot_command == "run":
+        from gradprog.snapshot.fetch import run_auto
+
+        result = run_auto(reg, store, page_ids=args.page, dry_run=args.dry_run, url_check=_url_check())
+        if args.dry_run:
+            print(f"dry run: {len(result.planned)} page(s) would be requested")
+            for p in result.planned:
+                print(f"  {p['page_id']}  {p['url']}  (robots: {p['robots_url']})")
+            return
+        print(f"{result.run_id}: {result.counts}")
+        print(f"report: {result.report_path.relative_to(REPO)}")
+    elif args.snapshot_command == "manual-due":
+        from datetime import datetime, timezone
+
+        from gradprog.snapshot.manual import manual_due, render_manual_due
+
+        due = manual_due(reg, store, today=datetime.now(timezone.utc).date().isoformat(), url_check=_url_check())
+        path = SNAPSHOTS / "manual_due.md"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(render_manual_due(due), encoding="utf-8")
+        print(f"wrote {path.relative_to(REPO)}: {len(due)} page(s) due")
+    elif args.snapshot_command == "register-manual":
+        from gradprog.snapshot.manual import register_from_dir, register_manual
+
+        if args.from_dir:
+            if args.page or args.file or args.known_redirect:
+                raise ValueError("--from-dir cannot be combined with --page/--file/--known-redirect")
+            rows, unmatched = register_from_dir(reg, store, args.from_dir, retrieved_at=args.retrieved_at,
+                                                url_check=_url_check())
+            print(f"registered {len(rows)} file(s): {dict(Counter(r['classification'] for r in rows))}")
+            for u in unmatched:
+                print(f"  NOT REGISTERED {u['file']}: {u['reason']}")
+        else:
+            if not (args.page and args.file):
+                raise ValueError("use --page and --file, or --from-dir")
+            row = register_manual(reg, store, args.page, args.file, retrieved_at=args.retrieved_at,
+                                  url_check=_url_check(), known_redirect=args.known_redirect)
+            print(f"{row['snapshot_id']}: {row['classification']} {row['note']}")
+    elif args.snapshot_command == "renormalize":
+        from gradprog.snapshot.renormalize import renormalize
+
+        rows = renormalize(reg, store)
+        print(f"renormalized {len(rows)} snapshot(s): {dict(Counter(r['classification'] for r in rows))}")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="gradprog")
     sub = p.add_subparsers(dest="command", required=True)
@@ -168,6 +234,23 @@ def main(argv=None):
     v.add_argument("--ready", action="store_true", help="Phase 3 readiness checks")
     v.add_argument("--batch", choices=["pilot", "main"], help="batch for --ready")
     reg.set_defaults(func=cmd_registry)
+
+    snap = sub.add_parser("snapshot", help="Phase 3 snapshots and change detection (07)")
+    ssub = snap.add_subparsers(dest="snapshot_command", required=True)
+    sr = ssub.add_parser("run", help="fetch automatically captured pages")
+    sr.add_argument("--page", action="append", help="only this page_id (repeatable)")
+    sr.add_argument("--dry-run", action="store_true", help="list the pages that would be requested")
+    ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    sm = ssub.add_parser("register-manual", help="register browser-saved .mhtml/.pdf files")
+    sm.add_argument("--page")
+    sm.add_argument("--file", type=Path)
+    sm.add_argument("--from-dir", type=Path)
+    sm.add_argument("--retrieved-at", help="UTC YYYY-MM-DDTHH:MM:SSZ or YYYY-MM-DD; default: file time")
+    sm.add_argument("--known-redirect", help="new address the site redirects this page to (07 §5.2)")
+    ssub.add_parser("renormalize", help="re-normalize stored snapshots under the current normalizer version")
+    sb = ssub.add_parser("backup", help="incremental copy of data/snapshots")
+    sb.add_argument("--dest", required=True, type=Path)
+    snap.set_defaults(func=cmd_snapshot)
 
     args = p.parse_args(argv)
     if getattr(args, "ready", False) and not args.batch:

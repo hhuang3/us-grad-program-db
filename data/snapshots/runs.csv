@@ -1,0 +1,4 @@
+run_id,method,started_at,finished_at,first_capture,unchanged,changed,suspected_redesign,unavailable,blocked,fetch_error,anomaly_page_ids
+run-20261004T014459Z-auto,auto,2026-10-04T01:44:59Z,2026-10-04T01:48:41Z,39,0,0,0,0,0,0,
+run-20261004T151335Z-manual,manual,2026-10-04T15:13:35Z,2026-10-04T15:13:37Z,21,0,0,0,0,0,0,
+run-20261004T151338Z-manual,manual,2026-10-04T15:13:38Z,2026-10-04T15:13:38Z,1,0,0,0,0,0,0,

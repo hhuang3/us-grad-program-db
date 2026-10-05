@@ -22,3 +22,11 @@ data/raw/
 # Phase 2 working checklist (regenerated each batch, not tracked)
 data/registry/review_pilot.md
 data/registry/url_check.csv
+
+# Phase 3 snapshots: anything containing page text stays local (docs/spec/07_snapshots.md §4.1)
+data/snapshots/raw/
+data/snapshots/normalized/
+data/snapshots/diffs/
+data/snapshots/reports/
+data/snapshots/manual_due.md
+data/snapshots/logs/
