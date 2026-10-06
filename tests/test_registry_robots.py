@@ -174,3 +174,21 @@ def test_check_robots_requires_contact_email(registry, monkeypatch):
     monkeypatch.delenv("GRADPROG_CONTACT_EMAIL", raising=False)
     with pytest.raises(DownloadError, match="GRADPROG_CONTACT_EMAIL"):
         check_robots(registry, client=httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200))))
+
+
+def test_check_robots_skips_retired_pages(registry):
+    registry.pages.loc[registry.pages.page_id == "pg-0004", "url_status"] = "retired"
+    run(registry)
+    pages = registry.pages.set_index("page_id")
+    assert pages.loc["pg-0004", "robots_allowed"] == "no"        # unchanged (fixture value)
+    d = registry.domains.set_index("domain")
+    assert d.loc["business.alpha.edu", "robots_allows_registered_paths"] == "yes"   # only pg-0003 counted
+
+
+def test_check_robots_does_not_request_domain_with_only_retired_pages(registry):
+    registry.pages.loc[registry.pages.domain == "datascience.alpha.edu", "url_status"] = "retired"
+    before = registry.domains.set_index("domain").loc["datascience.alpha.edu"].to_dict()
+    seen = []
+    run(registry, seen=seen)
+    assert "datascience.alpha.edu" not in {h for h, _, _ in seen}
+    assert registry.domains.set_index("domain").loc["datascience.alpha.edu"].to_dict() == before

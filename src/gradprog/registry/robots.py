@@ -56,7 +56,11 @@ def check_robots(registry, contact_email=None, client=None, min_interval=3.0, cl
 
     pages, domains = registry.pages, registry.domains
     last = None
+    active = pages["url_status"] != "retired"   # 06 §4.1: retired pages are not judged
     for i, row in domains.iterrows():
+        on_domain = pages["domain"] == row["domain"]
+        if on_domain.any() and not (on_domain & active).any():
+            continue
         if last is not None and clock() - last < min_interval:
             sleep(min_interval - (clock() - last))
         try:
@@ -68,7 +72,7 @@ def check_robots(registry, contact_email=None, client=None, min_interval=3.0, cl
             print(f"{row['domain']}: robots.txt request failed: {e}")
             code, text = None, ""
         last = clock()
-        mask = pages["domain"] == row["domain"]
+        mask = on_domain & active
         status, verdicts = robots_verdicts(code, text, list(pages.loc[mask, "url"]))
         pages.loc[mask, "robots_allowed"] = [verdicts[u] for u in pages.loc[mask, "url"]]
         domains.loc[i, "robots_checked_at"] = now()

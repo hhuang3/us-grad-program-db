@@ -37,3 +37,14 @@ def test_sets_are_disjoint_and_sorted(registry):
     auto, manual = page_sets(registry)
     assert not set(auto) & set(manual)
     assert auto == sorted(auto) and manual == sorted(manual)
+
+
+def test_retired_pages_are_neither_fetched_nor_listed(registry):
+    from gradprog.snapshot.targets import not_included
+
+    p = registry.programs
+    p.loc[p.program_id == "alpha-ms-businessanalytics", "fetch_method"] = "manual"
+    registry.pages.loc[registry.pages.page_id.isin(["pg-0002", "pg-0004", "pg-0005"]), "url_status"] = "retired"
+    auto, manual = page_sets(registry)
+    assert auto == ["pg-0001"] and manual == ["pg-0003"]
+    assert not_included(registry) == []

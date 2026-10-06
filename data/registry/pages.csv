@@ -33,8 +33,8 @@ pg-0034,https://ma.stat.columbia.edu/,ma.stat.columbia.edu,program_home,program,
 pg-0035,https://ma.stat.columbia.edu/applications-checklist/,ma.stat.columbia.edu,requirements,program,confirmed,html,yes,false,2026-10-02
 pg-0036,https://ma.stat.columbia.edu/admissions-faq/,ma.stat.columbia.edu,faq,program,confirmed,html,yes,false,2026-10-02
 pg-0037,https://www.gsas.columbia.edu/content/statistics-ma,www.gsas.columbia.edu,admissions,graduate_school,confirmed,html,yes,false,2026-10-02
-pg-0038,https://stat.illinois.edu/academics/graduate-programs/ms-statistics,stat.illinois.edu,program_home,program,confirmed,html,no,false,2026-10-02
-pg-0039,https://stat.illinois.edu/admissions/prospective-graduate-students/application-requirements,stat.illinois.edu,requirements,department,confirmed,html,no,false,2026-10-02
+pg-0038,https://stat.illinois.edu/academics/graduate-programs/ms-statistics,stat.illinois.edu,program_home,program,retired,html,no,false,2026-10-02
+pg-0039,https://stat.illinois.edu/academics/graduate-programs/application-requirements,stat.illinois.edu,requirements,department,confirmed,html,no,false,2026-10-02
 pg-0040,https://econ.wisc.edu/msqe/,econ.wisc.edu,program_home,program,confirmed,html,yes,true,2026-10-02
 pg-0041,https://econ.wisc.edu/msqe-admissions/,econ.wisc.edu,admissions,program,confirmed,html,yes,true,2026-10-02
 pg-0043,https://dornsife.usc.edu/econ/masters/ms-aee/,dornsife.usc.edu,program_home,program,confirmed,html,no,false,2026-10-03
@@ -62,3 +62,4 @@ pg-0064,https://carey.jhu.edu/admissions/international-applicants,carey.jhu.edu,
 pg-0065,https://olin.washu.edu/programs/specialized-masters/ms-in-business-analytics/index.php,olin.washu.edu,program_home,program,confirmed,html,yes,true,2026-10-03
 pg-0066,https://olin.washu.edu/programs/specialized-masters/on-campus-smp-apply.php,olin.washu.edu,admissions,department,confirmed,html,yes,true,2026-10-03
 pg-0068,https://olin.washu.edu/programs/specialized-masters/ms-in-business-analytics/cost-aid-scholarships.php,olin.washu.edu,tuition,program,confirmed,html,yes,true,2026-10-03
+pg-0069,https://catalog.illinois.edu/graduate/las/statistics-ms/,catalog.illinois.edu,program_home,university,confirmed,html,yes,false,2026-10-05

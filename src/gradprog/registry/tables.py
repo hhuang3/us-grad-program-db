@@ -29,7 +29,8 @@ FETCH_METHODS = ("auto", "manual")
 PAGE_TYPES = ("program_home", "admissions", "deadlines", "requirements", "tuition", "funding", "faq",
               "grad_school_intl", "isso_stem_list", "other")
 OWNER_LEVELS = ("program", "department", "graduate_school", "university")
-URL_STATUSES = ("proposed", "confirmed")
+URL_STATUSES = ("proposed", "confirmed", "retired")
+NEW_URL_STATUSES = ("proposed", "confirmed")   # retired is set by hand on an existing page (06 §3.2)
 CONTENT_FORMATS = ("html", "pdf")
 ROBOTS_ALLOWED = ("yes", "no", "not_checked")
 CRAWL_ALLOWED = ("true", "false")
@@ -123,7 +124,7 @@ def next_page_id(pages):
 def add_page(registry, url, page_type, owner_level, content_format, program_ids, added_at,
              url_status="proposed"):
     checks = [("page_type", page_type, PAGE_TYPES), ("owner_level", owner_level, OWNER_LEVELS),
-              ("content_format", content_format, CONTENT_FORMATS), ("url_status", url_status, URL_STATUSES)]
+              ("content_format", content_format, CONTENT_FORMATS), ("url_status", url_status, NEW_URL_STATUSES)]
     for name, value, allowed in checks:
         if value not in allowed:
             raise RegistryError(f"{name}={value!r} must be one of {list(allowed)}")

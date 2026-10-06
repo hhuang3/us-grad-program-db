@@ -484,3 +484,41 @@ def test_validate_does_not_modify_tables(registry, registry_candidates):
     after = [registry.programs, registry.pages, registry.program_pages, registry.domains]
     for a, b in zip(before, after):
         assert a.equals(b)
+
+
+# --- retired pages (§3.2, §5.1, §5.2, §5.3) ------------------------------------
+
+def retire(registry, page_id, note="retired 2026-10-06: requires login"):
+    set_cell(registry.pages, "page_id", page_id, "url_status", "retired")
+    set_cell(registry.program_pages, "page_id", page_id, "scope_note", note)
+
+
+def test_retired_page_is_not_checked_as_unconfirmed(registry, registry_candidates):
+    retire(registry, "pg-0004")
+    set_cell(registry.pages, "page_id", "pg-0003", "url_status", "confirmed")
+    r = run(registry, registry_candidates)
+    assert r.errors == [] and not any("pg-0004" in w for w in r.warnings)
+
+
+@pytest.mark.parametrize("note", ["", "no longer public", "retired: login", "retired 2026-13-01: login"])
+def test_retired_page_needs_dated_reason(registry, registry_candidates, note):
+    retire(registry, "pg-0004", note)
+    assert_error(run(registry, registry_candidates), "pg-0004", "retired")
+
+
+def test_retired_reason_needed_on_every_link(registry, registry_candidates):
+    retire(registry, "pg-0002")
+    set_cell(registry.program_pages, "program_id", "alpha-ms-datascience", "scope_note", "")
+    assert_error(run(registry, registry_candidates), "pg-0002", "retired")
+
+
+def test_retired_program_home_needs_replacement(registry, registry_candidates):
+    retire(registry, "pg-0001")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "program_home")
+
+
+def test_retired_page_not_in_blocked_lists(registry, registry_candidates):
+    retire(registry, "pg-0005")
+    r = run(registry, registry_candidates, ready=True, batch="pilot")
+    assert "pg-0005" not in {b["page_id"] for b in r.report["ready_crawl_blocked"]}
+    assert "pg-0005" not in {b["page_id"] for b in r.report["crawl_blocked_pages"]}

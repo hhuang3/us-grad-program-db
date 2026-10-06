@@ -110,6 +110,7 @@ def test_add_page_rejects_duplicate_url_after_normalization(registry):
         {"program_ids": []},
         {"added_at": "2026/10/03"},
         {"url_status": "maybe"},
+        {"url_status": "retired"},          # pages are retired by hand, never registered retired
     ],
 )
 def test_add_page_rejects_invalid_input(registry, kwargs):
