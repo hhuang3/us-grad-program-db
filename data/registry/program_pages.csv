@@ -58,7 +58,7 @@ duke-other-mqmbusinessanalytics,pg-0057,
 rochester-ms-businessanalytics,pg-0058,
 rochester-ms-businessanalytics,pg-0059,
 rochester-ms-businessanalytics,pg-0060,
-jhu-ms-businessanalyticsai,pg-0061,页面中 Admissions 与 Application Deadlines 区块为其他项目（MBA/BS in Engineering 双学位）的内容，且为 Fall 2026 旧数据，抽取时不采用；申请要求与截止日期以 pg-0062 为准
+jhu-ms-businessanalyticsai,pg-0061,页面同时包含在职（线上）版内容，抽取时只取全日制面授版；页面中 Admissions 与 Application Deadlines 区块曾为其他项目（MBA/BS in Engineering 双学位）的内容且为 Fall 2026 旧数据（2026-10 P2 发现），抽取时不采用，申请要求与截止日期以 pg-0062 为准
 jhu-ms-businessanalyticsai,pg-0062,
 jhu-ms-businessanalyticsai,pg-0063,
 jhu-ms-businessanalyticsai,pg-0064,
