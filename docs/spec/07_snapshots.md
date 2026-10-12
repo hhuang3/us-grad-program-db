@@ -270,7 +270,7 @@ min_similarity: 0.3   # line ratio < min_similarity
 ### 10.1 launchd
 
 - `ops/launchd/` 下提供 plist 模板和 README：
-  - 每周一 07:00 运行 `gradprog snapshot run`。launchd 的 `StartCalendarInterval` 使用 **Mac 的系统时区**；README 写明这一点（Mac 时区为东京时就是东京时间 07:00）。
+  - 每周日 09:00 运行 `gradprog snapshot run`（2026-10-07 修订，原为每周一 07:00）。plist 中 `StartCalendarInterval` 为 `Weekday = 0`（周日）、`Hour = 9`、`Minute = 0`。launchd 的 `StartCalendarInterval` 使用 **Mac 的系统时区**；README 写明这一点（Mac 时区为东京时就是东京时间 09:00）。
   - 联系邮箱：launchd 不读 `~/.zshrc`。由一个包装脚本 `ops/launchd/run-snapshot.sh` 读取 `~/.config/gradprog/env`（仓库外，`KEY=value` 格式，权限 600），只导出 `GRADPROG_CONTACT_EMAIL`，再调用 `uv run gradprog snapshot run`。
   - 日志：`data/snapshots/logs/`（gitignore）。
 - **不自动安装**：模板里的路径用占位符，README 写明替换与 `launchctl` 安装步骤，由你手动安装。

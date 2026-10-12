@@ -1,6 +1,7 @@
 """docs/spec/07_snapshots.md §6.4 (renormalize), §8 (links), §10 (launchd, backup)."""
 
 import hashlib
+import plistlib
 import re
 
 import pytest
@@ -127,8 +128,9 @@ def test_launchd_templates():
     plist = (d / "com.gradprog.snapshot.plist.template").read_text(encoding="utf-8")
     script = (d / "run-snapshot.sh").read_text(encoding="utf-8")
     readme = (d / "README.md").read_text(encoding="utf-8")
-    assert "<key>Weekday</key>" in plist and "<integer>1</integer>" in plist
-    assert "<key>Hour</key>" in plist and "<integer>7</integer>" in plist
+    # every Sunday 09:00 in the Mac's time zone (Weekday 0 = Sunday)
+    assert plistlib.loads(plist.encode("utf-8"))["StartCalendarInterval"] == {"Weekday": 0, "Hour": 9, "Minute": 0}
+    assert "Sunday 09:00" in readme and "09:00" in plist
     assert "__REPO_DIR__" in plist and "/Users/" not in plist
     assert ".config/gradprog/env" in script and "GRADPROG_CONTACT_EMAIL" in script
     assert "snapshot run" in script

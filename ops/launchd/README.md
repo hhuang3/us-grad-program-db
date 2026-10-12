@@ -1,6 +1,6 @@
 # Weekly snapshot run with launchd
 
-Runs `gradprog snapshot run` every Monday at 07:00 (docs/spec/07_snapshots.md §10.1). Nothing here is installed automatically.
+Runs `gradprog snapshot run` every Sunday at 09:00 (docs/spec/07_snapshots.md §10.1). Nothing here is installed automatically.
 
 ## 1. Contact email (outside the repository)
 
@@ -38,7 +38,7 @@ rm ~/Library/LaunchAgents/com.gradprog.snapshot.plist
 
 ## 3. Time zone (时区)
 
-`StartCalendarInterval` uses the Mac's **system time zone**. With the Mac set to Asia/Tokyo (东京时区) the job runs at 07:00 Tokyo time. If the Mac is asleep at that time, launchd runs the job when it wakes.
+`StartCalendarInterval` uses the Mac's **system time zone**. With the Mac set to Asia/Tokyo (东京时区) the job runs every Sunday 09:00 Tokyo time (`Weekday` 0 = Sunday, `Hour` 9, `Minute` 0). If the Mac is asleep at that time, launchd runs the job when it wakes.
 
 ## 4. Logs
 
