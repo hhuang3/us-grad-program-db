@@ -322,3 +322,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 ### 12.5 .gitignore
 
 1. 新增 `data/extraction/`（observation 含原文）与 `data/gold/local/`（标准答案集的带原文副本，09 §4）。
+
+## 13. 留给 P5 的事项
+
+- `term_basis = recurring_no_year` 的截止日期（页面没写年份、按每年固定日期推算，§7.2），对用户展示时要标明“按往年推算”，与页面写明年份的日期区分显示（2026-10-12 负责人要求）。
