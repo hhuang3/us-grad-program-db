@@ -273,6 +273,11 @@ min_similarity: 0.3   # line ratio < min_similarity
   - 每周日 09:00 运行 `gradprog snapshot run`（2026-10-07 修订，原为每周一 07:00）。plist 中 `StartCalendarInterval` 为 `Weekday = 0`（周日）、`Hour = 9`、`Minute = 0`。launchd 的 `StartCalendarInterval` 使用 **Mac 的系统时区**；README 写明这一点（Mac 时区为东京时就是东京时间 09:00）。
   - 联系邮箱：launchd 不读 `~/.zshrc`。由一个包装脚本 `ops/launchd/run-snapshot.sh` 读取 `~/.config/gradprog/env`（仓库外，`KEY=value` 格式，权限 600），只导出 `GRADPROG_CONTACT_EMAIL`，再调用 `uv run gradprog snapshot run`。
   - 日志：`data/snapshots/logs/`（gitignore）。
+  - **防止运行中睡眠**（2026-10-12 新增；10-11 的第一次定时运行因 Mac 用电池睡眠，耗时 65 分钟）：包装脚本用 `caffeinate -i` 包住 `uv run gradprog snapshot run`，运行期间阻止系统**闲置睡眠**。
+    - `caffeinate -i` **不能防止合盖睡眠**，也不能阻止电量过低或用户手动让 Mac 睡眠；运行时 Mac 应开盖（或接外接显示器、电源）。README 写明这一点。
+    - 运行开始和结束时，各把电源状态（`pmset -g batt` 的一行摘要：电源来源、电量、充放电状态）写进日志。
+    - 结束时在日志中写运行耗时（秒），以及运行期间 `pmset -g log` 中出现的 “Entering Sleep state” 次数；耗时超过 15 分钟或睡眠次数大于 0 时，多写一行以 `WARNING:` 开头的说明。
+    - 只写日志：runs.csv 和运行报告没有对应的列或栏目，不为此改变结构。
 - **不自动安装**：模板里的路径用占位符，README 写明替换与 `launchctl` 安装步骤，由你手动安装。
 
 ### 10.2 备份 `gradprog snapshot backup --dest <目录>`

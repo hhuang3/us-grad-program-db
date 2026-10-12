@@ -137,6 +137,57 @@ def test_launchd_templates():
     for text in (plist, script, readme):   # no real address in the repository, only placeholders
         assert all(m.endswith("@example.com") for m in re.findall(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+", text))
     assert "launchctl" in readme and "时区" in readme
+    assert "caffeinate -i" in script and "合盖" in readme      # lid-close sleep is not prevented (§10.1)
+
+
+STUBS = {
+    # fake uv: remember the call and the time, so the fake sleep log can fall inside the run window
+    "uv": 'echo "uv $*"; date "+%Y-%m-%d %H:%M:%S %z" > "$HOME/during"; exit "${UV_EXIT:-0}"',
+    "caffeinate": 'echo "caffeinate $1" >> "$HOME/calls"; shift; exec "$@"',
+    "pmset": """case "$2" in
+  batt) printf "Now drawing from 'Battery Power'\n -InternalBattery-0 (id=1)\t11%%; discharging; 2:10 remaining present: true\n";;
+  log) [[ -n "${SLEEPS:-}" ]] && printf "%s Sleep               \tEntering Sleep state due to 'Maintenance Sleep'\n" "$(cat "$HOME/during")"; true;;
+esac""",
+}
+
+
+def run_wrapper(tmp_path, **env):
+    import shutil
+    import subprocess
+
+    if not shutil.which("zsh"):
+        pytest.skip("zsh not available")
+    home = tmp_path / "home"
+    (home / ".config" / "gradprog").mkdir(parents=True)
+    (home / ".config" / "gradprog" / "env").write_text("GRADPROG_CONTACT_EMAIL=someone@example.com\n")
+    bin_dir = home / ".local" / "bin"
+    bin_dir.mkdir(parents=True)
+    for name, body in STUBS.items():
+        (bin_dir / name).write_text("#!/bin/zsh\n" + body + "\n")
+        (bin_dir / name).chmod(0o755)
+    script = REPO / "ops" / "launchd" / "run-snapshot.sh"
+    result = subprocess.run(["zsh", str(script)], env={"HOME": str(home), **env}, capture_output=True, text=True)
+    calls = (home / "calls").read_text() if (home / "calls").exists() else ""
+    return result, calls
+
+
+def test_wrapper_keeps_the_mac_awake_and_logs_power(tmp_path):
+    result, calls = run_wrapper(tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert calls == "caffeinate -i\n"                                   # the run is wrapped in caffeinate -i
+    out = result.stdout
+    assert "uv run gradprog snapshot run" in out
+    assert out.count("power: Battery Power; 11%; discharging; 2:10 remaining") == 2   # start and end
+    assert re.search(r"elapsed \d+ s; sleeps during run: 0", out)
+    assert "WARNING" not in out and "someone@example.com" not in out
+
+
+def test_wrapper_warns_about_sleep_and_keeps_exit_code(tmp_path):
+    result, _ = run_wrapper(tmp_path, SLEEPS="1", UV_EXIT="3")
+    assert result.returncode == 3
+    assert "sleeps during run: 1" in result.stdout
+    assert re.search(r"^WARNING: .*sleep", result.stdout, re.MULTILINE)
+    assert result.stdout.count("power:") == 2                          # end is logged even when the run fails
 
 
 # --- backup (§10.2) -----------------------------------------------------------
