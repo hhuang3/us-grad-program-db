@@ -1,6 +1,6 @@
 # 09 标准答案集（gold set）
 
-> 状态：draft v0.1（Phase 4a，2026-10-12）。标注由负责人完成。字段与规则以 `08_extraction.md` 为准（含其 §12 的提议改动）。
+> 状态：draft v0.1（Phase 4a，2026-10-12）。标注由负责人完成。字段与规则以 `08_extraction.md` 和 02 v0.3 为准。
 
 ## 1. 用途与工作量
 
@@ -77,6 +77,7 @@
 - 每个“轮次 × 类型 × 适用对象”一行：复制模板中该项目的 `deadline` 行，填 `round_name`（原样）、`deadline_type`、`applicant_scope`、`value`（日期）。
 - 倒计时区块里的轮次和日期照常标注，剩余时间不标。
 - 页面写“rolling”而没有日期：`is_rolling = true`，`value` 留空，`value_status = found`。
+- 日期没写年份（如 “January 2”）：按每年固定日期，年份取快照取得日期之后该月日的下一次出现，再按季节区间填 `valid_for_term`（08 §7.2）；`flags` 加 `recurring_no_year`。
 
 ## 4. 文件
 
@@ -104,7 +105,7 @@
 | `deadline_tz` | 负责人 | 仅 deadline，页面写了才填 |
 | `is_rolling` | 负责人 | 仅 deadline：`true / false` |
 | `evidence_page_id` | 负责人 | 依据的页面 |
-| `flags` | 负责人 | `contradictory`、`contamination`、`stale`、`inferred_term`，分号分隔 |
+| `flags` | 负责人 | `contradictory`、`contamination`、`stale`、`inferred_term`、`recurring_no_year`，分号分隔 |
 | `notes` | 负责人 | 自由文本，不要粘贴页面原文 |
 | `annotated_by` | 负责人 | |
 | `annotated_at` | 负责人 | `YYYY-MM-DD` |

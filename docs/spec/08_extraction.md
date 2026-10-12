@@ -1,7 +1,7 @@
 # 08 字段抽取（Phase 4）
 
-> 状态：draft v0.1（Phase 4a，2026-10-12）。只定义规则，本阶段不写代码、不调用 LLM。
-> 依据：`02_field_dictionary.md` v0.2、`05_data_model.md` v1.3、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，**经负责人确认后才改动那几份文件**；在那之前，本文件中引用的新字段、新取值以 §12 的提议为准。
+> 状态：draft v0.2（Phase 4a，2026-10-12）。只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
+> 依据：`02_field_dictionary.md` v0.2、`05_data_model.md` v1.3、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
 
 本文件定义 05 的第二层 **observation**：从 snapshot 的规范化正文中抽取字段，写成 observation。observation 不直接成为 fact，进入 fact 必须经过人工审核（05 §1.3）。
 
@@ -127,40 +127,58 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 
 ## 7. `valid_for_term` 的判断
 
-按**每一条 observation** 判断，不按页面判断（P2 报告 §6.2.1）。`valid_for_term` 的格式见 05 §2（`"Fall 2027"` 或 `term_unknown`）。代码记录判断依据 `term_basis`：`stated`（页面写明）/ `inferred_from_date`（由日期推算）/ `unknown`。
+按**每一条 observation** 判断，不按页面判断（P2 报告 §6.2.1）。`valid_for_term` 的格式见 05 §2（`"Fall 2027"` 或 `term_unknown`）。代码记录判断依据 `term_basis`：`stated`（页面写明）/ `inferred_from_date`（由日期推算）/ `recurring_no_year`（日期没写年份，按每年固定日期推算，§7.2）/ `unknown`。
 
 ### 7.1 页面写明了学期（`term_as_written` 非空）
 
 - 能确定季节和年份的写法（`Fall 2027`、`Fall semester 2027`、`2027 fall entry` 等）→ 换算为标准格式，`term_basis = stated`。
-- 只写季节、没写年份（如 “for the fall semester”）→ 季节按写明的，年份按 §7.2 的区间由日期推算，`term_basis = inferred_from_date`。没有日期可用时 → `term_unknown`。
+- 只写季节、没写年份（如 “for the fall semester”）→ 季节按写明的，年份按 §7.2 的区间由日期推算，`term_basis = inferred_from_date`。季节为夏季，或没有日期可用时 → `term_unknown`，进入审核。
 - 写法含糊、无法确定是入学季还是申请年份（如 Columbia DS 的 “GRE optional for the 2026 applications”）→ `term_unknown`。
 - 学年写法（如 `2026-27`、`AY 2026-2027`）→ 秋季入学项目换算为该学年的秋季（`2026-27` → `Fall 2026`），`term_basis = inferred_from_date`。
 
-### 7.2 页面没写学期：由截止日期推算
+### 7.2 由日期推算学期
 
-**v1 假定项目只有秋季入学。** 在这个假定下：
+**推算区间**（2026-10-12 修订：试点中有春季入学的项目，“只有秋季入学”的前提不成立）：
 
-- 截止日期在 **Y−1 年 9 月 1 日至 Y 年 8 月 31 日**之间 → 推算为 `Fall Y`，`term_basis = inferred_from_date`。
-  - 例：2026-08-15 → Fall 2026；2026-10-07 → Fall 2027；2027-01-06 → Fall 2027。
-- 没有日期的字段（托福、学费等）且页面没有任何学期写法 → `term_unknown`。
-- **有春季或夏季入学的项目，不按日期推算**：季节和年份都未写明的条目直接 `term_unknown` 并进入审核。季节已写明（§7.1 第二条）的条目仍可只推算年份。
-  - 区间规则只适用于秋季；春季、夏季的区间不在 v1 定义。
-  - 哪些项目有春季或夏季入学，由登记表给出（见 §12 的 06 改动：programs.csv 新增 `intake_terms`），不由 LLM 判断。
-  - **试点 21 个项目的情况**（2026-10-12 对已存快照正文的检索，需负责人核对后写入登记表）：
-
-| 判断 | 项目 | 依据（页面） |
+| 季节 | 截止日期落在 | 推算为 |
 |---|---|---|
-| 有春季入学 | unt-ms-datascience | pg-0008 有 Spring 2027 截止日期 |
-| 有春季和夏季入学 | utd-ms-businessanalytics | pg-0015 写明秋、春、夏三季入学 |
-| 有春季和夏季入学 | uconn-ms-businessanalyticsprojectmanagement | pg-0021、pg-0023（春季仅 Hartford；签证学生只在秋季、春季入学） |
-| 有春季入学 | uwmadison-ms-statisticsdatascience | pg-0032 有春季入学的申请截止日期 |
-| 有春季入学 | columbia-ma-statistics | pg-0053 有 Spring Admission Deadline |
-| 有春季入学 | uiuc-ms-statistics | pg-0039 有 MS Spring Admission 截止日期 |
-| 有春季入学 | rochester-ms-businessanalytics | pg-0058、pg-0059、pg-0060 写明接受 1 月春季入学 |
-| **矛盾，待核对** | jhu-ma-economics | pg-0045（项目页）写只招秋季；pg-0046（文理学院总表）列有 MA 春季和夏季截止日期 |
-| **矛盾，待核对** | washu-ms-businessanalytics | pg-0068 有 “starting in Spring 2026” 的费用说明；P2 核对时认为只有秋季入学 |
-| 明确无春季入学 | nyu-ms-datascience、uwmadison-ms-statistics | pg-0004；pg-0031、pg-0033 |
-| 页面未提及春季（按秋季处理，待核对） | columbia-ms-datascience、uva-ms-datascience、utd-ms-businessanalyticscohort、bu-ms-businessanalytics、uchicago-ms-applieddatascience、uwmadison-ms-quantitativeeconomics、usc-ms-appliedeconomicseconometrics、ucla-other-quantitativeeconomics、duke-other-mqmbusinessanalytics、jhu-ms-businessanalyticsai | 已存页面正文中没有春季入学的写法；未提及不等于没有 |
+| 秋季 | Y−1 年 9 月 1 日至 Y 年 8 月 31 日 | `Fall Y` |
+| 春季 | Y−1 年 3 月 1 日至 Y 年 2 月最后一天 | `Spring Y` |
+| 夏季 | 不定义区间 | 不推算 |
+
+- 例：秋季 2026-08-15 → Fall 2026；秋季 2026-10-07 → Fall 2027；春季 2026-11-09 → Spring 2027；春季 2026-02-15 → Spring 2026。
+- 两个区间有重叠（例如 10 月的截止日期既可能是 Fall Y+1 的，也可能是 Spring Y+1 的），所以**必须先确定季节**，再按该季节的区间推算年份。季节的来源只有两个：
+  1. 页面写明了季节（§7.1 第二条）；
+  2. 页面没写季节，而该项目**只有一个入学季**（登记表 `intake_terms` 只有一个值，见 06）→ 按该季节推算。
+- 季节和年份都没写、而项目**有多个入学季** → `term_unknown`，进入审核，不按日期猜季节。
+- 季节为夏季、没写年份 → `term_unknown`，进入审核。
+- 由完整日期推算出的学期 `term_basis = inferred_from_date`，进入审核（§10 第 2 条）；没写年份的按下一条处理。
+- 没有日期的字段（托福、学费等）且页面没有任何学期写法 → `term_unknown`。
+- **截止日期没写年份**（如 “January 2”“MS Spring Admission – September 15”）→ 按**每年固定日期**处理（2026-10-12 确认）：
+  - 年份推算为该月日在快照 `retrieved_at` 之后（含当天）的**下一次出现**。例：2026-10-11 取得、页面写 “January 2” → 2027-01-02。
+  - 再按上面的季节区间确定学期；季节的确定方式不变。
+  - `deadline_date` 填推算出的完整日期，`term_basis = recurring_no_year`；月日原文仍在 `evidence_text` 中。
+  - **不因没写年份而进审核**；只有季节无法确定（季节没写、且项目有多个入学季）时才进审核。
+  - 理由：这类写法通常表示每年固定的截止日期，试点中有 4 个项目使用（UW–Madison、UIUC、JHU Krieger、Rochester）；如果页面已经过期、日期实际已改，风险由每年 8 月 15 日的全量重新取得和重抽兜底（§11）。
+- `intake_terms` 由负责人在登记表中维护，不由 LLM 判断。
+
+**试点 21 个项目的 `intake_terms`**（2026-10-12 按已存快照正文检索，结果写入 programs.csv；“未核实”的在 `selection_note` 中注明，主批次登记时由负责人核对）：
+
+| intake_terms | 项目 | 依据（页面） |
+|---|---|---|
+| `fall;spring;summer` | unt-ms-datascience | pg-0008：Spring 2027、Summer 2027（夏季仅限美国本土申请者）、Fall 2027 同时开放 |
+| `fall;spring;summer` | utd-ms-businessanalytics | pg-0015：秋、春、夏三季入学 |
+| `fall;spring;summer` | uconn-ms-businessanalyticsprojectmanagement | pg-0021、pg-0023（春季仅 Hartford；签证学生只在秋季、春季入学） |
+| `fall;spring` | uwmadison-ms-statisticsdatascience | pg-0032：有春季入学的申请截止日期 |
+| `fall;spring` | uiuc-ms-statistics | pg-0039：MS Spring Admission 截止日期 |
+| `fall;spring` | rochester-ms-businessanalytics | pg-0058、pg-0059、pg-0060：MS BA 接受 1 月春季入学 |
+| `fall` | nyu-ms-datascience | pg-0004：明确没有春季入学 |
+| `fall` | uwmadison-ms-statistics | pg-0031、pg-0033：“no spring admissions” |
+| `fall` | jhu-ma-economics | pg-0045 明确只招秋季。pg-0046（文理学院总表）的春季、夏季截止日期属于 Cognitive Science，不是本项目；本项目在总表中只有一个 MA 截止日期（3 月 1 日），与项目页的“3 月 1 日优先、5 月 1 日最终”不同（§8.2 的实例） |
+| `fall` | washu-ms-businessanalytics | pg-0065 写明 Start: Fall。pg-0068 的 “starting in Spring 2026” 所在表格标题为 Academic Year 2026-27，表下注 “Posted Spring 2026”，应指收费标准的发布时间，不是入学季 |
+| `fall`（未核实） | columbia-ms-datascience、uva-ms-datascience、utd-ms-businessanalyticscohort、bu-ms-businessanalytics、uchicago-ms-applieddatascience、uwmadison-ms-quantitativeeconomics、usc-ms-appliedeconomicseconometrics、ucla-other-quantitativeeconomics、duke-other-mqmbusinessanalytics、jhu-ms-businessanalyticsai、columbia-ma-statistics | 已存页面没有春季、夏季入学的写法；未提及不等于没有。其中 uva（pg-0011 “requiring a fall start for all students”）、columbia-ma-statistics（pg-0037 只有 Fall Admission 截止日期）、ucla（pg-0049 只有 Fall 2027）、jhu-ms-businessanalyticsai（pg-0061 “Fall Term”）有支持秋季的写法 |
+
+columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所有项目共用的截止日期表，“Spring Admission Deadline” 是表头，Statistics MA 一行的春季栏为空。
 
 ### 7.3 过期
 
@@ -183,7 +201,11 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 | Duke 倒计时区块（pg-0055、pg-0056）：轮次名、起止日期、剩余时间 | 抽取轮次名和截止日期（与 pg-0056 的轮次表一致）；剩余时间文字（“N days N hours” 等）不是任何字段的值，不得出现在 evidence 以外的地方 |
 | UCLA MQE pg-0048、pg-0049（2026-10-11 快照）：Fall 2026 已关闭、Fall 2027 开放 | Fall 2027 的截止日期 `stated`；关于 Fall 2026 的内容不进入 Fall 2027 |
 | Columbia DS：“GRE optional for the 2026 applications” | `term_unknown`，进入审核 |
-| WashU pg-0065 “October 2026 Start”（上一季延期入学）、pg-0068 “starting in Spring 2026” | 不得记为 Fall 2027；后者在 washu 的入学季核对前进入审核 |
+| UNT pg-0008（10-07 快照）：Spring 2027 截止日期（国际申请者 2026-11-09） | `Spring 2027`，`term_basis = stated`；与春季区间推算结果一致。不得因项目有秋季入学而记为 Fall 2027 |
+| UW–Madison MS Statistics pg-0031（10-11 快照，`intake_terms = fall`）：“January 2 for a fall term start”（无年份） | 每年固定日期：2027-01-02，`Fall 2027`，`term_basis = recurring_no_year`，不进审核 |
+| UIUC pg-0039（10-04 快照）：“MS Spring Admission – September 15”（无年份） | 每年固定日期：取得日 2026-10-04 之后的下一次 9 月 15 日是 2027-09-15，按春季区间为 `Spring 2028`，`term_basis = recurring_no_year`，不进审核。Spring 2027 的截止日期（2026-09-15）在取得时已过，不得据此记为 Spring 2027 |
+| WashU pg-0065 “October 2026 Start”（上一季延期入学） | 不得记为 Fall 2027 |
+| WashU pg-0068：“starting in Spring 2026”（收费标准发布时间） | 学费 `tuition_year = 2026-27`；不得据此产生 Spring 2026 的入学季 |
 
 ## 8. 冲突处理
 
@@ -243,14 +265,14 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 | # | 条件 |
 |---|---|
 | 1 | `valid_for_term = term_unknown` |
-| 2 | `term_basis = inferred_from_date`（推算出的学期） |
+| 2 | `term_basis = inferred_from_date`（由完整日期推算出的学期；`recurring_no_year` 不在此列） |
 | 3 | 证据校验不通过（§6），或值不合类型、范围 |
 | 4 | 任何冲突类型（§8）：`level_mismatch`、`below_graduate_school_minimum`、`deadline_mismatch`、`in_page_contradiction`、`cross_program_contamination` |
 | 5 | 目标学期没有未过期的截止日期、只有上一季的过期截止日期（§7.3） |
 | 6 | `confidence` 低于阈值（阈值用 09 标准答案集定出，确定前默认 0.7） |
 | 7 | 新 observation 的值与 `review_status = corrected` 的 fact 不同（05 §1.3） |
 | 8 | 来源快照分类为 `suspected_redesign` |
-| 9 | 项目有春季或夏季入学，且条目学期未写明（§7.2） |
+| 9 | 季节和年份都没写、且项目有多个入学季；或季节为夏季、没写年份（§7.2） |
 | 10 | TOEFL 分制无法识别（§9） |
 | 11 | 页面受众存疑：LLM 报告页面是给在读学生或其他项目的（P2 报告 §6.2.5，例如 Columbia `/ma-student-faqs/`） |
 
@@ -269,9 +291,9 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 - 重抽只产生新的 observation，不直接改 fact（05 §5）。
 - `model_name` 变化视同 `prompt_version` 升级。
 
-## 12. 对其他 spec 的改动（待负责人确认后再改）
+## 12. 对其他 spec 的改动（2026-10-12 已确认并写入）
 
-以下改动在负责人确认前**不写入**对应文件。确认后按 spec → 测试 → 代码的顺序同步。
+以下改动已写入对应文件；涉及代码的（06 `intake_terms`）按 spec → 测试 → 代码的顺序同步。
 
 ### 12.1 02_field_dictionary.md（v0.2 → v0.3）
 
@@ -290,8 +312,7 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 
 ### 12.3 06_source_registry.md
 
-1. programs.csv 新增列 `intake_terms`：`fall` 或分号分隔的多值（`fall;spring;summer`），由负责人填写，selected 项目必填；`validate` 校验取值。用途：08 §7.2 判断能否按日期推算学期。试点 21 个项目的初始值按 08 §7.2 的表由负责人核对后填入。
-   - 替代方案：不改登记表，在 `config/` 下另放一个清单文件。登记表方案的好处是 `validate` 能检查漏填。
+1. programs.csv 新增列 `intake_terms`（在 `fetch_method` 之后）：`fall / spring / summer` 中的一个或多个，分号分隔、按 fall、spring、summer 的顺序、不重复；`status = selected` 时必填，其他状态可空。`validate` 检查漏填和取值。用途：08 §7.2 确定推算学期用的季节。试点 21 个项目的值见 08 §7.2 的表。
 
 ### 12.4 07_snapshots.md
 

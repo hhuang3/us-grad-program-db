@@ -177,6 +177,10 @@ def _check_programs(registry, candidates, errors):
                 errors.append(f"programs: {pid}: fetch_method={r.fetch_method!r} must be one of {list(t.FETCH_METHODS)}")
         elif r.fetch_method:
             errors.append(f"programs: {pid}: fetch_method must be empty when status={r.status}")
+        if (r.intake_terms or r.status == "selected") and not _valid_intake_terms(r.intake_terms):
+            errors.append(f"programs: {pid}: intake_terms={r.intake_terms!r} must be one or more of "
+                          f"{list(t.INTAKE_TERMS)} joined by ';' in that order"
+                          + (" (required when status=selected)" if r.status == "selected" else ""))
 
         placeholder = r.status == "excluded" and r.exclusion_reason == "not_found"
         if not PROGRAM_ID.match(pid):
@@ -193,6 +197,13 @@ def _check_programs(registry, candidates, errors):
             elif segment != r.degree_type:
                 errors.append(f"programs: {pid}: second segment '{segment}' must equal degree_type "
                               f"'{r.degree_type}'")
+
+
+def _valid_intake_terms(value):
+    """06 §3.1: one or more of fall / spring / summer, ';'-joined, in that order, no repeats."""
+    terms = value.split(";")
+    return bool(value) and all(x in t.INTAKE_TERMS for x in terms) and \
+        terms == sorted(set(terms), key=t.INTAKE_TERMS.index)
 
 
 def _check_pages(registry, errors):

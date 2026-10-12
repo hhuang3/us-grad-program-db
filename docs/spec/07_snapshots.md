@@ -1,7 +1,7 @@
 # 07 快照与变化检测（Phase 3）
 
 > 状态：v1.1（Phase 3a，2026-10-04 逐项确认）。原先标为待确认的设计均已确认；链接发现范围（§8）与条款受限域名的发布限制（§1）按答复修订。
-> 本文件定义 05 数据模型的第一层 **snapshot**。不抽取字段，不判断申请季。P4 只处理分类为 `first_capture` 和 `changed` 的快照。
+> 本文件定义 05 数据模型的第一层 **snapshot**。不抽取字段，不判断申请季。P4 抽取哪些快照见 `08_extraction.md` §2（2026-10-12 修订：不再只限 `first_capture` 和 `changed`）。
 
 ---
 
@@ -204,10 +204,10 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 | 1 | `blocked` | 本次 robots.txt 禁止或无法读取（不请求）；或最终状态码为 401、403 | 进异常清单 |
 | 2 | `unavailable` | 最终状态码为 404、410；或跳转判定为 `redirected_other` | 进异常清单 |
 | 3 | `fetch_error` | 网络错误、超时、5xx、其他非 2xx、超过大小上限、内容类型不支持；规范化后正文为空（0 字符）也算，note 写“可能需要 JavaScript 渲染” | 进异常清单；同一页面**连续 2 次**才在报告中列为“需要处理” |
-| 4 | `first_capture` | 取得成功，且没有可比较的上一版（§7.2） | 交给 P4 |
-| 5 | `unchanged` | `norm_sha256` 与上一版相同 | 无 |
-| 6 | `suspected_redesign` | 正文不同，且（字符数比上一版**减少超过** `char_drop`，**或**相似度**低于** `min_similarity`） | 生成 diff；进异常清单 |
-| 7 | `changed` | 正文不同，且不属于 6 | 生成 diff；交给 P4 |
+| 4 | `first_capture` | 取得成功，且没有可比较的上一版（§7.2） | 可被 P4 抽取（08 §2） |
+| 5 | `unchanged` | `norm_sha256` 与上一版相同 | 可被 P4 抽取（08 §2：首次抽取，或正文与上次抽取所用快照不同） |
+| 6 | `suspected_redesign` | 正文不同，且（字符数比上一版**减少超过** `char_drop`，**或**相似度**低于** `min_similarity`） | 生成 diff；进异常清单；可被 P4 抽取（08 §2），所得 observation 进入审核（08 §10） |
+| 7 | `changed` | 正文不同，且不属于 6 | 生成 diff；可被 P4 抽取（08 §2） |
 
 - **普通跳转**（跳到别的网址，但不是 `redirected_other`）：按内容分类，不另设分类；note 加 `redirected`，报告中建议“确认后在登记表中改用最终网址”。
 - 人工取得只会出现 4–7 和 `fetch_error`（文件无法解析或正文为空）。

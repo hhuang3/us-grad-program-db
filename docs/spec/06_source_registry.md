@@ -110,6 +110,7 @@
 | `selection_note` | 选入或排除的理由 | 自由文本；`status ∈ {selected, excluded}` 时必填 |
 | `batch` | 批次 | `pilot / main` |
 | `fetch_method` | Phase 3 取得页面的方式（2026-10-03 新增） | `auto / manual`；`status = selected` 时必填，其他状态必须为空。`auto`：由抓取器自动抓取；`manual`：页面无法自动抓取（条款、robots.txt 或网站防护），由人工取得，具体流程在 P3 设计 |
+| `intake_terms` | 入学季（2026-10-12 新增） | `fall / spring / summer` 中的一个或多个，分号分隔，按 fall、spring、summer 的顺序，不重复（如 `fall;spring`）；`status = selected` 时必填，其他状态可空。由你填写，不由抓取或抽取写入。用途：P4 由日期推算学期时确定季节（08 §7.2）。根据页面提议、尚未核实的值，在 `selection_note` 中注明“intake_terms 未核实” |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
 
 **`program_id` 格式**：`{学校简称}-{学位}-{方向}`，如 `uwmadison-ms-statistics`。
@@ -287,6 +288,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | 所有关联页面 `url_status = confirmed` | warning | error |
 | 关联页面中“不可抓取”的（见下） | – | **列出报告**（页面、所属域名、原因） |
 | `fetch_method` 为空 | error | error |
+| `intake_terms` 为空（2026-10-12 新增） | error | error |
 | `fetch_method = auto`：关联的 `program_home` 页面可抓取 | – | error |
 | `fetch_method = manual`：不要求可抓取（仍要求页面全部 `confirmed`） | – | 在报告中单独列出（`ready_manual_programs`） |
 
