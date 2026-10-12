@@ -30,3 +30,7 @@ data/snapshots/diffs/
 data/snapshots/reports/
 data/snapshots/manual_due.md
 data/snapshots/logs/
+
+# Phase 4 extraction: observations and gold-set copies contain page text (docs/spec/08 §4, 09 §4)
+data/extraction/
+data/gold/local/
