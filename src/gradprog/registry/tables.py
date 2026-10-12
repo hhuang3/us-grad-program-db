@@ -10,7 +10,8 @@ from gradprog.registry.urls import domain_of, normalize_url
 
 COLUMNS = {
     "programs": ["program_id", "unitid", "cip_code", "cip_group", "institution_name", "program_name", "degree_type",
-                 "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "fetch_method", "added_at"],
+                 "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "fetch_method",
+                 "intake_terms", "added_at"],
     "pages": ["page_id", "url", "domain", "page_type", "owner_level", "url_status", "content_format",
               "robots_allowed", "crawl_allowed", "added_at"],
     "program_pages": ["program_id", "page_id", "scope_note"],
@@ -26,6 +27,7 @@ EXCLUSION_REASONS = ("mba", "online_only", "certificate", "out_of_scope", "dupli
                      "other")
 BATCHES = ("pilot", "main")
 FETCH_METHODS = ("auto", "manual")
+INTAKE_TERMS = ("fall", "spring", "summer")   # programs.intake_terms: ";"-joined, in this order (06 §3.1)
 PAGE_TYPES = ("program_home", "admissions", "deadlines", "requirements", "tuition", "funding", "faq",
               "grad_school_intl", "isso_stem_list", "other")
 OWNER_LEVELS = ("program", "department", "graduate_school", "university")

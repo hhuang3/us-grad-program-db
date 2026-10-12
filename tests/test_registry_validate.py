@@ -522,3 +522,34 @@ def test_retired_page_not_in_blocked_lists(registry, registry_candidates):
     r = run(registry, registry_candidates, ready=True, batch="pilot")
     assert "pg-0005" not in {b["page_id"] for b in r.report["ready_crawl_blocked"]}
     assert "pg-0005" not in {b["page_id"] for b in r.report["crawl_blocked_pages"]}
+
+
+# --- intake_terms (§3.1, §5.2; 2026-10-12) -------------------------------------
+
+@pytest.mark.parametrize("ready", [False, True])
+def test_intake_terms_required_for_selected(registry, registry_candidates, ready):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "intake_terms", "")
+    assert_error(run(registry, registry_candidates, ready=ready, batch="pilot"), "alpha-ms-datascience", "intake_terms")
+
+
+@pytest.mark.parametrize("value", ["winter", "Fall", "spring;fall", "fall;fall", "fall,spring", "fall; spring", ";fall"])
+def test_intake_terms_invalid_values(registry, registry_candidates, value):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "intake_terms", value)
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "intake_terms")
+
+
+@pytest.mark.parametrize("value", ["fall", "spring", "fall;spring;summer", "spring;summer"])
+def test_intake_terms_valid_values(registry, registry_candidates, value):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "intake_terms", value)
+    assert not any("intake_terms" in e for e in run(registry, registry_candidates).errors)
+
+
+@pytest.mark.parametrize("value", ["", "fall"])
+def test_intake_terms_optional_when_not_selected(registry, registry_candidates, value):
+    set_cell(registry.programs, "program_id", "gamma-ms-statistics", "intake_terms", value)
+    assert not any("intake_terms" in e for e in run(registry, registry_candidates).errors)
+
+
+def test_intake_terms_checked_when_not_selected(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "gamma-ms-statistics", "intake_terms", "winter")
+    assert_error(run(registry, registry_candidates), "gamma-ms-statistics", "intake_terms")

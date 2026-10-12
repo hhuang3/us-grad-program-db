@@ -1,4 +1,4 @@
-# 字段定义 draft v0.2
+# 字段定义 draft v0.3
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -20,6 +20,7 @@
 | cip_code | CIP 代码 | str "NN.NNNN" | ISSO 的 STEM 项目列表、项目 FAQ | 格式规则见 `03_stem_logic.md` |
 | cip_source | CIP 出处 | enum：school_stem_page / program_page / i20_statement / ipeds_inferred / unknown | – | 只有学校自己的声明才能用于 confirmed |
 | stem_status | STEM 认定 | enum：confirmed_by_school / not_on_list / cip_on_list_unconfirmed / cip_not_on_list_unconfirmed / unknown | 同上 | 推导规则见 `03_stem_logic.md` |
+| stem_claim_on_page | 页面是否声称本项目是 STEM | enum：yes / no | 项目首页、FAQ | 不影响 `stem_status`（没有 CIP 时 stem_status 仍为 unknown）；v0.3 新增，见 08 §3.2 |
 
 ## 2. 考试与语言要求
 
@@ -56,8 +57,9 @@
 
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
-| tuition_basis | 学费计费方式 | enum：per_credit / per_term / program_total | Bursar / Cost 页 | |
-| tuition_amount_usd | 学费金额 | float，可空 | 同上 | 与 tuition_basis 配套；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
+| tuition_basis | 学费计费方式 | enum：per_credit / per_term / per_year / program_total | Bursar / Cost 页 | 页面原始口径；v0.3 新增 per_year |
+| tuition_amount_usd | 学费金额 | float，可空 | 同上 | **页面原始口径下的原始金额**，与 tuition_basis 配套，不换算；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
+| tuition_program_total_usd_est | 整个项目学费估算 | float，可空 | – | **派生字段**，由代码按 08 §3.1 换算，记录换算方法和输入；缺少输入时为空。v0.3 新增 |
 | credits_required | 总学分 | int，可空 | Curriculum | per_credit 时用于估算总额 |
 | tuition_year | 学费适用年度 | str，如 "2026-27" | 同上 | |
 | funding | 资助情况 | enum：none_typical / partial_scholarship / ta_ra_possible | Funding / FAQ | |
@@ -69,7 +71,8 @@
 | program_id | 关联主表 | str | |
 | term | 入学季 | str，如 "Fall 2027" | 必填；判断不出则 term_unknown 并进审核 |
 | round_name | 轮次 | str，如 Priority / Round 1 | 原样保留官方写法 |
-| deadline_date | 截止日期 | date | |
+| deadline_type | 日期类型 | enum：application / international_docs / deposit / decision_release / other | v0.3 新增。international_docs：国际学生材料（签证文件、I-20 申请等）的截止 |
+| deadline_date | 截止日期 | date | 页面没写年份时按每年固定日期推算（08 §7.2，`term_basis = recurring_no_year`） |
 | deadline_tz | 时区 | str（IANA），可空 | 如 America/New_York |
 | applicant_scope | 适用对象 | enum：all / international / domestic / funding_consideration | |
 | is_rolling | 是否滚动录取 | bool | |
@@ -86,15 +89,21 @@
 | confidence | 抽取置信度 | float 0–1 |
 | review_status | 审核状态 | enum：auto / approved / corrected / rejected |
 | valid_for_term | 适用入学季 | str，如 "Fall 2027"，或 term_unknown |
+| term_as_written | 条目对应学期在页面上的原文 | str，可空 | 
+| term_basis | valid_for_term 的依据 | enum：stated / inferred_from_date / recurring_no_year / unknown |
+| stale | 截止日期早于取得日期 | bool |
+| conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination |
+| includes_fees | 学费金额含杂费 | bool，只用于学费字段 |
 
 ## 7. 待定事项
 
-- 同一项目在研究生院页与系页数值冲突时的优先规则：P2 只要求两个页面都登记（`06_source_registry.md` 的 `owner_level` 区分层级），并记录两者 + 进审核；**优先规则在 P4 决定**。
+- ~~同一项目在研究生院页与系页数值冲突时的优先规则~~：**已关闭**（2026-10-12）。见 `08_extraction.md` §8.1：越具体的层级优先；项目页写“按研究生院要求”时用研究生院的值；研究生院要求视为下限，项目页低于下限时进审核。
 - ~~学费是否区分州内/州外~~：**已关闭**（2026-10-01）。只记录国际学生适用的金额，公立校即州外学费（见 §4 `tuition_amount_usd`）。
 - ~~多个专业方向（track/concentration）是否拆成多个 program_id~~：**已关闭**（2026-10-01）。一个申请入口 = 一个 `program_id`：共用申请入口的 track 算一个项目，分别申请、要求不同的拆开（见 `06_source_registry.md` §2.1）。
 
 ## 8. 修订记录
 
+- v0.3（2026-10-12，Phase 4a）：按 `08_extraction.md` §12 修订。新增 `stem_claim_on_page`、`tuition_program_total_usd_est`（派生）、截止日期子表 `deadline_type`；`tuition_basis` 新增 per_year，`tuition_amount_usd` 改为页面原始口径；没写年份的 `deadline_date` 按每年固定日期推算；元数据新增 `term_as_written`、`term_basis`（含 recurring_no_year）、`stale`、`conflict_type`、`includes_fees`；§7 关闭“研究生院页与系页冲突”。
 - v0.2（2026-10-01，Phase 2a）：学费只记国际学生适用金额（公立校即州外学费）；§7 关闭“学费是否区分州内/州外”与“track/concentration 是否拆分”两项，“研究生院页与系页冲突”改为 P2 两页都登记、P4 定优先规则。
 - v0.1（2026-09-30，Phase 1b，按逐项答复修订）：
   - 新增元数据 `value_status`（found / not_mentioned / extraction_failed / page_unavailable），作为所有字段的权威状态；从各枚举中删除 `not_mentioned`（delivery_mode、gre_policy、gmat_policy、toefl_scale_on_page、fee_waiver、three_year_bachelor、interview、tuition_basis、funding）。
