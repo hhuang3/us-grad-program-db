@@ -125,11 +125,16 @@
 | `domain` | 域名 | 由 `url` 导出（§3.5）；必须存在于 domains.csv |
 | `page_type` | 页面类型 | `program_home / admissions / deadlines / requirements / tuition / funding / faq / grad_school_intl / isso_stem_list / other` |
 | `owner_level` | 页面所属层级 | `program / department / graduate_school / university` |
-| `url_status` | URL 状态 | `proposed`（Claude Code 提议）/ `confirmed`（你已确认） |
+| `url_status` | URL 状态 | `proposed`（Claude Code 提议）/ `confirmed`（你已确认）/ `retired`（停用，见下） |
 | `content_format` | 内容格式 | `html / pdf` |
 | `robots_allowed` | robots.txt 是否允许抓取本页 | `yes / no / not_checked`；由 `check-robots` 写入，新页面为 `not_checked` |
 | `crawl_allowed` | 是否允许 Phase 3 抓取本页 | **导出列**，`true / false`，规则见 §4.3 |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
+
+**停用（`retired`，2026-10-06 新增）**：页面已不能作为来源（例如变为需要登录、已被删除），由你手动把 `url_status` 改为 `retired`。
+- 行和 `page_id` 保留（§5.1 “不删除”），已有快照历史不受影响；`add-page` 不能直接登记 `retired` 页面。
+- 停用原因写进该页面每一条 program_pages 记录的 `scope_note`，以 `retired <YYYY-MM-DD>:` 开头（§3.3、§5.1）。
+- 停用页面不参与 §5.2 的检查、不列入 §5.3 的不可抓取清单、`check-robots` 不再判断它（§4.1）；Phase 3 不再取得它（07 §3）。
 
 用流水号而不用 URL 的 hash，是为了在 URL 变化（学校改版、重定向）时保持 `page_id` 不变，Phase 3 的快照历史才能连续。
 
@@ -139,7 +144,7 @@
 |---|---|
 | `program_id` | 关联 programs.csv |
 | `page_id` | 关联 pages.csv |
-| `scope_note` | 可空。该页面对**这个项目**的适用范围说明，单行文本（不含换行）。例如共用页面同时包含其他版本的内容时写明“页面同时包含线上版内容，抽取时只取面授版”。Phase 3/4 抽取时按此说明限定范围（2026-10-02 新增） |
+| `scope_note` | 可空。该页面对**这个项目**的适用范围说明，单行文本（不含换行）。例如共用页面同时包含其他版本的内容时写明“页面同时包含线上版内容，抽取时只取面授版”。Phase 3/4 抽取时按此说明限定范围（2026-10-02 新增）。页面停用时，这里写停用原因，以 `retired <YYYY-MM-DD>:` 开头（2026-10-06 新增） |
 
 `(program_id, page_id)` 组合唯一（与 `scope_note` 无关）。一个页面可以服务多个项目（例如研究生院统一的国际学生语言要求页）。
 
@@ -197,6 +202,7 @@ RFC 9309 规定其他 4xx 视为“可以抓取”，`urllib.robotparser` 也是
   - `not_found` → `yes`；`error` → `no`。
 - 域名汇总 `robots_allows_registered_paths`（写回 domains.csv）：该域名下已登记页面全部 `yes` → `yes`；全部 `no` → `no`；有 `yes` 也有 `no` → `partial`。该域名下没有已登记页面时 → `no_pages`（2026-10-01 确认，不记为 `yes`）。
 - 同时写回 `robots_checked_at`、`robots_status`，并重算 pages.csv 的 `crawl_allowed`。robots.txt 的内容**不保存**。
+- **停用页面**（`url_status = retired`）不参与判断：`robots_allowed` 保持原值，也不计入域名汇总；域名下已登记的页面全部停用时，不请求该域名，该域名的各列保持原值（2026-10-06 新增）。
 - 检查之后再登记的新页面，`robots_allowed = not_checked`，`crawl_allowed = false`，直到下次运行 `check-robots`。
 - 重定向：跟随（最多 5 次）。最终落在其他域名时，仍按最终响应判断，并把重定向信息打印到命令输出，不写进表里。
 
@@ -257,6 +263,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
   - `pages.domain` ∈ domains.csv；
   - program_pages 的两端都存在。
 - `program_pages.scope_note` 不得包含换行符。
+- `url_status = retired` 的页面：它的每一条 program_pages 记录，`scope_note` 都必须以 `retired <YYYY-MM-DD>:` 开头（日期合法）（2026-10-06 新增）。
 - 枚举值合法；日期、时间格式合法。
 - `status` 与 `exclusion_reason`、`selection_note` 的组合合法（§3.1）。
 - `program_id` 格式合法（§3.1）；占位记录规则（§2.1）。
@@ -268,6 +275,8 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
   - 不在 git 仓库中、或找不到 git 时：同样跳过，并给出一条 warning。
 
 ### 5.2 `status = selected` 的项目
+
+本节的“关联页面”不含停用页面（`url_status = retired`，2026-10-06 新增）。例如项目首页停用后，必须关联一个新的 program_home 页面，否则报 error。
 
 | 检查 | 默认 | `--ready` 模式 |
 |---|---|---|
@@ -296,7 +305,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 - 各组 selected 数量与 §2.3 名额的对比（含 pilot / main 分开计数）。
 - 各组 selected / excluded / backlog 数量；各 `exclusion_reason` 的数量。
-- `crawl_allowed = false` 的页面清单，以及原因（未检查 / robots / tos）；`tos_status ≠ no_restriction` 的域名清单。
+- `crawl_allowed = false` 的页面清单（不含停用页面），以及原因（未检查 / robots / tos）；`tos_status ≠ no_restriction` 的域名清单。
 - 被多个项目共用的页面数，以及 `owner_level = graduate_school` 的页面数。
 
 ---

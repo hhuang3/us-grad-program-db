@@ -1,0 +1,111 @@
+# 09 标准答案集（gold set）
+
+> 状态：draft v0.1（Phase 4a，2026-10-12）。标注由负责人完成。字段与规则以 `08_extraction.md` 为准（含其 §12 的提议改动）。
+
+## 1. 用途与工作量
+
+- **用途**：人工标注的基准，用来衡量 08 的抽取结果。**按字段统计**：
+  - 准确率：`found` 的 observation 中，值与标准答案一致的比例；
+  - 漏抽率：标准答案为 `found`、抽取为 `not_mentioned` 或 `extraction_failed` 的比例；
+  - 误报率：标准答案为 `not_mentioned`、抽取为 `found` 的比例；
+  - 学期正确率：`valid_for_term` 与标准答案一致的比例；
+  - 审核召回：标准答案中带 `contradictory`、`contamination`、`stale` 等标记的条目，被 08 §10 送进审核的比例。
+  - 另用它定出 08 §10 第 6 条的 `confidence` 阈值。
+- **标注对象是固定的一组快照**（§2 表中的 `snapshot_id`），不是实时网页。抽取也针对同一组快照运行，两边看的是同一份正文。快照以后变化时，标准答案集不随之更新；需要时另建 v2。
+- **先标注，后看结果**：负责人在看到任何 LLM 抽取结果之前完成标注，避免受模型输出影响。
+- **工作量估计**：
+  - 6 个项目、18 个页面，规范化正文合计约 19.7 万字符（约 3 万英文词）。通读约 2.5 小时。
+  - 行数：非截止日期字段每项目 15 行，共 90 行（模板已预填）；截止日期按轮次 × 类型另加，估计 40–50 行（Duke 一项就有 4 轮 × 申请、录取发布、押金 3 类，外加签证截止）。合计约 130–140 行。
+  - 填写约每行 1–1.5 分钟，2–3.5 小时。
+  - **合计约 5–6 小时**，可按项目分次完成。
+
+## 2. 项目
+
+| 项目 | 页面（快照） | 主要检验什么 |
+|---|---|---|
+| `unt-ms-datascience` | pg-0007（snap-20261011T005919Z）、pg-0008（snap-20261007T001931Z）、pg-0009（snap-20261011T010245Z） | 过期的截止日期（Fall 2026，08 §7.5）；有春季入学，学期推算受限（08 §7.2） |
+| `duke-other-mqmbusinessanalytics` | pg-0054（snap-20261011T010442Z）、pg-0055（snap-20261011T010445Z）、pg-0056（snap-20261011T010449Z）、pg-0057（snap-20261011T010452Z） | 倒计时区块；2025 年签证截止日期；4 轮截止日期表与 `deadline_type` |
+| `jhu-ms-businessanalyticsai` | pg-0061（snap-20261006T153726Z）、pg-0062（snap-20261004T150238Z）、pg-0063（snap-20261004T150247Z）、pg-0064（snap-20261004T150253Z） | 跨项目内容污染（08 §8.4）；面授与在职线上版写在同一页；scope_note |
+| `bu-ms-businessanalytics` | pg-0025（snap-20261011T010347Z）、pg-0026（snap-20261011T010352Z） | 同一页内数值矛盾（托福 90 / 95）；跨页面轮次数不同；跨项目内容污染 |
+| `ucla-other-quantitativeeconomics` | pg-0048（snap-20261011T010427Z）、pg-0049（snap-20261011T010431Z）、pg-0050（snap-20261011T010435Z） | 同一页多个学期；第一个有效变化实例；研究生院层级页（pg-0050） |
+| `uwmadison-ms-statistics`（对照） | pg-0031（snap-20261011T010407Z）、pg-0033（snap-20261011T010414Z） | 页面结构简单时的基线 |
+
+快照编号写的是 `snapshot_id` 的时间部分，完整写法为 `snap-<时间>-<page_id>`；模板中写完整编号。
+
+**对照项目选 UW–Madison MS Statistics 的理由**：
+- 可以自动抓取，条款无限制（stat.wisc.edu）。
+- 两个页面结构简单：截止日期在正文中只写一处、只有秋季入学（“no spring admissions”）；没有轮播、倒计时、活动列表；10-07、10-11 两次运行都是 unchanged。
+- 已登记页面上**没有托福、雅思数值**（语言要求在未登记的研究生院页），可检验抽取能否正确给出 `not_mentioned`，而不是凭常识填一个分数。
+- 对照项目的准确率应明显高于其他 5 个；如果不是，问题在提示词或 schema 的基本层面，而不在复杂页面。
+
+## 3. 标注说明
+
+### 3.1 正确值
+
+- 以 §2 表中的快照正文为准（本地 `data/snapshots/normalized/` 或原始文件），**不看实时网页**，也不用页面以外的知识。
+- 一个项目的所有页面一起看：某字段在任何一页找到，就填 `found`；多页都有且值不同时，每个值各填一行（§3.3）。
+- 值的写法按 02（含 08 §12 的修订）：
+  - 学费：`tuition_amount_usd` 填页面原始口径下的金额，`tuition_basis` 填页面口径（每学分、每学期、每年、整个项目）；只填国际学生适用的金额，公立校即州外学费。**不要换算**。
+  - 时长：换算成月（“1 year” → 12；“9 to 18 months” → min 9、max 18）。
+  - 截止日期：`YYYY-MM-DD`。
+  - TOEFL：旧制填 `toefl_min_legacy`，新制填 `toefl_min_new_scale`；两种都写了两行都填，`toefl_scale_on_page` 填 `both`。
+  - CIP：只填页面写明的 6 位代码；`stem_claim_on_page` 填页面是否声称 STEM。
+- `evidence_page_id` 填你依据的页面。原文片段只填在本地副本的 `evidence_text` 列（§4）。
+
+### 3.2 页面没写
+
+- 所有页面都没写 → `value_status = not_mentioned`，`value` 留空。
+- 只写了“请见研究生院要求”而没有数值 → `not_mentioned`，`notes` 写明“指向研究生院”。
+- 页面写了、但写法让你无法确定值（例如“competitive TOEFL score”）→ `not_mentioned`，`notes` 写明原因。
+
+### 3.3 页面自相矛盾
+
+- 每个说法各填一行，`flags` 都写 `contradictory`。
+- 你能判断哪个正确时，在正确那行的 `notes` 写 `correct`，另一行写 `incorrect` 和理由；判断不了就都不写。
+- 内容属于其他项目（跨项目内容污染）时，`flags` 写 `contamination`，`notes` 写明属于哪个项目。按 scope_note 本就不采用的区块，同样标出，不要省略。
+
+### 3.4 适用学期
+
+- 按 08 §7 的规则填 `valid_for_term`（`Fall 2027` 或 `term_unknown`）。
+- 学期是由日期推算的，`flags` 加 `inferred_term`。
+- 截止日期早于快照的取得日期，`flags` 加 `stale`，学期仍填它本来的学期（例如 UNT 填 Fall 2026）。
+- 无法确定的填 `term_unknown`，`notes` 写原因。
+- 托福、学费等没有日期的字段，页面没写学期就填 `term_unknown`；页面写了学年（例如 2026-27）按 08 §7.1 换算。
+
+### 3.5 截止日期
+
+- 每个“轮次 × 类型 × 适用对象”一行：复制模板中该项目的 `deadline` 行，填 `round_name`（原样）、`deadline_type`、`applicant_scope`、`value`（日期）。
+- 倒计时区块里的轮次和日期照常标注，剩余时间不标。
+- 页面写“rolling”而没有日期：`is_rolling = true`，`value` 留空，`value_status = found`。
+
+## 4. 文件
+
+| 文件 | 进 git | 内容 |
+|---|---|---|
+| `data/gold/gold_set_v1.csv` | 是 | 标准答案，不含原文 |
+| `data/gold/local/gold_set_v1_with_evidence.csv` | 否（gitignore） | 同样的行，多一列 `evidence_text`，供标注和审核时对照 |
+
+两份文件行的顺序、`row_id` 一致。标注时建议只填本地副本，填完后由脚本去掉 `evidence_text` 列生成 git 版（脚本在 P4 实现阶段写）；在那之前两份手工同步。
+
+**列**（模板已预填 `row_id`、`program_id`、`field`、`snapshot_ids`；其余由负责人填写）：
+
+| 列 | 填写 | 说明 |
+|---|---|---|
+| `row_id` | 预填 | `<program_id>:<field>:<序号>`；新增的截止日期行按序号续编 |
+| `program_id` | 预填 | |
+| `field` | 预填 | v1 字段名（08 §3）；截止日期为 `deadline` |
+| `snapshot_ids` | 预填 | 该项目标注所依据的全部快照，分号分隔 |
+| `value` | 负责人 | 按 §3.1 |
+| `value_status` | 负责人 | `found` / `not_mentioned` |
+| `valid_for_term` | 负责人 | §3.4 |
+| `round_name` | 负责人 | 仅 deadline |
+| `deadline_type` | 负责人 | 仅 deadline：`application / international_docs / deposit / decision_release / other` |
+| `applicant_scope` | 负责人 | 仅 deadline：`all / international / domestic / funding_consideration` |
+| `deadline_tz` | 负责人 | 仅 deadline，页面写了才填 |
+| `is_rolling` | 负责人 | 仅 deadline：`true / false` |
+| `evidence_page_id` | 负责人 | 依据的页面 |
+| `flags` | 负责人 | `contradictory`、`contamination`、`stale`、`inferred_term`，分号分隔 |
+| `notes` | 负责人 | 自由文本，不要粘贴页面原文 |
+| `annotated_by` | 负责人 | |
+| `annotated_at` | 负责人 | `YYYY-MM-DD` |
+| `evidence_text` | 负责人 | **仅本地副本**，≤ 200 字符 |

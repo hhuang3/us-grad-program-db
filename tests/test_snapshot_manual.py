@@ -216,3 +216,8 @@ def test_known_redirect_does_not_accept_other_addresses(reg, store, tmp_path):
 def test_saved_registered_address_has_no_redirect_note(reg, store, tmp_path):
     row = reg_one(reg, store, write(tmp_path, "a.mhtml", make_mhtml(URL3, BODY)))
     assert "redirected" not in row["note"]
+
+
+def test_retired_page_is_not_due(reg, store):
+    reg.pages.loc[reg.pages.page_id == "pg-0004", "url_status"] = "retired"
+    assert list(manual_due(reg, store, today="2026-10-06")["page_id"]) == ["pg-0003"]

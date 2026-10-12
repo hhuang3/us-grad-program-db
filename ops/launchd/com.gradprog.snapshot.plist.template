@@ -12,13 +12,13 @@
   </array>
   <key>WorkingDirectory</key>
   <string>__REPO_DIR__</string>
-  <!-- Every Monday 07:00 in the Mac's system time zone (Asia/Tokyo on the owner's Mac). -->
+  <!-- Every Sunday 09:00 in the Mac's system time zone (Asia/Tokyo on the owner's Mac). Weekday 0 = Sunday. -->
   <key>StartCalendarInterval</key>
   <dict>
     <key>Weekday</key>
-    <integer>1</integer>
+    <integer>0</integer>
     <key>Hour</key>
-    <integer>7</integer>
+    <integer>9</integer>
     <key>Minute</key>
     <integer>0</integer>
   </dict>

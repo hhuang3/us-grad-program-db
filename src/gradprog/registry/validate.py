@@ -33,6 +33,8 @@ OPTIONAL_ENUMS = {
 }
 KEYS = {"programs": "program_id", "pages": "page_id", "domains": "domain"}
 
+RETIRED_NOTE = re.compile(r"^retired (\S+): \S")
+
 
 @dataclass
 class ValidationResult:
@@ -138,6 +140,12 @@ def _check_values(registry, errors):
     for pid, page, note in zip(pp["program_id"], pp["page_id"], pp["scope_note"]):
         if "\n" in note or "\r" in note:
             errors.append(f"program_pages: {pid} -> {page}: scope_note must be a single line")
+    retired = set(registry.pages.loc[registry.pages["url_status"] == "retired", "page_id"])
+    for pid, page, note in zip(pp["program_id"], pp["page_id"], pp["scope_note"]):
+        m = RETIRED_NOTE.match(note)
+        if page in retired and not (m and t.is_date(m.group(1))):
+            errors.append(f"program_pages: {pid} -> {page}: retired page needs scope_note "
+                          f"'retired YYYY-MM-DD: <reason>', got {note!r}")
     d = registry.domains
     for k, v in zip(d["domain"], d["robots_checked_at"]):
         if v and not UTC_TIMESTAMP.match(v):
@@ -245,7 +253,7 @@ def _check_selected(registry, ready, batch, errors, warnings, blocked, crawl, ma
             (errors if strict else warnings).append(f"programs: {pid}: delivery_mode is unknown; confirm it")
         if MBA.search(f"{r.program_name} {r.degree_type}"):
             warnings.append(f"programs: {pid}: program_name looks like an MBA ({r.program_name!r}); confirm it")
-        linked = [p for p in links.get(pid, []) if p in pages.index]
+        linked = [p for p in links.get(pid, []) if p in pages.index and pages.loc[p, "url_status"] != "retired"]
         types = {pages.loc[p, "page_type"] for p in linked}
         if "program_home" not in types:
             errors.append(f"programs: {pid}: selected program needs a program_home page")
@@ -277,7 +285,8 @@ def _report(registry, crawl):
     tos = crawl.tos
     pages = registry.pages
     blocked = [{"page_id": row.page_id, "domain": row.domain, "reason": crawl.reason(row.page_id, row._asdict())}
-               for row in pages.itertuples(index=False) if not crawl.ok(row.page_id, row._asdict())]
+               for row in pages.itertuples(index=False)
+               if row.url_status != "retired" and not crawl.ok(row.page_id, row._asdict())]
     link_counts = registry.program_pages.groupby("page_id")["program_id"].nunique()
     return {
         "quota": quota,
