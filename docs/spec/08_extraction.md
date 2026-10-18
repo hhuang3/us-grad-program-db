@@ -261,6 +261,8 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 - 同一要求两种分制都写了（UConn：“79（旧制）或 4.5（新制）”）→ 两个字段各存一条，`toefl_scale_on_page = both`。
 - 写明的分制与数值范围不符，或同一分制内自相矛盾（WashU pg-0066：“5.0 overall (new scale) OR 4.5 ≥ 90 overall (old scale)”）→ `in_page_contradiction`，进入审核。
 - `toefl_scale_on_page`：页面只出现旧制 → `legacy`，只出现新制 → `new`，两者都有 → `both`。
+- **有条件录取的分数区间不是最低要求**（2026-10-18）：页面在标准最低分之外，另给一个更低的分数区间，达到即可有条件录取、入学后须参加英语测试或修英语课时，`toefl_min_*`、`ielts_min_overall` 只取标准最低分，不得取该区间的下限。提示词中写明这一点；LLM 可另行输出该区间（作为 `conditional_admission_range`，只记录、不进入 v1 字段），供审核参考。
+  - 测试用例：UW–Madison 研究生院英语要求页 pg-0070（snap-20261018T101205Z）：标准要求与 ESLAT 有条件录取区间写在同一页，最低分取标准要求。
 
 ## 10. 必须进入人工审核的情况
 
