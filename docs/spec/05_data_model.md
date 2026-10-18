@@ -1,6 +1,6 @@
 # 05 数据模型（设计，Phase 1 不实现）
 
-> 状态：v1.4（Phase 4a，2026-10-12：observation 层与重抽规则按 `08_extraction.md` 补充）。v1.3：snapshot 层以 `07_snapshots.md` 为准。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
+> 状态：v1.4（Phase 4a，2026-10-12；2026-10-18 补充：§4 新增 `referenced_elsewhere`、`mentioned_without_value`。observation 层与重抽规则按 `08_extraction.md` 补充）。v1.3：snapshot 层以 `07_snapshots.md` 为准。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
 
 ## 1. 四层数据状态
 
@@ -9,7 +9,7 @@
 | 层 | 是什么 | 主键 | 关键字段 | 谁写入 |
 |---|---|---|---|---|
 | `snapshot` | 一次原始取得（自动抓取或人工保存） | `snapshot_id` | **以 `07_snapshots.md` §4.2 为准**：`page_id, method, retrieved_at, requested_url, final_url, http_status, content_type, raw_sha256, normalizer_version, norm_sha256, classification, prev_snapshot_id` 等 | 抓取器 / 人工登记 |
-| `observation` | 一次抽取的结果（每个字段一行） | `observation_id` | `snapshot_id, program_id, field, value, value_status, valid_for_term, term_as_written, term_basis, stale, conflict_type, evidence_text, confidence, model_name, prompt_version, schema_version, extracted_at`（抽取规则见 `08_extraction.md`） | 抽取器 |
+| `observation` | 一次抽取的结果（每个字段一行） | `observation_id` | `snapshot_id, program_id, field, value, value_status, reference_target, valid_for_term, term_as_written, term_basis, stale, conflict_type, evidence_text, confidence, model_name, prompt_version, schema_version, extracted_at`（抽取规则见 `08_extraction.md`） | 抽取器 |
 | `fact` | 经人工审核确认的当前值 | `(program_id, field, valid_for_term)` 的当前版本 + `fact_version` | `value, value_status, source_observation_id, review_status, reviewer, reviewed_at, evidence_url` | 人工审核 |
 | `release` | 对外发布的数据集版本 | `release_id`（如 `v2027.1`） | `released_at, version, fact 版本集合` | 发布流程 |
 
@@ -57,15 +57,19 @@
 
 | value_status | 含义 | `value` |
 |---|---|---|
-| `found` | 页面可访问，且找到了该字段 | 有值（符合 02 中的类型或枚举） |
-| `not_mentioned` | 页面可访问，抽取成功，且页面确实没写 | null |
+| `found` | 页面可访问，且给出了可以直接使用的值 | 有值（符合 02 中的类型或枚举） |
+| `referenced_elsewhere` | 页面讲到该字段，但让读者去看别的页面或来源，自己没给值（例如“见研究生院要求页面”）。指向哪里另存于 `reference_target`（页面上的链接文字或网址）（2026-10-18 新增） | null |
+| `mentioned_without_value` | 页面提到有这项要求，但没给值，也没指向别处（例如“有不退还的申请费”“须提交英语成绩”“competitive TOEFL score”）（2026-10-18 新增） | null |
+| `not_mentioned` | 页面可访问，抽取成功，且页面完全没提到该字段 | null |
 | `extraction_failed` | 页面可访问，但抽取失败（模型报错、输出不合 schema、校验不通过） | null |
 | `page_unavailable` | 页面不可访问（snapshot `classification ∈ {blocked, unavailable, fetch_error}`，见 07 §7.1） | null |
 
 - 约束：`value_status = found` ⇔ `value` 非空。违反时校验报错，不写入。
 - 抓取失败时，同样要为该 page 关联的每个 `(program_id, field)` 写一条 observation，`value_status = page_unavailable`，关联那条失败的 snapshot。这样“没有数据”也有记录可查。
 - fact 层的 `value_status` 由审核人确认。例如一个项目的多个页面中，一个不可访问、另一个写明了该字段，审核后 fact 为 `found`。
-- `not_mentioned` 也是事实，可以对外发布（“官网未说明”）；`extraction_failed` 和 `page_unavailable` 不能成为已发布的 fact，必须先重抓、重抽或人工处理。
+- 一个项目的多个页面状态不同时，项目层默认取信息最多的：`found` > `referenced_elsewhere` > `mentioned_without_value` > `not_mentioned`。
+- `referenced_elsewhere`：指向的页面已登记给该项目时，以那一页的值为准（08 §8.1）；没有登记时，列为来源登记的覆盖缺口，进入审核。
+- `not_mentioned`、`mentioned_without_value`、`referenced_elsewhere` 也是事实，可以对外发布（分别为“官网未说明”“官网提到但未给出具体值”“官网指向其他页面”）；`extraction_failed` 和 `page_unavailable` 不能成为已发布的 fact，必须先重抓、重抽或人工处理。
 
 ## 5. 重跑规则（为后续阶段预留）
 

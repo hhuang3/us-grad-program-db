@@ -1,13 +1,14 @@
 # 09 标准答案集（gold set）
 
-> 状态：draft v0.1（Phase 4a，2026-10-12）。标注由负责人完成。字段与规则以 `08_extraction.md` 和 02 v0.3 为准。
+> 状态：draft v0.2（Phase 4a，2026-10-18：§3.2 三种无值状态、GRE 映射、适用对象、共用总览页、多页证据、附带条件的截止日期）。v0.1（2026-10-12）。标注由负责人完成。字段与规则以 `08_extraction.md` 和 02 v0.3 为准。
 
 ## 1. 用途与工作量
 
 - **用途**：人工标注的基准，用来衡量 08 的抽取结果。**按字段统计**：
   - 准确率：`found` 的 observation 中，值与标准答案一致的比例；
-  - 漏抽率：标准答案为 `found`、抽取为 `not_mentioned` 或 `extraction_failed` 的比例；
-  - 误报率：标准答案为 `not_mentioned`、抽取为 `found` 的比例；
+  - 漏抽率：标准答案为 `found`、抽取不是 `found` 的比例；
+  - 无值状态正确率：标准答案为 `referenced_elsewhere`、`mentioned_without_value`、`not_mentioned` 时，抽取给出同一状态的比例；
+  - 误报率：标准答案不是 `found`、抽取为 `found` 的比例（例如凭常识填了一个分数）；
   - 学期正确率：`valid_for_term` 与标准答案一致的比例；
   - 审核召回：标准答案中带 `contradictory`、`contamination`、`stale` 等标记的条目，被 08 §10 送进审核的比例。
   - 另用它定出 08 §10 第 6 条的 `confidence` 阈值。
@@ -34,8 +35,8 @@
 
 **对照项目选 UW–Madison MS Statistics 的理由**：
 - 可以自动抓取，条款无限制（stat.wisc.edu）。
-- 两个页面结构简单：截止日期在正文中只写一处、只有秋季入学（“no spring admissions”）；没有轮播、倒计时、活动列表；10-07、10-11 两次运行都是 unchanged。
-- 已登记页面上**没有托福、雅思数值**（语言要求在未登记的研究生院页），可检验抽取能否正确给出 `not_mentioned`，而不是凭常识填一个分数。
+- 页面结构简单：只有秋季入学（“no spring admissions”）；没有轮播、倒计时、活动列表；10-07、10-11 两次运行都是 unchanged。
+- 项目页的英语要求指向研究生院；研究生院的英语要求页于 2026-10-18 补登，可检验 `referenced_elsewhere` 与层级规则（08 §8.1）。
 - 对照项目的准确率应明显高于其他 5 个；如果不是，问题在提示词或 schema 的基本层面，而不在复杂页面。
 
 ## 3. 标注说明
@@ -44,19 +45,38 @@
 
 - 以 §2 表中的快照正文为准（本地 `data/snapshots/normalized/` 或原始文件），**不看实时网页**，也不用页面以外的知识。
 - 一个项目的所有页面一起看：某字段在任何一页找到，就填 `found`；多页都有且值不同时，每个值各填一行（§3.3）。
+- **共用总览页**（同一页面列出多个项目，例如统计系总览页列出 5 个项目的截止日期）：只采用明确标为本项目的那一行，其他项目的行（例如 MSDS 的春季截止日期）不采用，也不标 `contamination`。
+- **同一个值出现在多个页面**：`evidence_page_id` 填所有写了这个值的页面，分号分隔，最具体的排在前面（项目页 > 系页 > 研究生院页）。值不同则按 §3.3 分行。
 - 值的写法按 02（含 08 §12 的修订）：
   - 学费：`tuition_amount_usd` 填页面原始口径下的金额，`tuition_basis` 填页面口径（每学分、每学期、每年、整个项目）；只填国际学生适用的金额，公立校即州外学费。**不要换算**。
   - 时长：换算成月（“1 year” → 12；“9 to 18 months” → min 9、max 18）。
   - 截止日期：`YYYY-MM-DD`。
   - TOEFL：旧制填 `toefl_min_legacy`，新制填 `toefl_min_new_scale`；两种都写了两行都填，`toefl_scale_on_page` 填 `both`。
   - CIP：只填页面写明的 6 位代码；`stem_claim_on_page` 填页面是否声称 STEM。
-- `evidence_page_id` 填你依据的页面。原文片段只填在本地副本的 `evidence_text` 列（§4）。
+- 原文片段只填在本地副本的 `evidence_text` 列（§4）。
 
-### 3.2 页面没写
+### 3.2 没有给出值：三种状态
 
-- 所有页面都没写 → `value_status = not_mentioned`，`value` 留空。
-- 只写了“请见研究生院要求”而没有数值 → `not_mentioned`，`notes` 写明“指向研究生院”。
-- 页面写了、但写法让你无法确定值（例如“competitive TOEFL score”）→ `not_mentioned`，`notes` 写明原因。
+`value` 都留空，`value_status` 按下表区分（判断标准见 05 §4）：
+
+| value_status | 什么时候用 | `notes` |
+|---|---|---|
+| `referenced_elsewhere` | 页面讲到该字段，但让读者去看别的页面，自己没给值（例如“见研究生院要求页面”） | 写明指向哪里（链接文字或网址） |
+| `mentioned_without_value` | 页面提到有这项要求，但没给值，也没指向别处（例如“有不退还的申请费”“须提交英语成绩”“competitive TOEFL score”） | 可空 |
+| `not_mentioned` | 所有页面都完全没提到 | – |
+
+- 多个页面状态不同时，取信息最多的：`found` > `referenced_elsewhere` > `mentioned_without_value` > `not_mentioned`。
+- `evidence_page_id` 照填（`not_mentioned` 除外）；本地副本的 `evidence_text` 照抄提到该字段的原文。
+
+### 3.2a GRE / GMAT
+
+按 02 的映射表：“not required”“do not require”且没说提交了是否会被考虑 → `not_required`；“optional”“may submit”“not required but will be considered” → `optional`；“not accepted” → `not_accepted`；有豁免条件 → `conditional_waiver`。
+
+### 3.2b 适用对象
+
+- 目标申请者：从校外申请本项目的新生，以国际学生（F-1）为主。
+- 标注时**忽略**：已在本校读研的学生转入或加主修的流程；本校本科毕业生的快速通道（例如给本校本科毕业生的一年制路径）。这些内容不填，也不标 `contradictory`。
+- 截止日期按适用对象分开的（国际 / 美国本土 / 奖助评选），用 `applicant_scope` 区分，照常标注。
 
 ### 3.3 页面自相矛盾
 
@@ -76,6 +96,7 @@
 
 - 每个“轮次 × 类型 × 适用对象”一行：复制模板中该项目的 `deadline` 行，填 `round_name`（原样）、`deadline_type`、`applicant_scope`、`value`（日期）。
 - 倒计时区块里的轮次和日期照常标注，剩余时间不标。
+- **附带条件的截止日期**：条件日期与申请截止日期相同（例如“材料须在秋季截止日期前送达，才能参加助教岗位评选”）→ 不单独建行，在申请截止那一行的 `notes` 里记录条件；日期不同 → 单独一行，`applicant_scope = funding_consideration`。
 - 页面写“rolling”而没有日期：`is_rolling = true`，`value` 留空，`value_status = found`。
 - 日期没写年份（如 “January 2”）：按每年固定日期，年份取快照取得日期之后该月日的下一次出现，再按季节区间填 `valid_for_term`（08 §7.2）；`flags` 加 `recurring_no_year`。
 
@@ -97,14 +118,14 @@
 | `field` | 预填 | v1 字段名（08 §3）；截止日期为 `deadline` |
 | `snapshot_ids` | 预填 | 该项目标注所依据的全部快照，分号分隔 |
 | `value` | 负责人 | 按 §3.1 |
-| `value_status` | 负责人 | `found` / `not_mentioned` |
+| `value_status` | 负责人 | `found` / `referenced_elsewhere` / `mentioned_without_value` / `not_mentioned`（§3.2） |
 | `valid_for_term` | 负责人 | §3.4 |
 | `round_name` | 负责人 | 仅 deadline |
 | `deadline_type` | 负责人 | 仅 deadline：`application / international_docs / deposit / decision_release / other` |
 | `applicant_scope` | 负责人 | 仅 deadline：`all / international / domestic / funding_consideration` |
 | `deadline_tz` | 负责人 | 仅 deadline，页面写了才填 |
 | `is_rolling` | 负责人 | 仅 deadline：`true / false` |
-| `evidence_page_id` | 负责人 | 依据的页面 |
+| `evidence_page_id` | 负责人 | 依据的页面；同一个值出现在多页时全部填，分号分隔，最具体的在前（§3.1） |
 | `flags` | 负责人 | `contradictory`、`contamination`、`stale`、`inferred_term`、`recurring_no_year`，分号分隔 |
 | `notes` | 负责人 | 自由文本，不要粘贴页面原文 |
 | `annotated_by` | 负责人 | |

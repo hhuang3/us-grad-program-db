@@ -2,7 +2,7 @@
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
-> 枚举值全部小写蛇形。字段是否在页面上找到，**只由**元数据 `value_status`（found / not_mentioned / extraction_failed / page_unavailable，见 §6）表达，这是权威状态；各字段的枚举中不含 `not_mentioned`。`value_status ≠ found` 时字段值为 null。
+> 枚举值全部小写蛇形。字段是否在页面上找到，**只由**元数据 `value_status`（found / not_mentioned / mentioned_without_value / referenced_elsewhere / extraction_failed / page_unavailable，见 §6）表达，这是权威状态；各字段的枚举中不含 `not_mentioned`。`value_status ≠ found` 时字段值为 null。
 
 ## 1. 项目主表 `program`
 
@@ -26,7 +26,7 @@
 
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
-| gre_policy | GRE 要求 | enum：required / optional / not_accepted / conditional_waiver | Admissions / FAQ | |
+| gre_policy | GRE 要求 | enum：required / optional / not_required / not_accepted / conditional_waiver | Admissions / FAQ | 映射见下方说明（v0.3 新增 not_required） |
 | gre_notes | GRE 补充说明 | str（短摘要） | 同上 | 如豁免条件 |
 | gmat_policy | GMAT 要求 | 同 gre_policy 枚举 | 同上 | BA 项目常见 |
 | toefl_min_legacy | TOEFL 最低总分（旧制） | int 0–120，可空 | 研究生院国际学生要求页 | |
@@ -38,6 +38,16 @@
 | duolingo_min | 多邻国最低分 | int，可空 | 同上 | |
 | english_req_level | 语言要求的来源层级 | enum：program / graduate_school | 同上 | 很多项目直接沿用研究生院标准 |
 | english_waiver | 语言豁免规则 | str（短摘要） | 同上 | |
+
+**`gre_policy` / `gmat_policy` 的映射**（v0.3）：
+
+| 页面写法 | 取值 |
+|---|---|
+| “required” | `required` |
+| “optional”“may submit”“not required but will be considered” | `optional` |
+| “not required”“do not require”，没说提交了是否会被考虑 | `not_required` |
+| “not accepted”“will not be considered” | `not_accepted` |
+| “required unless …”、有豁免条件 | `conditional_waiver` |
 
 ## 3. 申请材料与费用
 
@@ -81,13 +91,14 @@
 
 | 字段 | 含义 | 类型 / 取值 |
 |---|---|---|
-| value_status | 取值状态（权威） | enum：found / not_mentioned / extraction_failed / page_unavailable |
+| value_status | 取值状态（权威） | enum：found / not_mentioned / mentioned_without_value / referenced_elsewhere / extraction_failed / page_unavailable；判断标准见 05 §4 |
 | evidence_url | 来源页面 URL | str |
 | evidence_text | 来源原文片段（仅内部保存，不对外发布） | str，≤ 200 字符 |
 | snapshot_id | 来源快照 | str |
 | retrieved_at | 抓取时间 | datetime（UTC） |
 | confidence | 抽取置信度 | float 0–1 |
 | review_status | 审核状态 | enum：auto / approved / corrected / rejected |
+| reference_target | `value_status = referenced_elsewhere` 时页面指向的链接文字或网址 | str，可空 |
 | valid_for_term | 适用入学季 | str，如 "Fall 2027"，或 term_unknown |
 | term_as_written | 条目对应学期在页面上的原文 | str，可空 | 
 | term_basis | valid_for_term 的依据 | enum：stated / inferred_from_date / recurring_no_year / unknown |
@@ -103,6 +114,7 @@
 
 ## 8. 修订记录
 
+- v0.3 补充（2026-10-18）：`value_status` 新增 `mentioned_without_value`、`referenced_elsewhere`（判断标准见 05 §4）；`gre_policy` / `gmat_policy` 新增 `not_required` 并给出映射表。
 - v0.3（2026-10-12，Phase 4a）：按 `08_extraction.md` §12 修订。新增 `stem_claim_on_page`、`tuition_program_total_usd_est`（派生）、截止日期子表 `deadline_type`；`tuition_basis` 新增 per_year，`tuition_amount_usd` 改为页面原始口径；没写年份的 `deadline_date` 按每年固定日期推算；元数据新增 `term_as_written`、`term_basis`（含 recurring_no_year）、`stale`、`conflict_type`、`includes_fees`；§7 关闭“研究生院页与系页冲突”。
 - v0.2（2026-10-01，Phase 2a）：学费只记国际学生适用金额（公立校即州外学费）；§7 关闭“学费是否区分州内/州外”与“track/concentration 是否拆分”两项，“研究生院页与系页冲突”改为 P2 两页都登记、P4 定优先规则。
 - v0.1（2026-09-30，Phase 1b，按逐项答复修订）：

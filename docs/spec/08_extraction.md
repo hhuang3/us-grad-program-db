@@ -1,6 +1,6 @@
 # 08 字段抽取（Phase 4）
 
-> 状态：draft v0.2（Phase 4a，2026-10-12）。只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
+> 状态：draft v0.3（Phase 4a，2026-10-18）。v0.3：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
 > 依据：`02_field_dictionary.md` v0.2、`05_data_model.md` v1.3、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
 
 本文件定义 05 的第二层 **observation**：从 snapshot 的规范化正文中抽取字段，写成 observation。observation 不直接成为 fact，进入 fact 必须经过人工审核（05 §1.3）。
@@ -93,7 +93,8 @@ LLM 对每个页面输出一个 JSON 对象：
 | 键 | 含义 |
 |---|---|
 | `value` | 字段值，类型与枚举按 02（§12 修订后）；`value_status ≠ found` 时为 null |
-| `value_status` | `found / not_mentioned`（LLM 只输出这两种；`extraction_failed`、`page_unavailable` 由代码写） |
+| `value_status` | `found / referenced_elsewhere / mentioned_without_value / not_mentioned`（判断标准见 05 §4；`extraction_failed`、`page_unavailable` 由代码写） |
+| `reference_target` | 仅 `referenced_elsewhere`：页面上指向的链接文字或网址，原样 |
 | `evidence_text` | 支持该值的原文片段，≤ 200 字符，从正文中原样复制 |
 | `term_as_written` | 该条目所对应学期在页面上的原文写法；页面没写就为 null |
 | `confidence` | 0–1 |
@@ -118,7 +119,7 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 
 ## 6. 证据校验
 
-每条 `value_status = found` 的结果，写入前依次检查，任何一项不通过：该条作废，记为 `value_status = extraction_failed`（值为空），并进入审核（§10）。原始输出另存，供审核查看。
+每条 `value_status ∈ {found, referenced_elsewhere, mentioned_without_value}` 的结果都必须带 `evidence_text`；第 1、2、4 项对三者都适用，第 3 项只对 `found`。写入前依次检查，任何一项不通过：该条作废，记为 `value_status = extraction_failed`（值为空），并进入审核（§10）。原始输出另存，供审核查看。
 
 1. **逐字出现**：`evidence_text` 与规范化正文各自做空白规范化（连续空白合并为一个空格、去掉首尾空白）后，`evidence_text` 必须是正文的子串。不做大小写或标点的模糊匹配。
 2. **长度**：≤ 200 字符。
@@ -215,7 +216,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 
 - 层级由 `pages.owner_level` 给出：`program` > `department` > `graduate_school` > `university`（越具体越优先）。
 - 审核默认建议：采用更具体层级的值。
-- 例外一：更具体层级的页面写的是“按研究生院要求”（没有自己的数值）→ 采用研究生院的值。
+- 例外一：更具体层级的页面写的是“按研究生院要求”（`referenced_elsewhere`，没有自己的数值）→ 采用研究生院的值。指向的页面没有登记给该项目时，记为覆盖缺口，进入审核（05 §4）。
 - 例外二：**研究生院要求视为下限**。项目页（或系页）的数值**低于**研究生院下限时（例如项目页托福 79、研究生院 80），不自动采用，进入审核，冲突类型 `below_graduate_school_minimum`。“低于”按字段方向判断：最低分类字段（托福、雅思）数值更低即为低于；`gre_policy` 等枚举字段不做下限比较。
 - 冲突类型：`level_mismatch`、`below_graduate_school_minimum`。
 
@@ -238,6 +239,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 - **案例**：
   - **JHU Carey pg-0061**（`jhu-ms-businessanalyticsai`）：P2 核对时，页面的 Admissions 与 Application Deadlines 区块是 MBA/BS in Engineering 双学位的内容，且为 Fall 2026 旧数据，与 How to apply 页（pg-0062）矛盾（GMAT/GRE 一个说必需、一个说可选）。2026-10 `/full-time` 并入项目总页，P4 抽取时需确认这些内容是否已修正。scope_note 已写明不采用。
   - **BU pg-0026**（`bu-ms-businessanalytics`）：liberal arts 申请通道区块写明属于 MSBA，但“如何申请”一句指向 MiM 项目，疑似从 MiM 页面复制；该区块在 2026-10-11 的快照中已被删除。
+- **不属于污染的情况**：总览页按项目分行列出多个项目（例如统计系总览页列出 5 个项目的截止日期）。抽取只采用明确标为本项目的那一行（按项目名和学位），其他项目的行不采用，也不标记。只有当内容被写成本项目自己的、实际却属于别的项目时，才算污染（2026-10-18 补充）。
 - **检测信号**（任一命中即标记，进入审核，不自动采用该条）：
   1. LLM 在该条目的 `evidence_text` 或其所在区块中看到其他项目或学位的名称——提示词要求 LLM 对每条输出 `other_program_mentioned`（页面原文中的其他项目名，或 null），只记录、不判断；
   2. 该条目落在 `scope_note` 声明不采用的区块（LLM 依 scope_note 输出 `excluded_by_scope_note`，代码仍保留该条以备审核）；
@@ -274,6 +276,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | 8 | 来源快照分类为 `suspected_redesign` |
 | 9 | 季节和年份都没写、且项目有多个入学季；或季节为夏季、没写年份（§7.2） |
 | 10 | TOEFL 分制无法识别（§9） |
+| 12 | `referenced_elsewhere` 且指向的页面没有登记给该项目（覆盖缺口，05 §4） |
 | 11 | 页面受众存疑：LLM 报告页面是给在读学生或其他项目的（P2 报告 §6.2.5，例如 Columbia `/ma-student-faqs/`） |
 
 不进入审核的 observation 仍然不会自动成为 fact（05 §1.3）；“进入审核”指在审核队列中优先列出并标明原因。
