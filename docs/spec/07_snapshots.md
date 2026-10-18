@@ -94,9 +94,13 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 ### 5.1 自动抓取 `gradprog snapshot run`
 
 - 对象：§3 中“自动抓取”的页面。`--page <page_id>`（可重复）只抓指定的页面（仍然必须属于自动抓取对象）；`--dry-run` 只列出将要请求的页面和它们的 robots.txt 地址，不发任何请求。
-- 每次运行开始时，对涉及的每个域名重新读取一次 robots.txt（本次运行内缓存），判定规则同 06 §4.1：
-  - 本次判定为禁止的页面 → `blocked`，不请求；
-  - robots.txt 无法读取（06 §4.1 的 `error`）→ 该域名的页面都记为 `blocked`，不请求。
+- **运行前检查网络**（2026-10-18 新增）：请求任何 robots.txt 之前，依次尝试与本次涉及的前 3 个域名的 443 端口建立 TCP 连接（每个最多 10 秒，不发送 HTTP 请求）。全部失败 → 判定网络不通：不运行、不写 index.csv、runs.csv 和报告，在输出（日志）中写明原因，以退出码 75 退出，等下次定时再跑。只要有一个成功就照常运行。
+- 每次运行开始时，对涉及的每个域名重新读取一次 robots.txt（本次运行内缓存）：
+  - robots.txt 读取成功（2xx）且本次判定为禁止的页面 → `blocked`，不请求；note `robots.txt disallows`。
+  - robots.txt 返回 404 / 410 → 视为全部允许（同 06 §4.1）。
+  - robots.txt 返回 401 / 403 → 该域名的页面都记为 `blocked`，不请求；note `robots.txt HTTP <状态码>`。
+  - robots.txt **读取失败**——网络错误、超时、5xx、其他 4xx → 该域名的页面都记为 `fetch_error`，不请求；note `robots.txt unavailable: <原因>`（2026-10-18 修订：原规则记为 `blocked`。读取失败说明不了网站禁止抓取，10-18 运行中 Mac 睡眠导致的网络中断就因此产生了两条假的 `blocked`）。
+  - 登记表的 `check-robots`（06 §4.1）不受影响：它仍把读取失败记为 `robots_status = error`、`robots_allowed = no`，作为准入时的保守判断。
   - 运行**不修改**登记表（pages.csv、domains.csv）；robots 结果与登记表不一致时，在报告中建议运行 `gradprog registry check-robots`。
 - 礼貌规则沿用 P1 下载器：User-Agent 相同，联系邮箱来自 `GRADPROG_CONTACT_EMAIL`（未设置则拒绝运行），单线程，所有请求（含 robots.txt）之间间隔 ≥ 3 秒。
 - 跳转：最多跟随 5 次；记录 `final_url`；是否“跳转到不同页面”沿用 06 §4.4 的 `redirected_other` 规则。
@@ -201,9 +205,9 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 
 | # | classification | 判定 | 后续 |
 |---|---|---|---|
-| 1 | `blocked` | 本次 robots.txt 禁止或无法读取（不请求）；或最终状态码为 401、403 | 进异常清单 |
+| 1 | `blocked` | 本次 robots.txt 读取成功并禁止该页面，或 robots.txt 返回 401、403（不请求）；或页面最终状态码为 401、403 | 进异常清单 |
 | 2 | `unavailable` | 最终状态码为 404、410；或跳转判定为 `redirected_other` | 进异常清单 |
-| 3 | `fetch_error` | 网络错误、超时、5xx、其他非 2xx、超过大小上限、内容类型不支持；规范化后正文为空（0 字符）也算，note 写“可能需要 JavaScript 渲染” | 进异常清单；同一页面**连续 2 次**才在报告中列为“需要处理” |
+| 3 | `fetch_error` | robots.txt 读取失败（§5.1，不请求页面）；网络错误、超时、5xx、其他非 2xx、超过大小上限、内容类型不支持；规范化后正文为空（0 字符）也算，note 写“可能需要 JavaScript 渲染” | 进异常清单；同一页面**连续 2 次**才在报告中列为“需要处理” |
 | 4 | `first_capture` | 取得成功，且没有可比较的上一版（§7.2） | 可被 P4 抽取（08 §2） |
 | 5 | `unchanged` | `norm_sha256` 与上一版相同 | 可被 P4 抽取（08 §2：首次抽取，或正文与上次抽取所用快照不同） |
 | 6 | `suspected_redesign` | 正文不同，且（字符数比上一版**减少超过** `char_drop`，**或**相似度**低于** `min_similarity`） | 生成 diff；进异常清单；可被 P4 抽取（08 §2），所得 observation 进入审核（08 §10） |
@@ -270,12 +274,12 @@ min_similarity: 0.3   # line ratio < min_similarity
 ### 10.1 launchd
 
 - `ops/launchd/` 下提供 plist 模板和 README：
-  - 每周日 09:00 运行 `gradprog snapshot run`（2026-10-07 修订，原为每周一 07:00）。plist 中 `StartCalendarInterval` 为 `Weekday = 0`（周日）、`Hour = 9`、`Minute = 0`。launchd 的 `StartCalendarInterval` 使用 **Mac 的系统时区**；README 写明这一点（Mac 时区为东京时就是东京时间 09:00）。
+  - 每周日 20:00 运行 `gradprog snapshot run`（2026-10-18 修订；原为周一 07:00，10-07 改为周日 09:00。10-11、10-18 两次 09:00 的运行都遇到 Mac 合盖或睡眠，改到通常开着电脑的时间）。plist 中 `StartCalendarInterval` 为 `Weekday = 0`（周日）、`Hour = 20`、`Minute = 0`。launchd 的 `StartCalendarInterval` 使用 **Mac 的系统时区**；README 写明这一点（Mac 时区为东京时就是东京时间 20:00）。
   - 联系邮箱：launchd 不读 `~/.zshrc`。由一个包装脚本 `ops/launchd/run-snapshot.sh` 读取 `~/.config/gradprog/env`（仓库外，`KEY=value` 格式，权限 600），只导出 `GRADPROG_CONTACT_EMAIL`，再调用 `uv run gradprog snapshot run`。
   - 日志：`data/snapshots/logs/`（gitignore）。
   - **防止运行中睡眠**（2026-10-12 新增；10-11 的第一次定时运行因 Mac 用电池睡眠，耗时 65 分钟）：包装脚本用 `caffeinate -i` 包住 `uv run gradprog snapshot run`，运行期间阻止系统**闲置睡眠**。
-    - `caffeinate -i` **不能防止合盖睡眠**，也不能阻止电量过低或用户手动让 Mac 睡眠；运行时 Mac 应开盖（或接外接显示器、电源）。README 写明这一点。
-    - 运行开始和结束时，各把电源状态（`pmset -g batt` 的一行摘要：电源来源、电量、充放电状态）写进日志。
+    - `caffeinate -i` **不能防止合盖睡眠**，也不能阻止电量过低或用户手动让 Mac 睡眠；运行时 Mac 应开盖（或接外接显示器、电源）。README 写明这一点。系统定时唤醒（`pmset schedule`）也解决不了合盖：合盖且没有外接显示器时，Mac 只会短暂唤醒（DarkWake）后又睡回去（10-18 的日志）。
+    - 运行开始和结束时，各把电源状态（`pmset -g batt` 的一行摘要：电源来源、电量、充放电状态）写进日志。充电时输出中含 “(no estimate)” 等括号内容，摘要也必须保留电量部分（2026-10-18 修正）。
     - 结束时在日志中写运行耗时（秒），以及运行期间 `pmset -g log` 中出现的 “Entering Sleep state” 次数；耗时超过 15 分钟或睡眠次数大于 0 时，多写一行以 `WARNING:` 开头的说明。
     - 只写日志：runs.csv 和运行报告没有对应的列或栏目，不为此改变结构。
 - **不自动安装**：模板里的路径用占位符，README 写明替换与 `launchctl` 安装步骤，由你手动安装。

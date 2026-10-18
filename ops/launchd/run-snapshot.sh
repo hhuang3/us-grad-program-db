@@ -23,7 +23,7 @@ SLOW_SECONDS=900   # 07 §10.1: warn when a run takes longer than 15 minutes
 power() {
   pmset -g batt 2>/dev/null | awk '
     NR == 1 { sub(/^Now drawing from /, ""); gsub(/\047/, ""); src = $0 }
-    NR == 2 { sub(/^.*\)[ \t]*/, ""); sub(/ present:.*/, ""); batt = $0 }
+    NR == 2 { sub(/^[^)]*\)[ \t]*/, ""); sub(/ present:.*/, ""); batt = $0 }
     END { print src (batt != "" ? "; " batt : "") }'
 }
 

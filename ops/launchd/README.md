@@ -1,6 +1,6 @@
 # Weekly snapshot run with launchd
 
-Runs `gradprog snapshot run` every Sunday at 09:00 (docs/spec/07_snapshots.md §10.1). Nothing here is installed automatically.
+Runs `gradprog snapshot run` every Sunday at 20:00 (docs/spec/07_snapshots.md §10.1). Nothing here is installed automatically.
 
 ## 1. Contact email (outside the repository)
 
@@ -38,13 +38,15 @@ rm ~/Library/LaunchAgents/com.gradprog.snapshot.plist
 
 ## 3. Time zone (时区)
 
-`StartCalendarInterval` uses the Mac's **system time zone**. With the Mac set to Asia/Tokyo (东京时区) the job runs every Sunday 09:00 Tokyo time (`Weekday` 0 = Sunday, `Hour` 9, `Minute` 0). If the Mac is asleep at that time, launchd runs the job when it wakes.
+`StartCalendarInterval` uses the Mac's **system time zone**. With the Mac set to Asia/Tokyo (东京时区) the job runs every Sunday 20:00 Tokyo time (`Weekday` 0 = Sunday, `Hour` 20, `Minute` 0). If the Mac is asleep at that time, launchd runs the job when it wakes.
 
 ## 3a. Sleep during the run (睡眠)
 
-`run-snapshot.sh` runs the job under `caffeinate -i`, which blocks **idle** sleep while the run lasts. It does **not** prevent lid-close sleep (合盖睡眠), sleep forced by a low battery, or sleep you start yourself. On Sunday morning keep the Mac open (or on an external display) and preferably on power. The first scheduled run (2026-10-11) ran on battery at 11% and took 65 minutes because the Mac kept going back to sleep.
+`run-snapshot.sh` runs the job under `caffeinate -i`, which blocks **idle** sleep while the run lasts. It does **not** prevent lid-close sleep (合盖睡眠), sleep forced by a low battery, or sleep you start yourself. On Sunday evening keep the Mac open (or on an external display) and preferably on power. A scheduled wake (`pmset schedule`) does not help with the lid closed: the Mac only dark-wakes and goes back to sleep. The 09:00 runs on 2026-10-11 (battery, 11%) and 2026-10-18 (lid closed) took 65 and 109 minutes for this reason, which is why the job moved to 20:00.
 
 The log records the power state at the start and end of each run, the run time, and how many times the Mac entered sleep during it; a line starting with `WARNING:` means it slept or the run took longer than 15 minutes.
+
+Before requesting anything, the run checks that at least one of the sites is reachable (a TCP connection to port 443, no HTTP request). If none is, it prints `run skipped: network unavailable …`, exits with code 75 and writes nothing; the next scheduled run tries again.
 
 ## 4. Logs
 
