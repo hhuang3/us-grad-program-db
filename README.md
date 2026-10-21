@@ -17,3 +17,10 @@ Environment variables (never commit these):
 - `SCORECARD_API_KEY`: optional; the College Scorecard API is used only as a supplement to the bulk files
 
 See `docs/spec/` for the design and data rules. Raw downloads go to `data/raw/` (git-ignored). Provenance for every file is in `data/manifest/`.
+
+## Manual page captures (Phase 3)
+
+Pages that cannot be fetched automatically are saved by hand in a browser as `.mhtml` and registered with `uv run gradprog snapshot register-manual --from-dir <folder>`; `uv run gradprog snapshot manual-due` lists the pages that are due (docs/spec/07_snapshots.md §5.2).
+
+- Save the page itself, not a login page or an error page.
+- **Expand every collapsed question or list before saving.** On some pages the answers are not in the page until they are opened, so a collapsed save keeps only the question titles. These pages are marked in `data/registry/program_pages.csv` (`scope_note` starting with “人工保存前先展开”); currently pg-0005 (NYU CDS FAQ) and pg-0047 (JHU Krieger exams page).
