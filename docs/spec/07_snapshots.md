@@ -113,7 +113,8 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 
 **`gradprog snapshot manual-due`** → 生成 `data/snapshots/manual_due.md`：
 - 列出 §3 中“人工取得”的页面里，距离上次**成功的**人工或自动取得 ≥ 14 天（按 `retrieved_at` 计算，以运行命令时的 UTC 日期为准）或从未取得过的页面。
-- 列：page_id、项目、page_type、可点击的 URL、上次取得日期（没有则写“从未”）。按项目分组。末尾写待办总数。
+- 列：page_id、项目、page_type、可点击的 URL、上次取得日期（没有则写“从未”）、保存说明。按项目分组。末尾写待办总数。
+- **保存说明**（2026-10-22 新增）：该页面在 program_pages 中含“人工保存”字样的 `scope_note`（例如要求先展开折叠项），原样显示；同一页面关联多个项目、说明不同时用“；”连接，相同的只显示一次。没有这类 scope_note 时为空。只用于抽取范围的 scope_note 不显示。
 
 **`gradprog snapshot register-manual --page <page_id> --file <路径> [--retrieved-at <时间>]`**：
 - 接受 `.mhtml` 和 `.pdf`，其他扩展名报错。

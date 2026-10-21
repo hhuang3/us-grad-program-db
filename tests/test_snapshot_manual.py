@@ -4,6 +4,7 @@ import hashlib
 import os
 from datetime import datetime, timezone
 
+import pandas as pd
 import pytest
 
 from gradprog.snapshot.manual import manual_due, register_from_dir, register_manual, render_manual_due
@@ -221,3 +222,27 @@ def test_saved_registered_address_has_no_redirect_note(reg, store, tmp_path):
 def test_retired_page_is_not_due(reg, store):
     reg.pages.loc[reg.pages.page_id == "pg-0004", "url_status"] = "retired"
     assert list(manual_due(reg, store, today="2026-10-06")["page_id"]) == ["pg-0003"]
+
+
+# --- save instructions in manual-due (07 §5.2, 2026-10-22) ---------------------
+
+def test_manual_due_shows_save_instructions(reg, store):
+    pp = reg.program_pages
+    pp.loc[pp.page_id == "pg-0003", "scope_note"] = "人工保存前先展开页面上所有折叠的问答"
+    pp.loc[pp.page_id == "pg-0004", "scope_note"] = "抽取时只取面授版"           # extraction scope only: not shown
+    due = manual_due(reg, store, today="2026-10-06")
+    notes = dict(zip(due["page_id"], due["save_note"]))
+    assert notes == {"pg-0003": "人工保存前先展开页面上所有折叠的问答", "pg-0004": ""}
+    md = render_manual_due(due)
+    assert "保存说明" in md and "人工保存前先展开页面上所有折叠的问答" in md and "抽取时只取面授版" not in md
+
+
+def test_save_instructions_from_several_programs_are_joined_once(reg, store):
+    pp = reg.program_pages
+    extra = pp[pp.page_id == "pg-0003"].assign(program_id="alpha-ms-datascience")
+    reg.program_pages = pd.concat([pp, extra], ignore_index=True)
+    reg.program_pages.loc[reg.program_pages.page_id == "pg-0003", "scope_note"] = ["人工保存时展开 A", "人工保存时展开 A"]
+    assert manual_due(reg, store, today="2026-10-06").set_index("page_id").loc["pg-0003", "save_note"] == "人工保存时展开 A"
+    reg.program_pages.loc[reg.program_pages.page_id == "pg-0003", "scope_note"] = ["人工保存时展开 A", "人工保存时展开 B"]
+    assert manual_due(reg, store, today="2026-10-06").set_index("page_id").loc["pg-0003", "save_note"] == \
+        "人工保存时展开 A；人工保存时展开 B"
