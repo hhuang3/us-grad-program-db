@@ -46,7 +46,7 @@ rm ~/Library/LaunchAgents/com.gradprog.snapshot.plist
 
 The log records the power state at the start and end of each run, the run time, and how many times the Mac entered sleep during it; a line starting with `WARNING:` means it slept or the run took longer than 15 minutes.
 
-Before requesting anything, the run checks that at least one of the sites is reachable (a TCP connection to port 443, no HTTP request). If none is, it prints `run skipped: network unavailable …`, exits with code 75 and writes nothing; the next scheduled run tries again.
+Before requesting anything, the run checks that at least one of the sites is reachable (a TCP connection to port 443, no HTTP request). If none is, it prints `run skipped: network unavailable …`, exits with code 75 and writes nothing; the next scheduled run tries again. The wrapper then shows a macOS notification (“gradprog snapshot”) with the time and reason of the skip. The first notification may need to be allowed in System Settings → Notifications (it appears under Script Editor).
 
 ## 4. Logs
 

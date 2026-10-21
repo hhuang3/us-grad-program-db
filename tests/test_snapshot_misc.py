@@ -142,7 +142,9 @@ def test_launchd_templates():
 
 STUBS = {
     # fake uv: remember the call and the time, so the fake sleep log can fall inside the run window
-    "uv": 'echo "uv $*"; date "+%Y-%m-%d %H:%M:%S %z" > "$HOME/during"; exit "${UV_EXIT:-0}"',
+    "uv": 'echo "uv $*"; [[ -n "${UV_SAY:-}" ]] && echo "$UV_SAY"; date "+%Y-%m-%d %H:%M:%S %z" > "$HOME/during"; '
+          'exit "${UV_EXIT:-0}"',
+    "osascript": 'shift; printf "osascript %s\\n" "$*" >> "$HOME/calls"',   # drop the "-" (script on stdin), keep argv
     "caffeinate": 'echo "caffeinate $1" >> "$HOME/calls"; shift; exec "$@"',
     "pmset": """case "$2" in
   batt) printf "${BATT:-Now drawing from 'Battery Power'\n -InternalBattery-0 (id=1)\t11%%; discharging; 2:10 remaining present: true\n}";;
@@ -271,3 +273,19 @@ def test_cli_skips_the_run_when_the_network_is_down(monkeypatch, capsys, registr
     assert cli.main(["snapshot", "run"]) == 75
     out = capsys.readouterr().out
     assert "run skipped" in out and "network unavailable" in out
+
+
+def test_wrapper_notifies_when_the_run_is_skipped(tmp_path):
+    reason = "run skipped: network unavailable: no TCP connection to a.edu (port 443)"
+    result, calls = run_wrapper(tmp_path, UV_EXIT="75", UV_SAY=reason)
+    assert result.returncode == 75
+    assert reason in result.stdout                                       # still logged
+    note = [c for c in calls.splitlines() if c.startswith("osascript ")]
+    assert len(note) == 1 and "network unavailable: no TCP connection to a.edu" in note[0]
+    assert re.search(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}", note[0])        # local time of the skip
+
+
+@pytest.mark.parametrize("exit_code", ["0", "1"])
+def test_wrapper_does_not_notify_otherwise(tmp_path, exit_code):
+    result, calls = run_wrapper(tmp_path, UV_EXIT=exit_code, SLEEPS="1")
+    assert "osascript" not in calls

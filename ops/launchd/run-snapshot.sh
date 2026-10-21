@@ -38,9 +38,23 @@ echo "=== $(date -u +%Y-%m-%dT%H:%M:%SZ) snapshot run ==="
 echo "power: $(power)"
 start_local="$(date '+%Y-%m-%d %H:%M:%S')"
 start_s=$(date +%s)
-rc=0
+# macOS notification; the text is passed as an argument, never spliced into the AppleScript.
+notify() {
+  osascript - "$1" <<'OSA' >/dev/null 2>&1 || true
+on run argv
+  display notification (item 1 of argv) with title "gradprog snapshot"
+end run
+OSA
+}
+
+out_file="$(mktemp -t gradprog-run)"
 # caffeinate -i blocks idle sleep while the run lasts; it does not prevent lid-close sleep (07 §10.1).
-caffeinate -i uv run gradprog snapshot run || rc=$?
+caffeinate -i uv run gradprog snapshot run | tee "$out_file"
+rc=${pipestatus[1]}
+if (( rc == 75 )); then   # skipped because the network was down (07 §5.1)
+  notify "Snapshot run skipped at $(date '+%Y-%m-%d %H:%M %Z'): $(sed -n 's/^run skipped: //p' "$out_file" | head -n 1)"
+fi
+rm -f "$out_file"
 end_local="$(date '+%Y-%m-%d %H:%M:%S')"
 elapsed=$(( $(date +%s) - start_s ))
 sleeps="$(sleeps_between "$start_local" "$end_local")"
