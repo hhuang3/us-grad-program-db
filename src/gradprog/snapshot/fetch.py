@@ -1,6 +1,7 @@
 """Automatic snapshot runs (07 §5.1, §7, §8, §9)."""
 
 import os
+import socket
 import time
 from dataclasses import dataclass, field
 
@@ -32,6 +33,28 @@ ACTIONS = {
     ("fetch_error", "first"): "下次运行再看",
     ("suspected_redesign", ""): "人工查看 diff，确认是否改版；必要时调整规范化规则",
 }
+
+
+class NetworkUnavailable(Exception):
+    """07 §5.1: no planned host was reachable before the run; nothing was requested or written."""
+
+
+def _tcp_probe(host, timeout=10):
+    try:
+        socket.create_connection((host, 443), timeout=timeout).close()
+        return True
+    except OSError:
+        return False
+
+
+def _robots_outcome(code, text, url, reason):
+    """07 §5.1: (classification, note) when robots.txt stops the page, else None."""
+    if code in (401, 403):
+        return "blocked", f"robots.txt HTTP {code}"
+    if code is None or (code >= 400 and code not in (404, 410)):
+        return "fetch_error", f"robots.txt unavailable: {reason}"
+    _, verdict = robots_verdicts(code, text, [url])
+    return None if verdict[url] == "yes" else ("blocked", "robots.txt disallows")
 
 
 @dataclass
@@ -175,7 +198,7 @@ def _links(rows, store, registry, keywords, rules):
 
 def run_auto(registry, store, contact_email=None, client=None, clock=None, sleep=None, now=None,
              page_ids=None, dry_run=False, thresholds=None, rules=None, url_check=None,
-             max_bytes=MAX_BYTES, keywords=None):
+             max_bytes=MAX_BYTES, keywords=None, probe=None):
     email = contact_email or os.environ.get(CONTACT_ENV, "").strip()
     if not email:
         raise DownloadError(f"set {CONTACT_ENV} to a contact email before running snapshots")
@@ -196,6 +219,9 @@ def run_auto(registry, store, contact_email=None, client=None, clock=None, sleep
                for p in auto]
     if dry_run:
         return RunResult(planned=planned)
+    hosts = list(dict.fromkeys(p["domain"] for p in planned))[:3]
+    if hosts and not any((probe or _tcp_probe)(h) for h in hosts):
+        raise NetworkUnavailable(f"network unavailable: no TCP connection to {', '.join(hosts)} (port 443)")
 
     now = now or utc_now
     started = now()
@@ -213,19 +239,21 @@ def run_auto(registry, store, contact_email=None, client=None, clock=None, sleep
                 text = resp.read().decode("utf-8", errors="replace") if 200 <= code < 300 else ""
             finally:
                 resp.close()
-        except httpx.HTTPError:
-            code, text = None, ""
-        robots[domain] = (code, text)
+            reason = f"HTTP {code}"
+        except httpx.TimeoutException:
+            code, text, reason = None, "", "timeout"
+        except httpx.HTTPError as e:
+            code, text, reason = None, "", type(e).__name__
+        robots[domain] = (code, text, reason)
 
     rows = []
     for p in planned:
-        code, text = robots[p["domain"]]
-        status, verdict = robots_verdicts(code, text, [p["url"]])
-        if verdict[p["url"]] != "yes":
-            note = "robots.txt unavailable" if status == "error" else "robots.txt disallows"
+        code, text, reason = robots[p["domain"]]
+        stopped = _robots_outcome(code, text, p["url"], reason)
+        if stopped:
             rows.append(failure(store, page_id=p["page_id"], run_id=run_id, method="auto", retrieved_at=now(),
-                                requested_url=p["url"], final_url="", http_status="", classification="blocked",
-                                note=note))
+                                requested_url=p["url"], final_url="", http_status="", classification=stopped[0],
+                                note=stopped[1]))
             continue
         rows.append(_fetch_one(polite, store, registry, p["page_id"], p["url"], run_id, now, max_bytes, rules,
                                thresholds))

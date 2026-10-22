@@ -19,7 +19,8 @@ from gradprog.util.manifest import ManifestError, validate_timestamp
 
 DUE_DAYS = 14
 DATE_ONLY = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-DUE_COLUMNS = ["program_id", "page_id", "page_type", "url", "last_retrieved"]
+DUE_COLUMNS = ["program_id", "page_id", "page_type", "url", "last_retrieved", "save_note"]
+SAVE_NOTE_MARK = "人工保存"   # 07 §5.2: scope notes with this text are instructions for the manual save
 
 
 def manual_due(registry, store, today, url_check=None):
@@ -35,16 +36,22 @@ def manual_due(registry, store, today, url_check=None):
         if last and (today_d - date.fromisoformat(last[:10])).days < DUE_DAYS:
             continue
         rows.append([";".join(programs_of(registry, p)), p, pages.loc[p, "page_type"], pages.loc[p, "url"],
-                     last[:10]])
+                     last[:10], _save_note(registry, p)])
     due = pd.DataFrame(rows, columns=DUE_COLUMNS)
     return due.sort_values(["program_id", "page_id"]).reset_index(drop=True)
+
+
+def _save_note(registry, page_id):
+    pp = registry.program_pages
+    notes = [n for n in pp.loc[pp["page_id"] == page_id, "scope_note"] if SAVE_NOTE_MARK in n]
+    return "；".join(dict.fromkeys(notes))
 
 
 def render_manual_due(due):
     out = ["# 人工取得待办", "", f"距上次成功取得 ≥ {DUE_DAYS} 天或从未取得的页面。保存为 .mhtml（页面本身是 PDF 时保存 .pdf）。", ""]
     for program, g in due.groupby("program_id", sort=True):
-        out += [f"## {program}", "", "| page_id | page_type | URL | 上次取得 |", "|---|---|---|---|"]
-        out += [f"| {r.page_id} | {r.page_type} | [{r.url}]({r.url}) | {r.last_retrieved or '从未'} |"
+        out += [f"## {program}", "", "| page_id | page_type | URL | 上次取得 | 保存说明 |", "|---|---|---|---|---|"]
+        out += [f"| {r.page_id} | {r.page_type} | [{r.url}]({r.url}) | {r.last_retrieved or '从未'} | {r.save_note} |"
                 for r in g.itertuples(index=False)]
         out.append("")
     out.append(f"合计待办：{len(due)} 个页面")

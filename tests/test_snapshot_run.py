@@ -6,7 +6,7 @@ import itertools
 import httpx
 import pytest
 
-from gradprog.snapshot.fetch import run_auto
+from gradprog.snapshot.fetch import NetworkUnavailable, run_auto
 from gradprog.snapshot.store import SnapshotStore
 from gradprog.util.download import DownloadError, user_agent
 from helpers import make_pdf
@@ -79,6 +79,8 @@ class Env:
             url = str(request.url)
             if request.url.path == "/robots.txt":
                 r = robots.get(request.url.host, (200, ROBOTS_OK))
+                if callable(r):
+                    return r(request)
                 return httpx.Response(r[0], text=r[1])
             resp = pages[url]
             if isinstance(resp, Exception):
@@ -98,6 +100,7 @@ class Env:
         kw.setdefault("thresholds", T)
         kw.setdefault("rules", {})
         kw.setdefault("keywords", KEYWORDS)
+        kw.setdefault("probe", lambda host: True)   # network check (07 §5.1): reachable unless a test says otherwise
         return run_auto(self.registry, self.store, contact_email=EMAIL, client=client, clock=clock, sleep=sleep,
                         now=self.now, **kw)
 
@@ -255,10 +258,60 @@ def test_robots_now_disallows(env):
     assert URLS["pg-0003"] not in requested and URLS["pg-0004"] not in requested
 
 
-def test_robots_unreadable_blocks_domain(env):
-    env.run(robots={"grad.alpha.edu": (503, "")})
-    assert env.latest("pg-0002").classification == "blocked"
-    assert env.latest("pg-0005").classification == "blocked"
+@pytest.mark.parametrize("status", [503, 500, 429, 400])
+def test_robots_read_failure_is_fetch_error(env, status):
+    env.run(robots={"grad.alpha.edu": (status, "")})
+    for page in ("pg-0002", "pg-0005"):
+        r = env.latest(page)
+        assert r.classification == "fetch_error" and r.note.startswith("robots.txt unavailable")
+    assert not {str(r.url) for r in env.seen} & {URLS["pg-0002"], URLS["pg-0005"]}   # pages not requested
+
+
+def test_robots_network_error_is_fetch_error(env):
+    def handler_robots(request):
+        raise httpx.ConnectError("network down", request=request)
+    env.run(robots={"grad.alpha.edu": handler_robots})
+    r = env.latest("pg-0002")
+    assert r.classification == "fetch_error" and "ConnectError" in r.note
+
+
+@pytest.mark.parametrize("status", [401, 403])
+def test_robots_forbidden_blocks_domain(env, status):
+    env.run(robots={"grad.alpha.edu": (status, "")})
+    r = env.latest("pg-0002")
+    assert r.classification == "blocked" and r.note == f"robots.txt HTTP {status}"
+
+
+def test_robots_not_found_allows(env):
+    env.run(robots={"grad.alpha.edu": (404, "")})
+    assert env.latest("pg-0002").classification == "first_capture"
+
+
+def test_robots_failure_shows_as_first_fetch_error_anomaly(env):
+    result = env.run(robots={"grad.alpha.edu": (503, "")})
+    a = next(x for x in result.anomalies if x["page_id"] == "pg-0002")
+    assert (a["classification"], a["needs_action"]) == ("fetch_error", False)
+
+
+# --- network check before the run (07 §5.1) -------------------------------------
+
+def test_network_down_skips_the_run(env):
+    probed = []
+    with pytest.raises(NetworkUnavailable, match="network"):
+        env.run(probe=lambda host: probed.append(host) or False)
+    assert env.seen == []                                   # no robots.txt, no pages
+    assert not (env.store.root / "index.csv").exists() and not (env.store.root / "runs.csv").exists()
+    assert 1 <= len(probed) <= 3
+
+
+def test_network_check_needs_only_one_reachable_host(env):
+    hosts = iter([False, True, True])
+    env.run(probe=lambda host: next(hosts))
+    assert len(env.rows()) > 0
+
+
+def test_dry_run_does_not_probe(env):
+    env.run(dry_run=True, probe=lambda host: pytest.fail("probed during a dry run"))
 
 
 def test_robots_read_once_per_domain(env):

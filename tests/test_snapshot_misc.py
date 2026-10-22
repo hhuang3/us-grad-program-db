@@ -128,9 +128,9 @@ def test_launchd_templates():
     plist = (d / "com.gradprog.snapshot.plist.template").read_text(encoding="utf-8")
     script = (d / "run-snapshot.sh").read_text(encoding="utf-8")
     readme = (d / "README.md").read_text(encoding="utf-8")
-    # every Sunday 09:00 in the Mac's time zone (Weekday 0 = Sunday)
-    assert plistlib.loads(plist.encode("utf-8"))["StartCalendarInterval"] == {"Weekday": 0, "Hour": 9, "Minute": 0}
-    assert "Sunday 09:00" in readme and "09:00" in plist
+    # every Sunday 20:00 in the Mac's time zone (Weekday 0 = Sunday)
+    assert plistlib.loads(plist.encode("utf-8"))["StartCalendarInterval"] == {"Weekday": 0, "Hour": 20, "Minute": 0}
+    assert "Sunday 20:00" in readme and "20:00" in plist
     assert "__REPO_DIR__" in plist and "/Users/" not in plist
     assert ".config/gradprog/env" in script and "GRADPROG_CONTACT_EMAIL" in script
     assert "snapshot run" in script
@@ -142,10 +142,12 @@ def test_launchd_templates():
 
 STUBS = {
     # fake uv: remember the call and the time, so the fake sleep log can fall inside the run window
-    "uv": 'echo "uv $*"; date "+%Y-%m-%d %H:%M:%S %z" > "$HOME/during"; exit "${UV_EXIT:-0}"',
+    "uv": 'echo "uv $*"; [[ -n "${UV_SAY:-}" ]] && echo "$UV_SAY"; date "+%Y-%m-%d %H:%M:%S %z" > "$HOME/during"; '
+          'exit "${UV_EXIT:-0}"',
+    "osascript": 'shift; printf "osascript %s\\n" "$*" >> "$HOME/calls"',   # drop the "-" (script on stdin), keep argv
     "caffeinate": 'echo "caffeinate $1" >> "$HOME/calls"; shift; exec "$@"',
     "pmset": """case "$2" in
-  batt) printf "Now drawing from 'Battery Power'\n -InternalBattery-0 (id=1)\t11%%; discharging; 2:10 remaining present: true\n";;
+  batt) printf "${BATT:-Now drawing from 'Battery Power'\n -InternalBattery-0 (id=1)\t11%%; discharging; 2:10 remaining present: true\n}";;
   log) [[ -n "${SLEEPS:-}" ]] && printf "%s Sleep               \tEntering Sleep state due to 'Maintenance Sleep'\n" "$(cat "$HOME/during")"; true;;
 esac""",
 }
@@ -250,3 +252,40 @@ def test_backup_overwrites_reports_and_never_deletes(src, tmp_path):
 def test_backup_requires_destination(src):
     with pytest.raises((BackupError, TypeError, ValueError)):
         backup(src, None)
+
+
+def test_wrapper_power_summary_while_charging(tmp_path):
+    batt = "Now drawing from 'AC Power'\\n -InternalBattery-0 (id=1)\\t22%%; charging; (no estimate) present: true\\n"
+    result, _ = run_wrapper(tmp_path, BATT=batt)
+    assert result.stdout.count("power: AC Power; 22%; charging; (no estimate)") == 2
+
+
+def test_cli_skips_the_run_when_the_network_is_down(monkeypatch, capsys, registry):
+    from gradprog import cli
+    from gradprog.registry import tables
+    from gradprog.snapshot import fetch
+
+    def down(*a, **kw):
+        raise fetch.NetworkUnavailable("network unavailable: no TCP connection to a.edu, b.edu")
+
+    monkeypatch.setattr(tables, "load_registry", lambda path: registry)
+    monkeypatch.setattr(fetch, "run_auto", down)
+    assert cli.main(["snapshot", "run"]) == 75
+    out = capsys.readouterr().out
+    assert "run skipped" in out and "network unavailable" in out
+
+
+def test_wrapper_notifies_when_the_run_is_skipped(tmp_path):
+    reason = "run skipped: network unavailable: no TCP connection to a.edu (port 443)"
+    result, calls = run_wrapper(tmp_path, UV_EXIT="75", UV_SAY=reason)
+    assert result.returncode == 75
+    assert reason in result.stdout                                       # still logged
+    note = [c for c in calls.splitlines() if c.startswith("osascript ")]
+    assert len(note) == 1 and "network unavailable: no TCP connection to a.edu" in note[0]
+    assert re.search(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}", note[0])        # local time of the skip
+
+
+@pytest.mark.parametrize("exit_code", ["0", "1"])
+def test_wrapper_does_not_notify_otherwise(tmp_path, exit_code):
+    result, calls = run_wrapper(tmp_path, UV_EXIT=exit_code, SLEEPS="1")
+    assert "osascript" not in calls

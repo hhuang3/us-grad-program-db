@@ -151,7 +151,13 @@ def cmd_snapshot(args):
     if args.snapshot_command == "run":
         from gradprog.snapshot.fetch import run_auto
 
-        result = run_auto(reg, store, page_ids=args.page, dry_run=args.dry_run, url_check=_url_check())
+        from gradprog.snapshot.fetch import NetworkUnavailable
+
+        try:
+            result = run_auto(reg, store, page_ids=args.page, dry_run=args.dry_run, url_check=_url_check())
+        except NetworkUnavailable as e:   # 07 §5.1: skip quietly; the next scheduled run tries again
+            print(f"run skipped: {e}")
+            return 75
         if args.dry_run:
             print(f"dry run: {len(result.planned)} page(s) would be requested")
             for p in result.planned:
@@ -256,11 +262,10 @@ def main(argv=None):
     if getattr(args, "ready", False) and not args.batch:
         p.error("--ready requires --batch")
     try:
-        args.func(args)
+        return args.func(args) or 0
     except (DownloadError, ValueError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
-    return 0
 
 
 if __name__ == "__main__":
