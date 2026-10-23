@@ -154,7 +154,7 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 - 季节和年份都没写、而项目**有多个入学季** → `term_unknown`，进入审核，不按日期猜季节。
 - 季节为夏季、没写年份 → `term_unknown`，进入审核。
 - 由完整日期推算出的学期 `term_basis = inferred_from_date`，进入审核（§10 第 2 条）；没写年份的按下一条处理。
-- 没有日期的字段（托福、学费等）且页面没有任何学期写法 → `term_unknown`。
+- **没有日期的字段**（托福、雅思、GRE、GMAT、学费、时长、学分、CIP、STEM、申请费）且条目没有学期写法 → `valid_for_term` **留空**（`term_basis = unknown`），视为抓取时点的现行要求，**不进审核**（2026-10-24）。过期风险由页面变化触发重抽（§11）和每年 8 月 15 日的全量重抽兜底。`term_unknown` 只用于截止日期无法确定学期，以及页面写了学期但无法确定是哪一季的情况。
 - **截止日期没写年份**（如 “January 2”“MS Spring Admission – September 15”）→ 按**每年固定日期**处理（2026-10-12 确认）：
   - 年份推算为该月日在快照 `retrieved_at` 之后（含当天）的**下一次出现**。例：2026-10-11 取得、页面写 “January 2” → 2027-01-02。
   - 再按上面的季节区间确定学期；季节的确定方式不变。
@@ -268,7 +268,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 
 | # | 条件 |
 |---|---|
-| 1 | `valid_for_term = term_unknown` |
+| 1 | `valid_for_term = term_unknown`（没有日期的字段留空时不在此列，见 §7.2） |
 | 2 | `term_basis = inferred_from_date`（由完整日期推算出的学期；`recurring_no_year` 不在此列） |
 | 3 | 证据校验不通过（§6），或值不合类型、范围 |
 | 4 | 任何冲突类型（§8）：`level_mismatch`、`below_graduate_school_minimum`、`deadline_mismatch`、`in_page_contradiction`、`cross_program_contamination` |

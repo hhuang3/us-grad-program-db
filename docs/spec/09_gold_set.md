@@ -47,6 +47,7 @@
 - 一个项目的所有页面一起看：某字段在任何一页找到，就填 `found`；多页都有且值不同时，每个值各填一行（§3.3）。
 - **共用总览页**（同一页面列出多个项目，例如统计系总览页列出 5 个项目的截止日期）：只采用明确标为本项目的那一行，其他项目的行（例如 MSDS 的春季截止日期）不采用，也不标 `contamination`。
 - **同一个值出现在多个页面**：`evidence_page_id` 填所有写了这个值的页面，分号分隔，最具体的排在前面（项目页 > 系页 > 研究生院页）。值不同则按 §3.3 分行。
+- **上级页面交出决定权**（2026-10-24）：上级页面只说“由项目决定”（例如研究生院写“研究生院不要求 GRE，由各项目决定”），不算同一个值出现在多个页面，`evidence_page_id` 只填给出值的页面，可在 `notes` 注明上级页面的说法。
 - 值的写法按 02（含 08 §12 的修订）：
   - 学费：`tuition_amount_usd` 填页面原始口径下的金额，`tuition_basis` 填页面口径（每学分、每学期、每年、整个项目）；只填国际学生适用的金额，公立校即州外学费。**不要换算**。
   - 时长：换算成月（“1 year” → 12；“9 to 18 months” → min 9、max 18）。
@@ -55,6 +56,7 @@
   - 英语最低分只填**标准要求**。页面另给“有条件录取”的分数区间（低于最低要求、入学后须参加英语测试或修英语课）时，该区间写进 `notes`，不作为最低分数（2026-10-18）。
   - CIP：只填页面写明的 6 位代码；`stem_claim_on_page` 填页面是否声称 STEM。
 - 原文片段只填在本地副本的 `evidence_text` 列（§4）。
+- `notes` 可以引用 **10 个词以内**的原文用于说明（例如 “two-year”、“Tuition Rates”）；不得整句或整段粘贴（2026-10-24）。
 
 ### 3.2 没有给出值：三种状态
 
@@ -66,6 +68,7 @@
 | `mentioned_without_value` | 页面提到有这项要求，但没给值，也没指向别处（例如“有不退还的申请费”“须提交英语成绩”“competitive TOEFL score”） | 可空 |
 | `not_mentioned` | 所有页面都完全没提到 | – |
 
+- **单纯的导航链接不算 `referenced_elsewhere`**（2026-10-24）：页面上只是列出一个链接（例如资源列表里的 “Tuition Rates”），正文没有说“详见某页面”，按 `not_mentioned` 填，`notes` 可写明有这个链接。只有正文明确让读者去看某页面获取该字段的信息（例如“see the Graduate School requirements page for additional information”）才算 `referenced_elsewhere`。
 - 多个页面状态不同时，取信息最多的：`found` > `referenced_elsewhere` > `mentioned_without_value` > `not_mentioned`。
 - `evidence_page_id` 照填（`not_mentioned` 除外）；本地副本的 `evidence_text` 照抄提到该字段的原文。
 
@@ -87,15 +90,19 @@
 
 ### 3.4 适用学期
 
-- 按 08 §7 的规则填 `valid_for_term`（`Fall 2027` 或 `term_unknown`）。
-- 学期是由日期推算的，`flags` 加 `inferred_term`。
+- 按 08 §7 的规则填 `valid_for_term`（`Fall 2027`、`term_unknown` 或留空，见下）。
+- 两个推算标记的区别：
+  - `inferred_term`：**日期有年份**，按日期落在哪个季节区间推算学期。例：页面写 “Priority deadline: November 9, 2026”、页面没写季节、项目只有秋季入学 → Fall 2027。
+  - `recurring_no_year`：**日期没有年份**，按每年固定日期推算（取快照取得日期之后该月日的下一次出现），再定学期。例：页面写 “January 2 for a fall term start”、10 月取得 → 2027-01-02，Fall 2027。
+  - 两者不同时用。
 - 截止日期早于快照的取得日期，`flags` 加 `stale`，学期仍填它本来的学期（例如 UNT 填 Fall 2026）。
-- 无法确定的填 `term_unknown`，`notes` 写原因。
-- 托福、学费等没有日期的字段，页面没写学期就填 `term_unknown`；页面写了学年（例如 2026-27）按 08 §7.1 换算。
+- **没有日期的字段**（托福、雅思、GRE、GMAT、学费、时长、学分、CIP、STEM、申请费）：页面没写学期时 `valid_for_term` **留空**，视为抓取时点的现行要求（2026-10-24）。页面写了学期或学年（例如 2026-27）时照填或按 08 §7.1 换算。
+- `term_unknown` 只用于：截止日期无法确定学期；页面写了学期但无法确定是哪一季（例如 “for the 2026 applications”）。`notes` 写原因。
 
 ### 3.5 截止日期
 
 - 每个“轮次 × 类型 × 适用对象”一行：复制模板中该项目的 `deadline` 行，填 `round_name`（原样）、`deadline_type`、`applicant_scope`、`value`（日期）。
+- 默认值（2026-10-24）：页面没有轮次名 → `round_name` 留空；页面没有区分适用对象 → `applicant_scope = all`；页面没提滚动录取 → `is_rolling = false`。
 - 倒计时区块里的轮次和日期照常标注，剩余时间不标。
 - **附带条件的截止日期**：条件日期与申请截止日期相同（例如“材料须在秋季截止日期前送达，才能参加助教岗位评选”）→ 不单独建行，在申请截止那一行的 `notes` 里记录条件；日期不同 → 单独一行，`applicant_scope = funding_consideration`。
 - 页面写“rolling”而没有日期：`is_rolling = true`，`value` 留空，`value_status = found`。
@@ -128,7 +135,7 @@
 | `is_rolling` | 负责人 | 仅 deadline：`true / false` |
 | `evidence_page_id` | 负责人 | 依据的页面；同一个值出现在多页时全部填，分号分隔，最具体的在前（§3.1） |
 | `flags` | 负责人 | `contradictory`、`contamination`、`stale`、`inferred_term`、`recurring_no_year`，分号分隔 |
-| `notes` | 负责人 | 自由文本，不要粘贴页面原文 |
+| `notes` | 负责人 | 自由文本；可引用 10 个词以内的原文，不得整句或整段粘贴（§3.1） |
 | `annotated_by` | 负责人 | |
 | `annotated_at` | 负责人 | `YYYY-MM-DD` |
 | `evidence_text` | 负责人 | **仅本地副本**，≤ 200 字符 |
