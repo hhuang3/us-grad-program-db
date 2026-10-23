@@ -184,6 +184,8 @@ def cmd_snapshot(args):
             rows, unmatched = register_from_dir(reg, store, args.from_dir, retrieved_at=args.retrieved_at,
                                                 url_check=_url_check())
             print(f"registered {len(rows)} file(s): {dict(Counter(r['classification'] for r in rows))}")
+            if any(r.get("rule_losses") for r in rows):   # 07 §6.5 reminder
+                print("domain rules removed data-like lines; see the run report in data/snapshots/reports/")
             for u in unmatched:
                 print(f"  NOT REGISTERED {u['file']}: {u['reason']}")
         else:
@@ -192,11 +194,17 @@ def cmd_snapshot(args):
             row = register_manual(reg, store, args.page, args.file, retrieved_at=args.retrieved_at,
                                   url_check=_url_check(), known_redirect=args.known_redirect)
             print(f"{row['snapshot_id']}: {row['classification']} {row['note']}")
+            if row.get("rule_losses"):
+                print(f"domain rules removed {row['rule_losses']} data-like line(s); see the run report")
     elif args.snapshot_command == "renormalize":
         from gradprog.snapshot.renormalize import renormalize
 
         rows = renormalize(reg, store)
         print(f"renormalized {len(rows)} snapshot(s): {dict(Counter(r['classification'] for r in rows))}")
+        flagged = [r for r in rows if r.get("rule_losses")]
+        if flagged:   # 07 §6.5 reminder; see the run report for the pages
+            print(f"domain rules removed data-like lines on {len(flagged)} snapshot(s) "
+                  f"({sum(r['rule_losses'] for r in flagged)} lines); see data/snapshots/reports/")
 
 
 def main(argv=None):

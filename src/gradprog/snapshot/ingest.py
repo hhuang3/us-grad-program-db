@@ -4,7 +4,7 @@ import hashlib
 import re
 
 from gradprog.snapshot.classify import classify_content, select_prev
-from gradprog.snapshot.normalize import NORMALIZER_VERSION, normalize
+from gradprog.snapshot.normalize import NORMALIZER_VERSION, normalize, rule_losses
 from gradprog.snapshot.store import INDEX_COLUMNS, SnapshotError, make_snapshot_id
 
 JS_NOTE = "可能需要 JavaScript 渲染"
@@ -45,7 +45,9 @@ def analyse(store, page_id, snapshot_id, retrieved_at, raw, content_type, charse
     norm.parent.mkdir(parents=True, exist_ok=True)
     norm.write_text(text, encoding="utf-8", newline="")
     fields = {"normalizer_version": version, "norm_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
-              "norm_chars": len(text), "note": ""}
+              "norm_chars": len(text), "note": "",
+              # 07 §6.5: data-like lines removed by the domain rules (reported, not stored in the index)
+              "rule_losses": len(rule_losses(raw, content_type, domain, rules, charset))}
     prev = select_prev(store.read_index(), page_id, retrieved_at, snapshot_id, version)
     prev_text = None
     if prev is not None:
@@ -77,9 +79,11 @@ def ingest(store, registry, *, page_id, run_id, method, retrieved_at, requested_
                     http_status=http_status, content_type=content_type,
                     raw_sha256=hashlib.sha256(raw).hexdigest(), raw_bytes=len(raw))
     extra = fields.pop("note", "")
+    losses = fields.pop("rule_losses", 0)
     row.update({k: ("" if v is None else str(v)) for k, v in fields.items()})
     row["note"] = join_note(note, extra)
     store.append_index(row)
+    row["rule_losses"] = losses   # for the run report only; not an index column
     return row
 
 

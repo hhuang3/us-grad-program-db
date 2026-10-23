@@ -39,8 +39,30 @@ def render(result, registry):
     out += ["", "## 未纳入取得的页面（07 §3）", ""]
     out += [f"- {p['page_id']}（{p['program_ids']}）：{p['reason']}" for p in result.not_included] or ["无"]
 
+    out += rule_loss_section(result.rows)
     out += ["", f"## 人工取得待办：{result.manual_due} 个页面", ""]
     return "\n".join(out) + "\n"
+
+
+def rule_loss_section(rows):
+    """07 §6.5: pages where the domain rules removed data-like lines (counts only, never the lines)."""
+    hits = [r for r in rows if r.get("rule_losses")]
+    out = ["", "## 按域名规则删除的疑似数据行（提醒，不影响分类）", ""]
+    if hits:
+        out += ["| page_id | 行数 |", "|---|---|"] + [f"| {r['page_id']} | {r['rule_losses']} |" for r in hits]
+    else:
+        out.append("无")
+    return out
+
+
+def write_rule_losses(store, run_id, rows):
+    """Manual and renormalize runs have no full report; write one only when there is something to flag."""
+    if not any(r.get("rule_losses") for r in rows):
+        return None
+    path = store.report_path(run_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join([f"# Snapshot run {run_id}", *rule_loss_section(rows)]) + "\n", encoding="utf-8")
+    return path
 
 
 def write(store, result, registry):

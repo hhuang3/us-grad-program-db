@@ -7,6 +7,7 @@ import httpx
 import pytest
 
 from gradprog.snapshot.fetch import NetworkUnavailable, run_auto
+from gradprog.snapshot.normalize import NORMALIZER_VERSION
 from gradprog.snapshot.store import SnapshotStore
 from gradprog.util.download import DownloadError, user_agent
 from helpers import make_pdf
@@ -124,14 +125,14 @@ def test_first_run_captures_every_auto_page(env):
     ix = env.rows()
     assert sorted(ix["page_id"]) == sorted(URLS)
     assert set(ix["classification"]) == {"first_capture"}
-    assert set(ix["method"]) == {"auto"} and set(ix["normalizer_version"]) == {"1"}
+    assert set(ix["method"]) == {"auto"} and set(ix["normalizer_version"]) == {str(NORMALIZER_VERSION)}
     assert ix["run_id"].nunique() == 1 and ix["run_id"].iloc[0].endswith("-auto")
     r = env.latest("pg-0005")
     assert (r.content_type, r.http_status, r.final_url) == ("pdf", "200", URLS["pg-0005"])
     for row in ix.itertuples(index=False):
         ext = row.content_type
         assert env.store.raw_path(row.page_id, row.snapshot_id, ext).is_file()
-        assert env.store.norm_path(row.page_id, row.snapshot_id, 1).is_file()
+        assert env.store.norm_path(row.page_id, row.snapshot_id, NORMALIZER_VERSION).is_file()
         assert row.prev_snapshot_id == ""
 
 
@@ -160,7 +161,7 @@ def test_changed_writes_diff_and_counts(env):
     env.run(pages)
     r = env.latest("pg-0001")
     assert (r.classification, r.added_lines, r.removed_lines) == ("changed", "1", "0")
-    assert env.store.diff_path("pg-0001", r.snapshot_id, 1).is_file()
+    assert env.store.diff_path("pg-0001", r.snapshot_id, NORMALIZER_VERSION).is_file()
 
 
 def test_suspected_redesign(env):
@@ -397,3 +398,21 @@ def test_report_lists_pages_not_included(env):
     result = env.run()
     assert [p["page_id"] for p in result.not_included] == ["pg-0005"]
     assert "pg-0005" in result.report_path.read_text(encoding="utf-8")
+
+
+
+# --- data-like lines removed by domain rules (07 §6.5) -------------------------
+
+def test_auto_report_lists_rule_losses(env):
+    pages = default_pages()
+    pages[URLS["pg-0002"]] = html(page_html("International admissions",
+                                            '<div class="events"><p>Deadline reminder: January 5, 2027</p></div>'))
+    result = env.run(pages=pages, rules={"grad.alpha.edu": [{"remove_selector": ".events"}]})
+    report = result.report_path.read_text(encoding="utf-8")
+    assert "按域名规则删除的疑似数据行" in report and "| pg-0002 | 1 |" in report
+    assert "January 5, 2027" not in report
+
+
+def test_auto_report_without_rule_losses(env):
+    report = env.run().report_path.read_text(encoding="utf-8")
+    assert "按域名规则删除的疑似数据行" in report and "无" in report.split("按域名规则删除的疑似数据行")[1][:20]

@@ -109,8 +109,14 @@ def test_rules_file_is_bound_to_normalizer_version():
     assert nz.RULES_SHA256[nz.NORMALIZER_VERSION] == hashlib.sha256(data).hexdigest()
 
 
-def test_initial_rules_are_empty():
-    assert load_rules(REPO / "config" / "normalize_rules.yaml") == {}
+def test_v2_rules_cover_the_recurring_noise():
+    """07 §6.5: the v2 rules file has the domains decided in Phase 3e."""
+    rules = load_rules()
+    assert nz.NORMALIZER_VERSION == 2
+    assert {"infosystems.utdallas.edu", "www.fuqua.duke.edu", "olin.washu.edu", "datascience.virginia.edu",
+            "gsas.nyu.edu", "stat.illinois.edu"} <= set(rules)
+    duke = [r.get("remove_selector") for r in rules["www.fuqua.duke.edu"]]
+    assert ".field--name-field-deadline-date-timer-2" in duke
 
 
 @pytest.mark.parametrize("bad", ["a.edu: [{drop: 'x'}]\n", "a.edu: [{remove_selector: 'ul', remove_line_regex: 'x'}]\n",
@@ -148,3 +154,75 @@ def test_pdf_text():
 def test_unknown_content_type():
     with pytest.raises(ValueError):
         normalize(b"x", "docx")
+
+
+
+# --- normalizer v2 (07 §6.5) ---------------------------------------------------
+
+def html(body):
+    return f"<html><body>{body}</body></html>".encode()
+
+
+def test_doctype_inside_the_body_is_not_text():
+    raw = b"<br/><div>x</div>\n<!DOCTYPE html>\n<html><head><title>T</title></head><body><p>Real text</p></body></html>"
+    assert normalize(raw, "html").splitlines()[0] != "html"
+    assert "Real text" in normalize(raw, "html")
+
+
+def test_table_trailing_empty_cells_and_empty_rows():
+    t = normalize(html("<table><tr><th>Program</th><th>Fall</th><th>Spring</th><th></th></tr>"
+                       "<tr><td>Statistics</td><td>5/6/2027</td><td></td></tr>"
+                       "<tr><td>Religion</td><td></td><td>10/29/2026</td></tr>"
+                       "<tr><td> </td><td></td></tr></table>"), "html")
+    assert t.splitlines() == ["Program | Fall | Spring", "Statistics | 5/6/2027", "Religion | | 10/29/2026"]
+
+
+DUKE_COUNTDOWN = html(
+    '<div class="paragraphs-item-deadline-module">'
+    '<h3 class="field--name-field-icon-title"><div>MQM: BA Application Round 2 Deadline</div></h3>'
+    '<div class="field--name-field-deadline-date-timer-2"><div>2 months 3 weeks</div></div>'
+    '<div class="field--name-field-start-date"><div>Wed, 10/07/2026 - 00:00</div></div>'
+    '<div class="field--name-field-end-date"><div>Wed, 01/06/2027 - 23:59</div></div></div>'
+    '<div class="field__item"><div class="hidden field__item">Photo Box II - Ask a Student - 2018</div><p>Body</p></div>')
+
+
+def test_duke_countdown_keeps_round_and_dates():
+    t = normalize(DUKE_COUNTDOWN, "html", domain="www.fuqua.duke.edu", rules=load_rules()).splitlines()
+    assert "MQM: BA Application Round 2 Deadline" in t
+    assert "Wed, 10/07/2026 - 00:00" in t and "Wed, 01/06/2027 - 23:59" in t
+    assert "2 months 3 weeks" not in t and not any("Photo Box" in x for x in t)
+    assert "Body" in t
+
+
+def test_domain_rules_do_not_apply_elsewhere():
+    t = normalize(DUKE_COUNTDOWN, "html", domain="www.example.edu", rules=load_rules())
+    assert "2 months 3 weeks" in t and "Photo Box II - Ask a Student - 2018" in t
+
+
+def test_nyu_last_updated_line_only_on_gsas():
+    raw = html("<p>Apply by January 4.</p><p>Last updated October 2026.</p>")
+    assert "Last updated October 2026." not in normalize(raw, "html", domain="gsas.nyu.edu", rules=load_rules())
+    assert "Last updated October 2026." in normalize(raw, "html", domain="cds.nyu.edu", rules=load_rules())
+
+
+# --- protection: data-like lines removed by domain rules (07 §6.5) -------------
+
+def test_rule_losses_counts_data_like_lines_only():
+    rules = {"a.edu": [{"remove_selector": ".events"}, {"remove_line_regex": "^Note"}]}
+    raw = html('<div class="events"><p>Info session</p><p>October 22, 2026</p><p>Tuition waiver talk</p>'
+               '<p>Campus tour</p></div><p>Note: TOEFL 100 required</p><p>Keep me</p>')
+    lost = nz.rule_losses(raw, "html", "a.edu", rules)
+    assert sorted(lost) == ["Note: TOEFL 100 required", "October 22, 2026", "Tuition waiver talk"]
+    assert nz.rule_losses(raw, "html", "b.edu", rules) == []                     # no rules for this domain
+
+
+@pytest.mark.parametrize("line", ["Deadline: soon", "Apply by the portal", "$75 application fee", "IELTS 7",
+                                  "GRE optional", "GMAT", "Duolingo 120", "10/07/2026", "2026-10-07",
+                                  "Oct. 7, 2026", "minimum score of 90"])
+def test_data_like_patterns(line):
+    assert nz.DATA_LIKE.search(line)
+
+
+@pytest.mark.parametrize("line", ["Campus tour", "Meet our students", "Class of 2024"])
+def test_not_data_like(line):
+    assert not nz.DATA_LIKE.search(line)

@@ -12,6 +12,7 @@ from gradprog.snapshot.classify import load_thresholds
 from gradprog.snapshot.ingest import ingest, join_note
 from gradprog.snapshot.links import registrable_domain
 from gradprog.snapshot.normalize import load_rules, mhtml_location
+from gradprog.snapshot.report import write_rule_losses
 from gradprog.snapshot.store import CLASSES, SUCCESS, SnapshotError, make_run_id
 from gradprog.snapshot.targets import page_sets, programs_of
 from gradprog.util.download import utc_now
@@ -141,6 +142,7 @@ def _record_run(store, run_id, started, finished, rows):
                         or r["classification"] == "suspected_redesign"})
     store.append_run({"run_id": run_id, "method": "manual", "started_at": started, "finished_at": finished,
                       **counts, "anomaly_page_ids": ";".join(anomalies)})
+    write_rule_losses(store, run_id, rows)
 
 
 def register_manual(registry, store, page_id, file, retrieved_at=None, now=None, thresholds=None, rules=None,
