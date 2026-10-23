@@ -304,3 +304,43 @@ def test_wrapper_notifies_when_the_run_is_skipped(tmp_path):
 def test_wrapper_does_not_notify_otherwise(tmp_path, exit_code):
     result, calls = run_wrapper(tmp_path, UV_EXIT=exit_code, SLEEPS="1")
     assert "osascript" not in calls
+
+
+# --- known baseline of rule-loss reminders (07 §6.5) ---------------------------
+
+from gradprog.snapshot import report as run_report   # noqa: E402
+
+BASE = {"normalizer_version": NORMALIZER_VERSION, "pages": {"pg-0010": 4}}
+
+
+def rows(*items, version=NORMALIZER_VERSION):
+    return [{"page_id": p, "rule_losses": n, "normalizer_version": str(version)} for p, n in items]
+
+
+def test_baseline_file_matches_current_version():
+    base = run_report.load_baseline()
+    assert base["normalizer_version"] == NORMALIZER_VERSION
+    assert base["pages"]["pg-0010"] == 4 and len(base["pages"]) == 13
+
+
+def test_section_lists_only_new_reminders():
+    text = "\n".join(run_report.rule_loss_section(rows(("pg-0010", 4), ("pg-0010", 6), ("pg-0099", 1)), BASE))
+    assert "| pg-0099 | 1 | – |" in text
+    assert "| pg-0010 |" not in text                     # 4 and 6 stay within base + 2: only in the total
+    assert "基线内：2 个快照、10 行" in text
+
+
+def test_section_lists_a_clear_increase():
+    text = "\n".join(run_report.rule_loss_section(rows(("pg-0010", 7)), BASE))
+    assert "| pg-0010 | 7 | 4 |" in text
+
+
+def test_baseline_ignored_for_another_version():
+    text = "\n".join(run_report.rule_loss_section(rows(("pg-0010", 4), version=NORMALIZER_VERSION + 1), BASE))
+    assert "| pg-0010 | 4 | – |" in text
+
+
+def test_only_baseline_reminders_write_no_extra_report(tmp_path):
+    store = SnapshotStore(tmp_path / "snapshots")
+    assert run_report.write_rule_losses(store, "run-x-manual", rows(("pg-0010", 3)), BASE) is None
+    assert run_report.write_rule_losses(store, "run-x-manual", rows(("pg-0099", 1)), BASE).is_file()

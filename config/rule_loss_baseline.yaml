@@ -1,0 +1,21 @@
+# Known reminders of domain-rule data losses (docs/spec/07_snapshots.md §6.5).
+# Established from run-20261023T160808Z-renormalize (40 snapshots, 144 lines), checked by hand:
+#   UVA pg-0010–0013: event dates; UChicago pg-0028–0030, Columbia MA pg-0034–0036,
+#   JHU Carey pg-0062–0064: menu link text ("Tuition", "Deadlines", "GRE" ...). None is data.
+# Value per page: the largest number of flagged lines in one snapshot of that page.
+# A report lists a page only if it is not here, or if it exceeds its value by more than 2 lines.
+normalizer_version: 2
+pages:
+  pg-0010: 4
+  pg-0011: 4
+  pg-0012: 4
+  pg-0013: 4
+  pg-0028: 4
+  pg-0029: 4
+  pg-0030: 4
+  pg-0034: 2
+  pg-0035: 2
+  pg-0036: 2
+  pg-0062: 3
+  pg-0063: 3
+  pg-0064: 4
