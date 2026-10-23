@@ -150,7 +150,7 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 
 推荐 **BeautifulSoup4 + lxml 解析器 + 明确规则**。宁可多留一些噪音，再按域名补规则，也不能让启发式提取悄悄丢掉申请要求。PDF 用已经在用的 pdfplumber。
 
-### 6.2 处理步骤（`normalizer_version = 1`）
+### 6.2 处理步骤（`normalizer_version = 2`；与 v1 的差别见 §6.5）
 
 1. **取得 HTML**：
    - HTML：按 `Content-Type` 的 charset 解码；没有时按 `<meta charset>`；都没有时按 UTF-8，无法解码的字节替换为 U+FFFD。
@@ -167,6 +167,8 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
    - 块级元素（`p`、`div`、`li`、`h1`–`h6`、`section`、`article`、`br`、`dt`、`dd` 等）前后换行。
    - 表格：每个 `<tr>` 一行，单元格按文档顺序用 ` | ` 连接，保留单元格顺序。
    - 链接只保留文字，不保留 href。
+   - （v2）表格行**去掉行尾的空单元格**；所有单元格都为空的行整行删除。中间的空单元格保留，各列仍从左对齐。
+   - （v2）DOCTYPE 等声明节点不进入正文（个别页面把 `<!DOCTYPE html>` 写在正文片段之后，v1 会输出一行 “html”）。
 5. **统一空白**：
    - 换行统一为 `\n`。
    - 每行内的连续空白（含不换行空格）合并为一个空格，去掉行首行尾空白。
@@ -187,7 +189,7 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 {}
 ```
 
-- 初始为空（`{}`）。键是完整域名（与 domains.csv 一致）。
+- v1 为空（`{}`）；v2 的规则见 §6.5。键是完整域名（与 domains.csv 一致）。
 - 只有两种规则：`remove_selector`（第 3 步删除元素）、`remove_line_regex`（第 5 步之后删除整行）。
 - 规则内容（或任何会改变输出的代码、依赖库）变化时，**必须升 `normalizer_version`**。测试会检查：规则文件内容的哈希写在代码中，和当前版本号对应；规则变了而版本号没变，测试失败。
 
@@ -199,6 +201,43 @@ normalized 和 diffs 的文件名带上规范化程序的版本号 `v<N>`：重�
 - 重新分类时，“上一版”只在**同一 normalizer_version** 的结果之间选取（§7.2），按 `retrieved_at` 顺序逐页重算。
 - 取得失败的快照（没有原始文件）不重新分类，也不追加新行。
 
+
+### 6.5 normalizer_version 2（2026-10-24）
+
+依据：3e 期间 10-07、10-11、10-18 三次自动运行与 10-21 人工取得中反复出现的噪音（3e 报告）。v1 的文件与索引行全部保留；v2 通过 `renormalize` 生成（§6.4）。
+
+**通用改动**（代码）：§6.2 第 4 步的两条（表格行尾空单元格、DOCTYPE）。
+
+**按域名的规则**（`config/normalize_rules.yaml`）：
+
+| 域名 | 规则 | 噪音 |
+|---|---|---|
+| infosystems.utdallas.edu | 删 `#student-testimonials` | 学生感言随机排序 |
+| www.fuqua.duke.edu | 删 `.view-student-profile-blocks` | 学生档案随机子集 |
+| www.fuqua.duke.edu | 删 `.field--name-field-deadline-date-timer-2` | 倒计时剩余时间。**只删剩余时间字段**；轮次名、开始与截止日期在其他字段中，保留（P4 要抽取） |
+| www.fuqua.duke.edu | 删 `div.field__item.hidden` | 网站后台组件名（“Photo Box II - …”“false”）。带 `hidden` 类名，但这是只针对该域名、已逐条核对为后台标签的选择器，不是按可见性的通用删除（§6.2 第 3 步的原则不变） |
+| olin.washu.edu | 删 `section.ask-a-student`、`section.events`、`section.news` | 学生档案轮换、活动、新闻 |
+| datascience.virginia.edu | 删 `.section--events` | 活动列表 |
+| gsas.nyu.edu | 删 `#breadcrumbs`；删整行匹配 `^Last updated [A-Z][a-z]+ \d{4}\.?$` 的行 | 面包屑菜单残留；“最后更新”时间戳。时间戳**只对该域名**删除，不做通用规则（页面更新日期对 P4 判断过期有用，原始文件中保留） |
+| www.bu.edu | 删 `.wp-block-amp-section-nav` | 菜单残留 |
+| datascience.uchicago.edu | 删 `.widget_custom_menu_wizard`、`#social_widget-2` | 侧栏菜单（手机版与桌面版两份）、社交链接 |
+| carey.jhu.edu | 删 `.program-menu-in-this-section`、`.upcomming-events-two`、`[id^="block-carey-brightedge"]` | 菜单残留、活动轮播、相关项目卡片 |
+| ma.stat.columbia.edu | 删 `.menu-main-menu-container` | 侧栏菜单残留 |
+| dornsife.usc.edu | 删 `.gallery-container` | 图片画廊的重复说明文字 |
+| stat.illinois.edu | 删 `ilw-header`、`ilw-footer` | 页头菜单（含按钮文字）、页脚（含 Google 翻译小部件） |
+
+不处理：Columbia GSAS 的 “Apply Now” 卡片（只出现一次，删卡片组可能连带删掉有用链接）；只涉及其他项目的真实变化（例如 JHU Krieger 总表）照常判为 `changed`。
+
+**保护措施：按域名规则删掉的疑似数据行**
+
+- 每次规范化（自动、人工、`renormalize`）时，比较“只用通用规则”和“加上该域名规则”的两份正文，找出被域名规则删掉的行；其中**像数据的行**——含日期（如 `October 7, 2026`、`10/07/2026`、`2026-10-07`）、金额（`$`）、分数相关字样，或关键词 `deadline`、`apply by`、`tuition`、`fee`、`TOEFL`、`IELTS`、`Duolingo`、`GRE`、`GMAT`（不区分大小写）——计数。
+- 计数大于 0 时，在该次运行的报告中列出页面和行数（不列原文），作为提醒；**不阻止运行，不改变分类**。自动运行写在原有报告中；人工登记和 `renormalize` 也写一份 `reports/<run_id>.md`，命令输出中给出合计。
+- **已知基线**（2026-10-24）：为避免每周看到同样的提醒而习惯性忽略，把 v2 重新规范化（run-20261023T160808Z-renormalize：40 个快照、144 行）的提醒结果记为基线，存在 `config/rule_loss_baseline.yaml`：每个页面一个数，是该页面在基线中单个快照的最大提醒行数；文件注明对应的 `normalizer_version`。
+  - 报告只**逐页列出基线以外的新提醒**：页面不在基线中，或该页面的提醒行数**超过基线 2 行以上**（行数 > 基线 + 2）。表中同时给出基线值。
+  - 基线内的提醒只显示合计（快照数、行数）。
+  - 人工登记和 `renormalize` 只在有新提醒时才写报告；命令输出只提示新提醒。
+  - 基线只对它注明的 `normalizer_version` 有效；版本升级后，所有提醒都按新提醒处理，直到重新建立基线。
+- 已知会稳定提醒的页面（2026-10-24 renormalize 实测，即基线内容）：UVA pg-0010–0013（活动日期）；UChicago pg-0028–0030、Columbia MA pg-0034–0036、JHU Carey pg-0062–0064（菜单中的 “Tuition”“Deadlines”“GRE” 等链接文字）。这些都已核对不是数据。
 ## 7. 分类与差异
 
 ### 7.1 分类（每个页面每次取得都归入且只归入一类）

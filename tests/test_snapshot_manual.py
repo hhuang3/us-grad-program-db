@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 from gradprog.snapshot.manual import manual_due, register_from_dir, register_manual, render_manual_due
+from gradprog.snapshot.normalize import NORMALIZER_VERSION
 from gradprog.snapshot.store import SnapshotError, SnapshotStore
 from helpers import make_mhtml, make_pdf
 
@@ -76,8 +77,8 @@ def test_location_matches_known_redirect_target(reg, store, tmp_path):
     ix.update(snapshot_id="snap-20261007T000000Z-pg-0003", retrieved_at="2026-10-07T00:00:00Z",
               final_url="https://business.alpha.edu/programs/msba", method="auto", classification="unchanged")
     store.append_index(ix)
-    first = store.norm_path("pg-0003", store.read_index().iloc[0]["snapshot_id"], 1)
-    store.norm_path("pg-0003", ix["snapshot_id"], 1).write_bytes(first.read_bytes())   # a real row has its text
+    first = store.norm_path("pg-0003", store.read_index().iloc[0]["snapshot_id"], NORMALIZER_VERSION)
+    store.norm_path("pg-0003", ix["snapshot_id"], NORMALIZER_VERSION).write_bytes(first.read_bytes())   # a real row has its text
     row = reg_one(reg, store, write(tmp_path, "moved.mhtml", make_mhtml("https://business.alpha.edu/programs/msba", BODY)),
                   when="2026-10-21T00:00:00Z")
     assert row["final_url"] == "https://business.alpha.edu/programs/msba"
@@ -246,3 +247,22 @@ def test_save_instructions_from_several_programs_are_joined_once(reg, store):
     reg.program_pages.loc[reg.program_pages.page_id == "pg-0003", "scope_note"] = ["人工保存时展开 A", "人工保存时展开 B"]
     assert manual_due(reg, store, today="2026-10-06").set_index("page_id").loc["pg-0003", "save_note"] == \
         "人工保存时展开 A；人工保存时展开 B"
+
+
+
+# --- data-like lines removed by domain rules (07 §6.5) -------------------------
+
+def test_manual_run_reports_rule_losses(reg, store, tmp_path):
+    body = BODY.replace("</main>", '<div class="events"><p>October 22, 2026 info session</p></div></main>')
+    src = write(tmp_path, "msba.mhtml", make_mhtml(URL3, body))
+    rules = {"business.alpha.edu": [{"remove_selector": ".events"}]}
+    row = register_manual(reg, store, "pg-0003", src, retrieved_at="2026-10-06T10:00:00Z",
+                          now=lambda: "2026-10-06T12:00:00Z", thresholds=T, rules=rules)
+    report = store.report_path(row["run_id"]).read_text(encoding="utf-8")
+    assert "按域名规则删除的疑似数据行" in report and "| pg-0003 | 1 |" in report
+    assert "October 22, 2026" not in report                                      # counts only, no page text
+
+
+def test_manual_run_without_losses_writes_no_report(reg, store, tmp_path):
+    row = reg_one(reg, store, write(tmp_path, "a.mhtml", make_mhtml(URL3, BODY)))
+    assert not store.report_path(row["run_id"]).exists()

@@ -99,7 +99,7 @@
 | confidence | 抽取置信度 | float 0–1 |
 | review_status | 审核状态 | enum：auto / approved / corrected / rejected |
 | reference_target | `value_status = referenced_elsewhere` 时页面指向的链接文字或网址 | str，可空 |
-| valid_for_term | 适用入学季 | str，如 "Fall 2027"，或 term_unknown |
+| valid_for_term | 适用入学季 | str，如 "Fall 2027"，或 term_unknown；没有日期的字段页面没写学期时为空（05 §2） |
 | term_as_written | 条目对应学期在页面上的原文 | str，可空 | 
 | term_basis | valid_for_term 的依据 | enum：stated / inferred_from_date / recurring_no_year / unknown |
 | stale | 截止日期早于取得日期 | bool |

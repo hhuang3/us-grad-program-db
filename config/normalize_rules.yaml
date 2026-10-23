@@ -1,6 +1,48 @@
-# Extra normalization rules per domain (docs/spec/07_snapshots.md §6.3).
+# Extra normalization rules per domain (docs/spec/07_snapshots.md §6.3, §6.5).
 # domain:
 #   - {remove_selector: "<CSS selector>"}       # removed after the generic rules of step 3
 #   - {remove_line_regex: "<Python regex>"}     # after step 5, remove whole lines that match
 # Any change here requires bumping NORMALIZER_VERSION (enforced by tests).
-{}
+# normalizer_version 2 (2026-10-24): recurring noise found in Phase 3e.
+
+infosystems.utdallas.edu:
+  - remove_selector: "#student-testimonials"           # testimonials in random order
+
+www.fuqua.duke.edu:
+  - remove_selector: ".view-student-profile-blocks"    # random subset of student profiles
+  - remove_selector: ".field--name-field-deadline-date-timer-2"   # countdown: remaining time only; round and dates stay
+  - remove_selector: "div.field__item.hidden"          # CMS component labels ("Photo Box II - ...", "false")
+
+olin.washu.edu:
+  - remove_selector: "section.ask-a-student"           # rotating student profile
+  - remove_selector: "section.events"
+  - remove_selector: "section.news"
+
+datascience.virginia.edu:
+  - remove_selector: ".section--events"                # event list
+
+gsas.nyu.edu:
+  - remove_selector: "#breadcrumbs"                    # breadcrumb menu outside <nav>
+  - remove_line_regex: '^Last updated [A-Z][a-z]+ \d{4}\.?$'   # page timestamp (this domain only)
+
+www.bu.edu:
+  - remove_selector: ".wp-block-amp-section-nav"       # section menu outside <nav>
+
+datascience.uchicago.edu:
+  - remove_selector: ".widget_custom_menu_wizard"      # sidebar menu (mobile and desktop copies)
+  - remove_selector: "#social_widget-2"
+
+carey.jhu.edu:
+  - remove_selector: ".program-menu-in-this-section"   # section menu
+  - remove_selector: ".upcomming-events-two"           # events carousel (sic)
+  - remove_selector: '[id^="block-carey-brightedge"]'  # related-program link cards
+
+ma.stat.columbia.edu:
+  - remove_selector: ".menu-main-menu-container"       # sidebar menu
+
+dornsife.usc.edu:
+  - remove_selector: ".gallery-container"              # lightbox gallery captions
+
+stat.illinois.edu:
+  - remove_selector: "ilw-header"                      # header menu (incl. button text)
+  - remove_selector: "ilw-footer"                      # footer (incl. Google Translate widget)

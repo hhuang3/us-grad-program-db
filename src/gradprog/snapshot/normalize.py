@@ -4,18 +4,20 @@ import email
 import io
 import re
 import unicodedata
+from collections import Counter
 from email import policy
 from pathlib import Path
 
 import soupsieve
 import yaml
-from bs4 import BeautifulSoup, Comment, NavigableString, Tag
+from bs4 import BeautifulSoup, Comment, Declaration, Doctype, NavigableString, ProcessingInstruction, Tag
 
 from gradprog.registry.urls import UrlError, normalize_url
 
 # Bump whenever output can change (code, rules file, dependency behaviour) and add the new rules-file hash.
-NORMALIZER_VERSION = 1
-RULES_SHA256 = {1: "e526cbb980de8a67f4aa890aff8b10f11e1b8078d6a41303a04631db042e763a"}
+NORMALIZER_VERSION = 2
+RULES_SHA256 = {1: "e526cbb980de8a67f4aa890aff8b10f11e1b8078d6a41303a04631db042e763a",
+                2: "c371b1902d4a34bd9aefd30990c5229eee6120fc72866db2aaa5356bcf15f4b6"}
 RULES_FILE = Path(__file__).resolve().parents[3] / "config" / "normalize_rules.yaml"
 
 REMOVE_TAGS = ["script", "style", "noscript", "template", "svg", "iframe", "header", "nav", "footer", "form"]
@@ -29,6 +31,13 @@ BLOCK_TAGS = {
 RULE_KINDS = ("remove_selector", "remove_line_regex")
 META_CHARSET = re.compile(rb"""<meta[^>]+charset\s*=\s*["']?([A-Za-z0-9_\-:.]+)""", re.IGNORECASE)
 SPACES = re.compile(r"\s+")
+NOT_TEXT = (Comment, Doctype, Declaration, ProcessingInstruction)
+_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?"
+# 07 §6.5: lines that look like data (dates, money, scores, admission keywords)
+DATA_LIKE = re.compile(
+    rf"\b{_MONTH} \d{{1,2}}, \d{{4}}\b|\b\d{{1,2}}/\d{{1,2}}/\d{{4}}\b|\b\d{{4}}-\d{{2}}-\d{{2}}\b|\$\s?\d"
+    r"|\bscores?\b|\bdeadlines?\b|\bapply by\b|\btuition\b|\bfees?\b|\btoefl\b|\bielts\b|\bduolingo\b|\bgre\b"
+    r"|\bgmat\b", re.IGNORECASE)
 
 
 def load_rules(path=RULES_FILE):
@@ -116,7 +125,7 @@ def _cell_text(cell):
 
 def _emit(node, out):
     if isinstance(node, NavigableString):
-        if not isinstance(node, Comment):
+        if not isinstance(node, NOT_TEXT):   # v2: a stray <!DOCTYPE html> is not text
             out.append(str(node))
         return
     if not isinstance(node, Tag):
@@ -127,7 +136,10 @@ def _emit(node, out):
         return
     if name == "tr":
         cells = [_cell_text(c) for c in node.find_all(["td", "th"], recursive=False)]
-        out.append("\n" + " | ".join(cells) + "\n")
+        while cells and not cells[-1]:   # v2: drop trailing empty cells; all-empty rows vanish
+            cells.pop()
+        if cells:
+            out.append("\n" + " | ".join(cells) + "\n")
         return
     block = name in BLOCK_TAGS
     if block:
@@ -181,6 +193,15 @@ def normalize(raw, content_type, domain=None, rules=None, charset=None):
     elif content_type != "html":
         raise ValueError(f"unsupported content type {content_type!r}")
     return _finish(_html_text(_decode(raw, charset), domain, rules), domain, rules)
+
+
+def rule_losses(raw, content_type, domain, rules, charset=None):
+    """07 §6.5: data-like lines that the domain rules removed (generic-only text minus full text)."""
+    if not domain or not rules.get(domain):
+        return []
+    base = Counter(normalize(raw, content_type, domain, {}, charset).splitlines())
+    full = Counter(normalize(raw, content_type, domain, rules, charset).splitlines())
+    return [line for line, n in (base - full).items() for _ in range(n) if DATA_LIKE.search(line)]
 
 
 def location_matches(location, allowed_urls):

@@ -9,11 +9,13 @@ import pytest
 from gradprog.snapshot.backup import BackupError, backup
 from gradprog.snapshot.links import discover_links, load_keywords, registrable_domain
 from gradprog.snapshot.manual import register_manual
+from gradprog.snapshot.normalize import NORMALIZER_VERSION
 from gradprog.snapshot.renormalize import renormalize
 from gradprog.snapshot.store import SnapshotStore
 from helpers import REPO, make_mhtml
 
 T = {"char_drop": 0.5, "min_similarity": 0.3}
+NEXT = NORMALIZER_VERSION + 1   # renormalize tests target the version after the current one
 URL3 = "https://business.alpha.edu/msba"
 BODY = "<html><body><main><h1>MSBA</h1>" + "".join(f"<p>Item {i}.</p>" for i in range(10)) + \
        "<p>Updated weekly.</p></main></body></html>"
@@ -39,7 +41,7 @@ def populated(registry, tmp_path):
     return registry, store
 
 
-def test_v1_sees_build_line_as_change(populated):
+def test_current_version_sees_build_line_as_change(populated):
     _, store = populated
     assert list(store.read_index()["classification"]) == ["first_capture", "changed", "fetch_error"]
 
@@ -49,23 +51,36 @@ def test_renormalize_appends_rows_and_keeps_raw(populated):
     index_before = (store.root / "index.csv").read_bytes()
     raws = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in (store.root / "raw").rglob("*") if p.is_file()}
     rules = {"business.alpha.edu": [{"remove_line_regex": r"^Updated weekly\."}]}
-    rows = renormalize(registry, store, version=2, rules=rules, thresholds=T, now=lambda: "2026-10-21T00:00:00Z")
+    rows = renormalize(registry, store, version=NEXT, rules=rules, thresholds=T, now=lambda: "2026-10-21T00:00:00Z")
     assert (store.root / "index.csv").read_bytes().startswith(index_before)        # old rows untouched
     assert {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in raws} == raws   # raw files untouched
-    new = store.read_index()[store.read_index()["normalizer_version"] == "2"]
+    new = store.read_index()[store.read_index()["normalizer_version"] == str(NEXT)]
     assert len(rows) == 2 and len(new) == 2                                         # failed capture not redone
     assert list(new["classification"]) == ["first_capture", "unchanged"]           # noise removed by v2 rule
     assert all("renormalized" in n for n in new["note"])
     assert new["run_id"].iloc[0].endswith("-renormalize")
     for r in new.itertuples(index=False):
-        assert store.norm_path(r.page_id, r.snapshot_id, 2).is_file()
-        assert store.norm_path(r.page_id, r.snapshot_id, 1).is_file()                # v1 output kept
+        assert store.norm_path(r.page_id, r.snapshot_id, NEXT).is_file()
+        assert store.norm_path(r.page_id, r.snapshot_id, NORMALIZER_VERSION).is_file()   # current output kept
+
+
+def test_renormalize_reports_rule_losses(populated, tmp_path):
+    registry, store = populated
+    src = tmp_path / "fees.mhtml"
+    src.write_bytes(make_mhtml(URL3, BODY.replace("Updated weekly.", "Tuition $1,800 per credit.")))
+    register_manual(registry, store, "pg-0003", src, retrieved_at="2026-10-21T09:00:00Z",
+                    now=lambda: "2026-10-21T09:00:00Z", thresholds=T, rules={})
+    rules = {"business.alpha.edu": [{"remove_line_regex": r"^Tuition"}]}
+    renormalize(registry, store, version=NEXT, rules=rules, thresholds=T, now=lambda: "2026-10-22T00:00:00Z")
+    run_id = store.read_runs().iloc[-1]["run_id"]
+    report = store.report_path(run_id).read_text(encoding="utf-8")
+    assert "按域名规则删除的疑似数据行" in report and "pg-0003" in report
 
 
 def test_renormalize_is_idempotent(populated):
     registry, store = populated
-    renormalize(registry, store, version=2, rules={}, thresholds=T, now=lambda: "2026-10-21T00:00:00Z")
-    assert renormalize(registry, store, version=2, rules={}, thresholds=T, now=lambda: "2026-10-22T00:00:00Z") == []
+    renormalize(registry, store, version=NEXT, rules={}, thresholds=T, now=lambda: "2026-10-21T00:00:00Z")
+    assert renormalize(registry, store, version=NEXT, rules={}, thresholds=T, now=lambda: "2026-10-22T00:00:00Z") == []
 
 
 # --- link discovery (§8) ------------------------------------------------------
@@ -289,3 +304,43 @@ def test_wrapper_notifies_when_the_run_is_skipped(tmp_path):
 def test_wrapper_does_not_notify_otherwise(tmp_path, exit_code):
     result, calls = run_wrapper(tmp_path, UV_EXIT=exit_code, SLEEPS="1")
     assert "osascript" not in calls
+
+
+# --- known baseline of rule-loss reminders (07 §6.5) ---------------------------
+
+from gradprog.snapshot import report as run_report   # noqa: E402
+
+BASE = {"normalizer_version": NORMALIZER_VERSION, "pages": {"pg-0010": 4}}
+
+
+def rows(*items, version=NORMALIZER_VERSION):
+    return [{"page_id": p, "rule_losses": n, "normalizer_version": str(version)} for p, n in items]
+
+
+def test_baseline_file_matches_current_version():
+    base = run_report.load_baseline()
+    assert base["normalizer_version"] == NORMALIZER_VERSION
+    assert base["pages"]["pg-0010"] == 4 and len(base["pages"]) == 13
+
+
+def test_section_lists_only_new_reminders():
+    text = "\n".join(run_report.rule_loss_section(rows(("pg-0010", 4), ("pg-0010", 6), ("pg-0099", 1)), BASE))
+    assert "| pg-0099 | 1 | – |" in text
+    assert "| pg-0010 |" not in text                     # 4 and 6 stay within base + 2: only in the total
+    assert "基线内：2 个快照、10 行" in text
+
+
+def test_section_lists_a_clear_increase():
+    text = "\n".join(run_report.rule_loss_section(rows(("pg-0010", 7)), BASE))
+    assert "| pg-0010 | 7 | 4 |" in text
+
+
+def test_baseline_ignored_for_another_version():
+    text = "\n".join(run_report.rule_loss_section(rows(("pg-0010", 4), version=NORMALIZER_VERSION + 1), BASE))
+    assert "| pg-0010 | 4 | – |" in text
+
+
+def test_only_baseline_reminders_write_no_extra_report(tmp_path):
+    store = SnapshotStore(tmp_path / "snapshots")
+    assert run_report.write_rule_losses(store, "run-x-manual", rows(("pg-0010", 3)), BASE) is None
+    assert run_report.write_rule_losses(store, "run-x-manual", rows(("pg-0099", 1)), BASE).is_file()

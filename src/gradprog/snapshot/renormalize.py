@@ -3,6 +3,7 @@
 from gradprog.snapshot.classify import load_thresholds
 from gradprog.snapshot.ingest import analyse, join_note, note_charset, page_domain
 from gradprog.snapshot.normalize import NORMALIZER_VERSION, load_rules
+from gradprog.snapshot.report import write_rule_losses
 from gradprog.snapshot.store import CLASSES, SUCCESS, make_run_id
 from gradprog.util.download import utc_now
 
@@ -31,13 +32,15 @@ def renormalize(registry, store, version=None, rules=None, thresholds=None, now=
         row = {c: "" for c in ix.columns}
         row.update({c: src[c] for c in ACQUISITION})
         extra = fields.pop("note", "")
+        losses = fields.pop("rule_losses", 0)
         row.update({k: ("" if v is None else str(v)) for k, v in fields.items()})
         row.update(run_id=run_id, note=join_note(src["note"], extra, "renormalized"))
         store.append_index(row)
-        rows.append(row)
+        rows.append({**row, "rule_losses": losses})
     counts = {c: sum(r["classification"] == c for r in rows) for c in CLASSES}
     anomalies = sorted({r["page_id"] for r in rows if r["classification"] not in SUCCESS
                         or r["classification"] == "suspected_redesign"})
     store.append_run({"run_id": run_id, "method": "renormalize", "started_at": started, "finished_at": now(),
                       **counts, "anomaly_page_ids": ";".join(anomalies)})
+    write_rule_losses(store, run_id, rows)
     return rows

@@ -40,8 +40,9 @@
 
 ## 2. 申请季（term）是一等概念
 
-- 每条 observation 和 fact 都带 `valid_for_term`，格式为 `"<Season> <YYYY>"`，其中 Season ∈ {Fall, Spring, Summer}，如 `"Fall 2027"`；或者取特殊值 `term_unknown`。
-- 判断不出页面描述的是哪个入学季时，标 `term_unknown` 并**进入审核**。**不得默认为当前季。**
+- 每条 observation 和 fact 都带 `valid_for_term`，格式为 `"<Season> <YYYY>"`，其中 Season ∈ {Fall, Spring, Summer}，如 `"Fall 2027"`；或者取特殊值 `term_unknown`；或者留空（见下一条）。
+- **没有日期的字段**（托福、雅思、GRE、GMAT、学费、时长、学分、CIP、STEM、申请费）页面没写学期时 `valid_for_term` 留空，表示“抓取时点的现行要求”，不进审核（2026-10-24，08 §7.2）。fact 的键中 `valid_for_term` 为空即表示现行值。
+- 截止日期判断不出是哪个入学季、或页面写了学期但无法确定是哪一季时，标 `term_unknown` 并**进入审核**。**截止日期不得默认为当前季。**
 - `term_unknown` 的 observation 不能直接变成 fact，审核人必须指定具体的 term 或驳回。
 - 同一项目、同一字段、不同 term 的 fact 并存（例如 Fall 2026 与 Fall 2027 的截止日期）。
 
