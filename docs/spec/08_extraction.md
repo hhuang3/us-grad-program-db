@@ -1,7 +1,7 @@
 # 08 字段抽取（Phase 4）
 
-> 状态：draft v0.3（Phase 4a，2026-10-18）。v0.3：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
-> 依据：`02_field_dictionary.md` v0.2、`05_data_model.md` v1.3、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
+> 状态：draft v0.4（Phase 4b，2026-11-06）。v0.4：取消“温度 0”（§1）；整次调用失败的重试规则（§2.1）；LLM 输出形状（§4.1）；日期比对写法（§6）；写明学期与日期的处理（§7.1、§7.2、§7.4）；冲突的存储位置与跨页判断（§8）；审核条件第 13、14 条（§10）；判断代码版本（§11）。v0.3（2026-10-18）：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
+> 依据：`02_field_dictionary.md` v0.4、`05_data_model.md` v1.5、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
 
 本文件定义 05 的第二层 **observation**：从 snapshot 的规范化正文中抽取字段，写成 observation。observation 不直接成为 fact，进入 fact 必须经过人工审核（05 §1.3）。
 
@@ -10,7 +10,8 @@
 - **不用 RAG**。整页规范化正文（07 §6）直接作为输入，逐页抽取，**每页一次 LLM 调用**（共用页面的例外见 §2.3）。
   - 理由：页面正文最长约 3.7 万字符（UChicago pg-0028），在模型上下文之内；截止日期表、托福要求常与上下文（项目名、学期、适用对象）相隔较远，切块检索容易丢失这些上下文。
 - **结构化输出**：用 JSON schema 约束输出（字段、类型、枚举与 §4 一致）；输出不合 schema 记为 `extraction_failed`，不重试修补。
-- **温度 0**。
+- **不发送采样参数**（2026-11-06，取代原“温度 0”）：API 版本 2026-10-21 起，请求带 `temperature`、`top_p`、`top_k` 一律返回 400，当前模型也已不接受非默认值。因此同一输入的结果不保证完全相同：保存全部原始输出（§4），并用重复运行统计结果差异。
+- API key 只从环境变量 `ANTHROPIC_API_KEY` 读取，不回退到其他登录凭据。
 - 每条结果记录 `model_name`、`prompt_version`、`schema_version`、`extracted_at`（05 §1.2）。提示词和 schema 放在仓库中（git），带版本号；模型名不写死在代码里，由配置给出。
 - 提示词中放入：页面 URL、page_type、owner_level、所属项目名称（`programs.csv` 的 `program_name`、`degree_type`）、该页面对该项目的 `scope_note`（原样）、规范化正文。
 - LLM 只依据正文作答，不使用页面以外的知识（例如“这所学校一般要求托福 100”）。
@@ -23,6 +24,12 @@
 - **之后**：只抽取“规范化正文相对于上次抽取所用快照有变化”的页面，即最新成功快照的 `norm_sha256` 与上次抽取所用快照的 `norm_sha256` 不同。不按 07 的分类判断（`unchanged` 只是相对上一次取得，不是相对上一次抽取）。
 - **最新一次取得失败**（`blocked / unavailable / fetch_error`）：不调用 LLM；按 05 §4，为该页面关联的每个 `(program_id, field)` 写一条 `value_status = page_unavailable` 的 observation，关联那条失败的 snapshot。上一次成功抽取的 observation 保留不动。
 - 同一 `normalizer_version` 下比较 `norm_sha256`；规范化版本变化的处理见 §11。
+- **整次调用失败**（2026-11-06）：API 报错（SDK 重试后仍失败）、拒答（`stop_reason = refusal`）或输出被截断（`stop_reason = max_tokens`）。
+  - 为该次调用涉及的每个 `(program_id, field)` 写一条 `value_status = extraction_failed` 的 observation，页面级记录写明失败原因（不含页面文字）。
+  - 失败的调用**不算“上次抽取”**，下次运行自动再试。上一次成功抽取的 observation 保留不动。
+  - 同一页面**连续 2 次**整次调用失败后进入审核（§10 第 13 条），不再自动重试。按“页面 × 项目”分别调用时，按各自的调用计数。
+  - 成功一次即清零。`norm_sha256`、`prompt_version`、`schema_version` 或 `model_name` 变化时重新计数；负责人也可以明确指定重试。
+  - 输出不合 schema、证据校验不通过不属于整次调用失败：算作一次抽取，不重试（§1、§6）。
 
 ### 2.2 哪些页面
 
@@ -93,7 +100,7 @@ LLM 对每个页面输出一个 JSON 对象：
 | 键 | 含义 |
 |---|---|
 | `value` | 字段值，类型与枚举按 02（§12 修订后）；`value_status ≠ found` 时为 null |
-| `value_status` | `found / referenced_elsewhere / mentioned_without_value / not_mentioned`（判断标准见 05 §4；`extraction_failed`、`page_unavailable` 由代码写） |
+| `value_status` | `found / referenced_elsewhere / mentioned_without_value`（判断标准见 05 §4；`not_mentioned` 由空数组表示，见 §4.1；`extraction_failed`、`page_unavailable` 由代码写） |
 | `reference_target` | 仅 `referenced_elsewhere`：页面上指向的链接文字或网址，原样 |
 | `evidence_text` | 支持该值的原文片段，≤ 200 字符，从正文中原样复制 |
 | `term_as_written` | 该条目所对应学期在页面上的原文写法；页面没写就为 null |
@@ -103,7 +110,28 @@ LLM 对每个页面输出一个 JSON 对象：
 - 代码补全每条 observation 的 `evidence_url`（快照的 `final_url`）、`snapshot_id`、`retrieved_at`、`program_id`、`model_name`、`prompt_version`、`schema_version`、`extracted_at`，以及 §7 得出的 `valid_for_term` 和 `term_basis`（§12）。
 - 同一字段在页面上出现多个不同的值（例如托福 90 和 95）时，LLM 每个值输出一项，不自行选择；代码按 §8.3 处理。
 - **`confidence` 只用于排序和触发审核**（§10），不作为准确率指标，也不对外发布。
-- **存储**：observation 含 `evidence_text`（页面原文），按 00 §2 只保存在本地，不进 git，目录 `data/extraction/`（加入 .gitignore）。git 中只放提示词、schema、配置，以及不含原文的汇总统计。
+- **存储**：observation 含 `evidence_text`（页面原文），按 00 §2 只保存在本地，不进 git，目录 `data/extraction/`（已在 .gitignore 中）。git 中只放提示词、schema、配置（`config/extraction/`），以及不含原文的汇总统计（`data/extraction_stats/runs.csv`：计数、token、费用）。
+  - `data/extraction/calls/<call_id>.json`：每次调用的完整原始输出、用量、`request_id`，写入后不改。
+  - `data/extraction/page_records.jsonl`：页面级记录（05 §1.2）。
+  - `data/extraction/observations.jsonl`：只追加的 observation。
+  - `data/extraction/derived/current.csv`：当前视图，含跨页冲突和审核原因（§8、§10），随时可由上面三项重建。
+
+### 4.1 LLM 输出与 observation 的对应（2026-11-06）
+
+LLM 的输出形状与 observation 不完全一一对应，下列三组由代码转换；其余字段每个值一项，直接对应。
+
+| LLM 输出 | LLM 给出 | 代码写成 |
+|---|---|---|
+| TOEFL | 总分数字和证据，不判断分制 | 按 §9 写入 `toefl_min_legacy` 或 `toefl_min_new_scale`；`toefl_scale_on_page` 由代码汇总 |
+| 截止日期 | 月、日、可为空的年，以及 `round_name`、`deadline_type`、`deadline_tz`、`applicant_scope`、`is_rolling` | 按 §7 补全 `deadline_date`；LLM 不推算年份，也不输出 ISO 日期 |
+| 学费 | 金额、口径、年度、`includes_fees` 作为一组 | 拆成 `tuition_basis`、`tuition_amount_usd`、`tuition_year` 三条单字段 observation，用同一个 `group_id` 关联，多个值时不会配错 |
+
+- 每个字段（组）在 LLM 输出中是一个数组。**空数组表示 `not_mentioned`**，由代码写成 observation；LLM 只输出 `found / referenced_elsewhere / mentioned_without_value`。
+  - **空数组只用于页面完全没提到该字段**。页面提到了字段但没给值，必须输出 `mentioned_without_value`；指向别的页面，必须输出 `referenced_elsewhere`，不能返回空数组。提示词中写明这一点。
+  - 测试用例（合成）：“须提交英语成绩”→ 托福 `mentioned_without_value`；“见研究生院要求页面”→ `referenced_elsewhere`，`reference_target` 为页面上的链接文字；两者都不得写成 `not_mentioned`。
+- 条目级标记：`other_program_mentioned`、`excluded_by_scope_note`（§8.4）；TOEFL、雅思条目可带 `conditional_admission_range`（§9）。
+- 页面级：`terms_mentioned`，以及页面受众存疑的标记（§10 第 11 条）。
+- 正文在提示词中作为数据放在标签内，页面文字中的任何指示都不执行。
 
 ## 5. 分工：LLM 只记录观察，判断交给代码
 
@@ -123,7 +151,7 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 
 1. **逐字出现**：`evidence_text` 与规范化正文各自做空白规范化（连续空白合并为一个空格、去掉首尾空白）后，`evidence_text` 必须是正文的子串。不做大小写或标点的模糊匹配。
 2. **长度**：≤ 200 字符。
-3. **值与证据一致**：数值、日期、金额必须能在 `evidence_text` 中找到对应写法（例如 `toefl_min_legacy = 100` 时证据中有 “100”；日期按常见写法比对：`October 7, 2026`、`Oct. 7, 2026`、`10/07/2026`、`2026-10-07`）。枚举字段（`gre_policy` 等）不做此项。
+3. **值与证据一致**：数值、日期、金额必须能在 `evidence_text` 中找到对应写法（例如 `toefl_min_legacy = 100` 时证据中有 “100”）。数字按词边界比对，金额忽略千分位逗号。日期按 LLM 给出的月、日（和年，如有）比对常见写法：`October 7, 2026`、`Oct. 7, 2026`、`Sept 7`、`October 7th`、`7 October`、`10/07/2026`、`10/07`、`2026-10-07`（2026-11-06 补充没写年份和序数词的写法）。枚举字段（`gre_policy` 等）不做此项；`is_rolling = true` 且没有日期的条目不比对日期。
 4. **类型与范围**：符合 02 的类型和取值范围（例如 `toefl_min_legacy` 为 0–120 的整数，`toefl_min_new_scale` 为 1.0–6.0、步长 0.5，`ielts_min_overall` 为 0–9、步长 0.5）。
 
 ## 7. `valid_for_term` 的判断
@@ -133,9 +161,12 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 ### 7.1 页面写明了学期（`term_as_written` 非空）
 
 - 能确定季节和年份的写法（`Fall 2027`、`Fall semester 2027`、`2027 fall entry` 等）→ 换算为标准格式，`term_basis = stated`。
+  - **写明的学期与完整日期不一致**（日期落在该学期的 §7.2 区间之外，2026-11-06）→ 以写明的学期为准，`term_basis = stated`，日期原样保留，进入审核（§10 第 14 条，原因 `term_date_mismatch`）。这往往说明页面编辑出错或内容过期。夏季没有区间，不做此项检查。
+  - **日期没写年份**（如 “Fall 2027: January 2”，2026-11-06）→ 在该学期的区间内取日期（2027-01-02），`term_basis = stated`，早于取得日时按 §7.3 标 `stale`。不用 §7.2 的“下一次出现”，否则取得日在该日期之后时会推到下一年、与写明的学期矛盾。夏季没有区间：年份取下一次出现，并进入审核（§10 第 14 条，原因 `summer_date_unverified`）。
 - 只写季节、没写年份（如 “for the fall semester”）→ 季节按写明的，年份按 §7.2 的区间由日期推算，`term_basis = inferred_from_date`。季节为夏季，或没有日期可用时 → `term_unknown`，进入审核。
 - 写法含糊、无法确定是入学季还是申请年份（如 Columbia DS 的 “GRE optional for the 2026 applications”）→ `term_unknown`。
-- 学年写法（如 `2026-27`、`AY 2026-2027`）→ 秋季入学项目换算为该学年的秋季（`2026-27` → `Fall 2026`），`term_basis = inferred_from_date`。
+- 学年写法（如 `2026-27`、`AY 2026-2027`）→ 只招秋季的项目（`intake_terms = fall`）换算为该学年的秋季（`2026-27` → `Fall 2026`），`term_basis = inferred_from_date`；其他项目 → `term_unknown`（2026-11-06）。
+- 只写月份和年份的入学时间（如 `October 2026 Start`）→ `term_unknown`，不换算为季节。
 
 ### 7.2 由日期推算学期
 
@@ -155,7 +186,7 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 - 季节为夏季、没写年份 → `term_unknown`，进入审核。
 - 由完整日期推算出的学期 `term_basis = inferred_from_date`，进入审核（§10 第 2 条）；没写年份的按下一条处理。
 - **没有日期的字段**（托福、雅思、GRE、GMAT、学费、时长、学分、CIP、STEM、申请费）且条目没有学期写法 → `valid_for_term` **留空**（`term_basis = unknown`），视为抓取时点的现行要求，**不进审核**（2026-10-24）。过期风险由页面变化触发重抽（§11）和每年 8 月 15 日的全量重抽兜底。`term_unknown` 只用于截止日期无法确定学期，以及页面写了学期但无法确定是哪一季的情况。
-- **截止日期没写年份**（如 “January 2”“MS Spring Admission – September 15”）→ 按**每年固定日期**处理（2026-10-12 确认）：
+- **截止日期没写年份，且条目没有写明带年份的学期**（如 “January 2”“MS Spring Admission – September 15”；写明带年份的学期时见 §7.1）→ 按**每年固定日期**处理（2026-10-12 确认）：
   - 年份推算为该月日在快照 `retrieved_at` 之后（含当天）的**下一次出现**。例：2026-10-11 取得、页面写 “January 2” → 2027-01-02。
   - 再按上面的季节区间确定学期；季节的确定方式不变。
   - `deadline_date` 填推算出的完整日期，`term_basis = recurring_no_year`；月日原文仍在 `evidence_text` 中。
@@ -191,7 +222,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 ### 7.4 同一页面出现多个学期
 
 - 每条 observation 各自判断，同一页面上可以同时有 Fall 2026 和 Fall 2027 的 observation（05 §2：不同 term 的 fact 并存）。
-- `terms_mentioned` 中有两个或以上不同学期、而某条 observation 的 `term_as_written` 为空时，该条不按“页面唯一学期”套用，按 §7.2 处理。
+- 某条 observation 的 `term_as_written` 为空时，按 §7.2 处理，不套用页面上出现的学期；页面只出现一个学期时也一样（2026-11-06，原规则只明确了两个以上的情况）。条目确实属于某个学期时，由 LLM 填写 `term_as_written`。
 
 ### 7.5 测试用例
 
@@ -207,10 +238,23 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | UIUC pg-0039（10-04 快照）：“MS Spring Admission – September 15”（无年份） | 每年固定日期：取得日 2026-10-04 之后的下一次 9 月 15 日是 2027-09-15，按春季区间为 `Spring 2028`，`term_basis = recurring_no_year`，不进审核。Spring 2027 的截止日期（2026-09-15）在取得时已过，不得据此记为 Spring 2027 |
 | WashU pg-0065 “October 2026 Start”（上一季延期入学） | 不得记为 Fall 2027 |
 | WashU pg-0068：“starting in Spring 2026”（收费标准发布时间） | 学费 `tuition_year = 2026-27`；不得据此产生 Spring 2026 的入学季 |
+| 合成：写明 `Fall 2027`，日期 2025-12-01 | `Fall 2027`，`stated`，`stale`，进审核（`term_date_mismatch`） |
+| 合成：写明 `Fall 2027`，“January 2”，取得日 2027-02-10 | 2027-01-02，`Fall 2027`，`stated`，`stale`，不进审核 |
+| 合成：写明 `Summer 2027`，“March 1”，取得日 2026-10-11 | 2027-03-01，`Summer 2027`，`stated`，进审核（`summer_date_unverified`） |
+| 合成：`2026-27`，`intake_terms = fall;spring` | `term_unknown`，进审核 |
+| 合成：页面只出现 `Fall 2027`，某截止日期 `term_as_written` 为空，`intake_terms = fall;spring` | `term_unknown`，进审核，不套用 `Fall 2027` |
 
 ## 8. 冲突处理
 
-所有冲突都**不自动选择**：各方 observation 都保留，标出冲突类型，进入审核；审核时给出默认建议。冲突标记写在 observation 上（`conflict_type`，§12）。
+所有冲突都**不自动选择**：各方 observation 都保留，标出冲突类型，进入审核；审核时给出默认建议。
+
+**存储位置**（2026-11-06）：observation 只追加（05 §1），而跨页冲突会随其他页面重抽而变化，不能写死在旧记录上。
+
+- 同页判断（`in_page_contradiction`、§8.4 信号 1 和 2 的 `cross_program_contamination`）写在 observation 上。
+- 跨页判断（`level_mismatch`、`below_graduate_school_minimum`、`deadline_mismatch`）只写在派生视图（§4）中，每次运行后重建。
+- 视图中的 `conflict_type` 是两者的并集。
+
+只比较 `value_status = found` 的值，并按“字段 + 学期”分组；`valid_for_term` 留空的只和留空的比较。
 
 ### 8.1 研究生院页与系页（项目页）数值不同
 
@@ -218,12 +262,13 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 - 审核默认建议：采用更具体层级的值。
 - 例外一：更具体层级的页面写的是“按研究生院要求”（`referenced_elsewhere`，没有自己的数值）→ 采用研究生院的值。指向的页面没有登记给该项目时，记为覆盖缺口，进入审核（05 §4）。
 - 例外二：**研究生院要求视为下限**。项目页（或系页）的数值**低于**研究生院下限时（例如项目页托福 79、研究生院 80），不自动采用，进入审核，冲突类型 `below_graduate_school_minimum`。“低于”按字段方向判断：最低分类字段（托福、雅思）数值更低即为低于；`gre_policy` 等枚举字段不做下限比较。
-- 冲突类型：`level_mismatch`、`below_graduate_school_minimum`。
+- 两页层级相同、值不同（2026-11-06）：同样标 `level_mismatch`，不给默认建议。
+- 冲突类型：`level_mismatch`、`below_graduate_school_minimum`。低于下限时只标后者。
 
 ### 8.2 同一项目的截止日期有多个来源
 
 - 截止日期按 `(valid_for_term, deadline_type, applicant_scope, round_name)` 分组；不同组并存，不算冲突（例如研究生院的“提前截止”与项目的“Round 1”）。
-- 同一组内日期不同才算冲突，冲突类型 `deadline_mismatch`；审核默认建议按 §8.1 的层级。
+- 同一组内日期不同才算冲突：跨页面时冲突类型 `deadline_mismatch`，审核默认建议按 §8.1 的层级；同一页面内时按 §8.3 标 `in_page_contradiction`（2026-11-06 明确）。
 - 案例：UTD 商学院页有一套截止日期，研究生院页另有“提前截止”和“常规截止”两张表（P2 报告 §6.2.3）。
 
 ### 8.3 同一页面内数值矛盾
@@ -240,10 +285,10 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
   - **JHU Carey pg-0061**（`jhu-ms-businessanalyticsai`）：P2 核对时，页面的 Admissions 与 Application Deadlines 区块是 MBA/BS in Engineering 双学位的内容，且为 Fall 2026 旧数据，与 How to apply 页（pg-0062）矛盾（GMAT/GRE 一个说必需、一个说可选）。2026-10 `/full-time` 并入项目总页，P4 抽取时需确认这些内容是否已修正。scope_note 已写明不采用。
   - **BU pg-0026**（`bu-ms-businessanalytics`）：liberal arts 申请通道区块写明属于 MSBA，但“如何申请”一句指向 MiM 项目，疑似从 MiM 页面复制；该区块在 2026-10-11 的快照中已被删除。
 - **不属于污染的情况**：总览页按项目分行列出多个项目（例如统计系总览页列出 5 个项目的截止日期）。抽取只采用明确标为本项目的那一行（按项目名和学位），其他项目的行不采用，也不标记。只有当内容被写成本项目自己的、实际却属于别的项目时，才算污染（2026-10-18 补充）。
-- **检测信号**（任一命中即标记，进入审核，不自动采用该条）：
+- **检测信号**（信号 1、2 任一命中即标记，进入审核，不自动采用该条）：
   1. LLM 在该条目的 `evidence_text` 或其所在区块中看到其他项目或学位的名称——提示词要求 LLM 对每条输出 `other_program_mentioned`（页面原文中的其他项目名，或 null），只记录、不判断；
   2. 该条目落在 `scope_note` 声明不采用的区块（LLM 依 scope_note 输出 `excluded_by_scope_note`，代码仍保留该条以备审核）；
-  3. 与同一项目其他页面的同一字段、同一学期的值不同（与 §8.1、§8.2 同时成立时，两个冲突类型都标）。
+- 与同一项目其他页面的同一字段、同一学期的值不同，**单独不算污染**，按 §8.1、§8.2 标记（2026-11-06）。否则跨页不同的双方都会带污染信号，§8.1 的层级建议就失效了。
 - 审核默认建议：采用没有污染信号的页面的值；所有页面都有污染信号时，不给建议。
 
 ### 8.5 面授版与线上版写在同一页面
@@ -274,12 +319,14 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | 4 | 任何冲突类型（§8）：`level_mismatch`、`below_graduate_school_minimum`、`deadline_mismatch`、`in_page_contradiction`、`cross_program_contamination` |
 | 5 | 目标学期没有未过期的截止日期、只有上一季的过期截止日期（§7.3） |
 | 6 | `confidence` 低于阈值（阈值用 09 标准答案集定出，确定前默认 0.7） |
-| 7 | 新 observation 的值与 `review_status = corrected` 的 fact 不同（05 §1.3） |
+| 7 | 新 observation 的值与 `review_status = corrected` 的 fact 不同（05 §1.3）；fact 层实现后才生效 |
 | 8 | 来源快照分类为 `suspected_redesign` |
 | 9 | 季节和年份都没写、且项目有多个入学季；或季节为夏季、没写年份（§7.2） |
 | 10 | TOEFL 分制无法识别（§9） |
 | 12 | `referenced_elsewhere` 且指向的页面没有登记给该项目（覆盖缺口，05 §4） |
 | 11 | 页面受众存疑：LLM 报告页面是给在读学生或其他项目的（P2 报告 §6.2.5，例如 Columbia `/ma-student-faqs/`） |
+| 13 | 同一页面连续 2 次整次调用失败（§2.1），原因 `repeated_call_failure` |
+| 14 | 写明的学期与日期不一致（`term_date_mismatch`），或夏季学期的日期没写年份（`summer_date_unverified`）（§7.1） |
 
 不进入审核的 observation 仍然不会自动成为 fact（05 §1.3）；“进入审核”指在审核队列中优先列出并标明原因。
 
@@ -293,6 +340,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | `schema_version` 升级（含字段定义变化：02 中 v1 字段的类型、枚举、含义改变） | 全量重抽 |
 | 新申请季：每年 8 月 15 日（05 §5） | 全量重新取得 + 全量重抽 |
 
+- 判断代码（§6–§9）改动时升 `extract_rules_version`：**不调用 LLM**，用已存的原始输出重跑判断代码，追加新 observation；视图中每次调用只取最新 `extract_rules_version` 的结果（2026-11-06）。
 - 重抽只产生新的 observation，不直接改 fact（05 §5）。
 - `model_name` 变化视同 `prompt_version` 升级。
 

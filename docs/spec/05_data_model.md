@@ -1,6 +1,6 @@
 # 05 数据模型（设计，Phase 1 不实现）
 
-> 状态：v1.4（Phase 4a，2026-10-12；2026-10-18 补充：§4 新增 `referenced_elsewhere`、`mentioned_without_value`。observation 层与重抽规则按 `08_extraction.md` 补充）。v1.3：snapshot 层以 `07_snapshots.md` 为准。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
+> 状态：v1.5（Phase 4b，2026-11-06：跨页冲突放在派生视图，observation 新增 `group_id`、`extract_rules_version`，页面级记录新增状态，按 08 v0.4）。v1.4（Phase 4a，2026-10-12；2026-10-18 补充：§4 新增 `referenced_elsewhere`、`mentioned_without_value`。observation 层与重抽规则按 `08_extraction.md` 补充）。v1.3：snapshot 层以 `07_snapshots.md` 为准。Phase 2 起所有阶段以本文件为准。字段取值见 `02_field_dictionary.md`（draft v0.2），STEM 规则见 `03_stem_logic.md`。
 
 ## 1. 四层数据状态
 
@@ -9,7 +9,7 @@
 | 层 | 是什么 | 主键 | 关键字段 | 谁写入 |
 |---|---|---|---|---|
 | `snapshot` | 一次原始取得（自动抓取或人工保存） | `snapshot_id` | **以 `07_snapshots.md` §4.2 为准**：`page_id, method, retrieved_at, requested_url, final_url, http_status, content_type, raw_sha256, normalizer_version, norm_sha256, classification, prev_snapshot_id` 等 | 抓取器 / 人工登记 |
-| `observation` | 一次抽取的结果（每个字段一行） | `observation_id` | `snapshot_id, program_id, field, value, value_status, reference_target, valid_for_term, term_as_written, term_basis, stale, conflict_type, evidence_text, confidence, model_name, prompt_version, schema_version, extracted_at`（抽取规则见 `08_extraction.md`） | 抽取器 |
+| `observation` | 一次抽取的结果（每个字段一行） | `observation_id` | `snapshot_id, program_id, field, value, value_status, reference_target, valid_for_term, term_as_written, term_basis, stale, conflict_type, group_id, evidence_text, confidence, model_name, prompt_version, schema_version, extract_rules_version, extracted_at`（抽取规则见 `08_extraction.md`） | 抽取器 |
 | `fact` | 经人工审核确认的当前值 | `(program_id, field, valid_for_term)` 的当前版本 + `fact_version` | `value, value_status, source_observation_id, review_status, reviewer, reviewed_at, evidence_url` | 人工审核 |
 | `release` | 对外发布的数据集版本 | `release_id`（如 `v2027.1`） | `released_at, version, fact 版本集合` | 发布流程 |
 
@@ -22,10 +22,11 @@
 
 ### 1.2 observation
 
-- 每条 observation 必须能追溯到 `snapshot_id`，并记录 `model_name`、`prompt_version`、`schema_version`。
+- 每条 observation 必须能追溯到 `snapshot_id`，并记录 `model_name`、`prompt_version`、`schema_version`、`extract_rules_version`。
 - `evidence_text` ≤ 200 字符（与 02 §6 一致），只在内部保存。
 - `valid_for_term`、`term_basis`、`stale`、`conflict_type` 由代码按 08 §7、§8 判断，不由 LLM 输出（2026-10-12）。
-- 每次 LLM 调用另存一条页面级抽取记录（不是 observation）：`snapshot_id`、关联的 `program_id`、`terms_mentioned`（页面上出现的全部学期写法）、模型与版本信息、原始输出（08 §4）。
+- observation 上的 `conflict_type` 只含同页判断；跨页冲突写在可重建的派生视图中，不改旧记录（2026-11-06，08 §8）。
+- 每次 LLM 调用另存一条页面级抽取记录（不是 observation）：`snapshot_id`、关联的 `program_id`、`terms_mentioned`（页面上出现的全部学期写法）、模型与版本信息、原始输出、调用状态和失败原因（08 §2.1、§4）。
 
 ### 1.3 fact
 
@@ -83,4 +84,4 @@
 
 重抽只产生新的 observation，不直接改 fact。进入审核的规则见 §1.3。
 
-- 抽取的输入（2026-10-12，08 §2.1）：某页面首次抽取时，取它最新的成功快照，与 07 的分类无关；之后只在最新成功快照的 `norm_sha256` 与上次抽取所用快照不同时重抽。最新一次取得失败时写 `page_unavailable` 的 observation（§4）。
+- 抽取的输入（2026-10-12，08 §2.1）：某页面首次抽取时，取它最新的成功快照，与 07 的分类无关；之后只在最新成功快照的 `norm_sha256` 与上次抽取所用快照不同时重抽。最新一次取得失败时写 `page_unavailable` 的 observation（§4）。整次调用失败不算“上次抽取”，连续 2 次后进审核、不再自动重试（2026-11-06，08 §2.1）。

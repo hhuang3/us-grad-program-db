@@ -1,4 +1,4 @@
-# 字段定义 draft v0.3
+# 字段定义 draft v0.4
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -82,7 +82,7 @@
 | term | 入学季 | str，如 "Fall 2027" | 必填；判断不出则 term_unknown 并进审核 |
 | round_name | 轮次 | str，如 Priority / Round 1 | 原样保留官方写法 |
 | deadline_type | 日期类型 | enum：application / international_docs / deposit / decision_release / other | v0.3 新增。international_docs：国际学生材料（签证文件、I-20 申请等）的截止 |
-| deadline_date | 截止日期 | date | 页面没写年份时按每年固定日期推算（08 §7.2，`term_basis = recurring_no_year`） |
+| deadline_date | 截止日期 | date | 由代码补全，LLM 只给月、日和页面写明的年（08 §4.1）。页面没写年份时，写明带年份的学期则在该学期区间内取（08 §7.1），否则按每年固定日期推算（08 §7.2，`term_basis = recurring_no_year`） |
 | deadline_tz | 时区 | str（IANA），可空 | 如 America/New_York |
 | applicant_scope | 适用对象 | enum：all / international / domestic / funding_consideration | |
 | is_rolling | 是否滚动录取 | bool | |
@@ -103,7 +103,8 @@
 | term_as_written | 条目对应学期在页面上的原文 | str，可空 | 
 | term_basis | valid_for_term 的依据 | enum：stated / inferred_from_date / recurring_no_year / unknown |
 | stale | 截止日期早于取得日期 | bool |
-| conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination |
+| conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination；跨页类型只在派生视图中（08 §8） |
+| group_id | 同组字段的关联键 | str，可空；目前只用于学费三个字段（08 §4.1） |
 | includes_fees | 学费金额含杂费 | bool，只用于学费字段 |
 
 ## 7. 待定事项
@@ -114,6 +115,7 @@
 
 ## 8. 修订记录
 
+- v0.4（2026-11-06，Phase 4b）：按 `08_extraction.md` v0.4 修订。`deadline_date` 由代码补全，写明带年份的学期时在该学期区间内取；新增元数据 `group_id`；`conflict_type` 注明跨页类型只在派生视图中。
 - v0.3 补充（2026-10-18）：`value_status` 新增 `mentioned_without_value`、`referenced_elsewhere`（判断标准见 05 §4）；`gre_policy` / `gmat_policy` 新增 `not_required` 并给出映射表。
 - v0.3（2026-10-12，Phase 4a）：按 `08_extraction.md` §12 修订。新增 `stem_claim_on_page`、`tuition_program_total_usd_est`（派生）、截止日期子表 `deadline_type`；`tuition_basis` 新增 per_year，`tuition_amount_usd` 改为页面原始口径；没写年份的 `deadline_date` 按每年固定日期推算；元数据新增 `term_as_written`、`term_basis`（含 recurring_no_year）、`stale`、`conflict_type`、`includes_fees`；§7 关闭“研究生院页与系页冲突”。
 - v0.2（2026-10-01，Phase 2a）：学费只记国际学生适用金额（公立校即州外学费）；§7 关闭“学费是否区分州内/州外”与“track/concentration 是否拆分”两项，“研究生院页与系页冲突”改为 P2 两页都登记、P4 定优先规则。
