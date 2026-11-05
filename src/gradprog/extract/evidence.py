@@ -1,5 +1,6 @@
 """Evidence and value checks (08 §6) and TOEFL scale detection (08 §9)."""
 
+import calendar
 import re
 
 EVIDENCE_MAX = 200
@@ -148,6 +149,8 @@ def _check_deadline(entry, evidence):
     if month is None or day is None or not 1 <= month <= 12 or not 1 <= day <= 31:
         return ["value_out_of_range"]
     if year is not None and not 2000 <= year <= 2100:
+        return ["value_out_of_range"]
+    if day > calendar.monthrange(year or 2000, month)[1]:   # 2000 is a leap year: February 29 without a year passes
         return ["value_out_of_range"]
     if not date_in_evidence(month, day, year, evidence):
         return ["value_not_in_evidence"]

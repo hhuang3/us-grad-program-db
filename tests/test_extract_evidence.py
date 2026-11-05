@@ -84,6 +84,14 @@ def test_rolling_without_a_date_passes():
     assert check_entry("deadlines", entry, PAGE) == []
 
 
+@pytest.mark.parametrize("m,d,y,reason", [(2, 30, None, ["value_out_of_range"]), (2, 29, 2027, ["value_out_of_range"]),
+                                            (13, 1, None, ["value_out_of_range"]), (2, 29, None, ["value_not_in_evidence"])])
+def test_impossible_dates_fail_before_term_logic(m, d, y, reason):
+    entry = {"value_status": "found", "deadline_month": m, "deadline_day": d, "deadline_year": y,
+             "is_rolling": False, "evidence_text": "minimum TOEFL", "confidence": 0.5}
+    assert check_entry("deadlines", entry, PAGE) == reason
+
+
 def test_found_deadline_without_date_or_rolling_fails():
     entry = {"value_status": "found", "deadline_month": None, "deadline_day": None, "deadline_year": None,
              "is_rolling": False, "evidence_text": "minimum TOEFL", "confidence": 0.5}
