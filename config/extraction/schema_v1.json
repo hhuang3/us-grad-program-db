@@ -1,0 +1,954 @@
+{
+  "type": "object",
+  "properties": {
+    "terms_mentioned": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "applicants",
+        "current_students",
+        "other_program"
+      ]
+    },
+    "deadlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "deadline_month": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "deadline_day": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "deadline_year": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "round_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deadline_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "application",
+                  "international_docs",
+                  "deposit",
+                  "decision_release",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deadline_tz": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "applicant_scope": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "all",
+                  "international",
+                  "domestic",
+                  "funding_consideration"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_rolling": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "deadline_month",
+          "deadline_day",
+          "deadline_year",
+          "round_name",
+          "deadline_type",
+          "deadline_tz",
+          "applicant_scope",
+          "is_rolling"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "toefl_total": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "conditional_admission_range": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value",
+          "conditional_admission_range"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ielts_min_overall": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "conditional_admission_range": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value",
+          "conditional_admission_range"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "gre_policy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "optional",
+                  "not_required",
+                  "not_accepted",
+                  "conditional_waiver"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "gmat_policy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "optional",
+                  "not_required",
+                  "not_accepted",
+                  "conditional_waiver"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tuition": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "tuition_basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "per_credit",
+                  "per_term",
+                  "per_year",
+                  "program_total"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tuition_amount_usd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "tuition_year": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "includes_fees": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "tuition_basis",
+          "tuition_amount_usd",
+          "tuition_year",
+          "includes_fees"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "length_months_min": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "length_months_max": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "credits_required": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cip_code": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cip_context": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "stem_list",
+                  "program_intro",
+                  "i20_statement",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value",
+          "cip_context"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "stem_claim_on_page": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "yes",
+                  "no"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "app_fee_usd": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_as_written": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "terms_mentioned",
+    "audience",
+    "deadlines",
+    "toefl_total",
+    "ielts_min_overall",
+    "gre_policy",
+    "gmat_policy",
+    "tuition",
+    "length_months_min",
+    "length_months_max",
+    "credits_required",
+    "cip_code",
+    "stem_claim_on_page",
+    "app_fee_usd"
+  ],
+  "additionalProperties": false
+}
