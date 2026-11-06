@@ -5,7 +5,7 @@ from datetime import date
 
 import pytest
 
-from gradprog.extract.fields import COMMON, GROUPS
+from gradprog.extract.fields import COMMON, GROUPS, NUMBER_KEYS, OWN_ARRAY_KEYS, SIMPLE_KEYS, build_schema, schema_errors
 from gradprog.extract.llm import LLMCallFailed, LLMResult, LLMSetupError, cost_usd
 from gradprog.extract.observations import build_rows
 from gradprog.extract.pipeline import (
@@ -184,8 +184,32 @@ class FakeLLM:
         return result
 
 
+def _wire_value(value, prop):
+    if value is not None:
+        return value
+    return "none" if "enum" in prop else {"string": "", "number": 0, "integer": 0, "boolean": False}[prop["type"]]
+
+
+def wire(out):
+    """An output as the API returns it: three arrays and empty forms instead of None (08 §4.1)."""
+    schema = build_schema()["properties"]
+    done = {"terms_mentioned": out["terms_mentioned"], "audience": out["audience"], "fields": []}
+    for key in OWN_ARRAY_KEYS:
+        props = schema[key]["items"]["properties"]
+        done[key] = [{k: _wire_value(v, props[k]) for k, v in e.items()} for e in out[key]]
+    props = schema["fields"]["items"]["properties"]
+    for key in SIMPLE_KEYS:
+        for e in out[key]:
+            item = {k: _wire_value(None, p) for k, p in props.items() if k != "field"}
+            item.update({k: _wire_value(e[k], props[k]) for k in e if k in props})
+            item["number_value" if key in NUMBER_KEYS else "text_value"] = _wire_value(
+                e["value"], props["number_value" if key in NUMBER_KEYS else "text_value"])
+            done["fields"].append({"field": key, **item})
+    return done
+
+
 def ok(out=None, stop="end_turn"):
-    return LLMResult(json.dumps(out or output()), stop, "claude-haiku-5-5", "req_1", {"input": 1000, "output": 100})
+    return LLMResult(json.dumps(wire(out or output())), stop, "claude-haiku-5-5", "req_1", {"input": 1000, "output": 100})
 
 
 @pytest.fixture
@@ -342,6 +366,11 @@ def test_new_text_restarts_the_failure_count(env):
     assert actions(env) == ["call"]
 
 
+def test_wire_helper_produces_valid_output():
+    full = output(toefl_total=[entry("toefl_total", "x", value=90)], tuition=[entry("tuition", "x", tuition_amount_usd=9)])
+    assert schema_errors(wire(full), build_schema()) == []
+
+
 @pytest.mark.parametrize("text", ["not json", json.dumps({"terms_mentioned": []})])
 def test_off_schema_output_counts_as_an_extraction_and_is_not_retried(env, text):
     _, snaps, store, _ = env
@@ -356,7 +385,7 @@ def test_budget_stops_further_calls(env):
     registry, snaps, store, settings = env
     add_snapshot(snaps, "pg-0001")
     add_snapshot(snaps, "pg-0002")
-    expensive = LLMResult(json.dumps(output()), "end_turn", "m", "r", {"input": 100_000_000})
+    expensive = LLMResult(json.dumps(wire(output())), "end_turn", "m", "r", {"input": 100_000_000})
     llm = FakeLLM(expensive)
     result = run_extract(registry, snaps, store, llm, settings, {"pg-0001", "pg-0002"}, max_usd=1.0)
     assert len(llm.calls) == 1 and result["counts"]["stopped_by_budget"] == 2

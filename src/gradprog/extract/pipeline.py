@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from gradprog.extract.conflicts import cross_page_conflicts, suggestions
 from gradprog.extract.derive import tuition_total
-from gradprog.extract.fields import schema_errors
+from gradprog.extract.fields import from_wire, schema_errors
 from gradprog.extract.llm import LLMCallFailed, cost_usd
 from gradprog.extract.observations import build_rows, failure_rows
 from gradprog.extract.prompt import (
@@ -139,7 +139,7 @@ def _parse(text, schema):
     except (TypeError, ValueError):
         return None, "output_not_json"
     errors = schema_errors(output, schema)
-    return (None, f"off schema at {errors[0].split(':')[0]}") if errors else (output, "")
+    return (None, f"off schema at {errors[0].split(':')[0]}") if errors else (from_wire(output), "")
 
 
 def _unavailable(c, store, now):
@@ -295,7 +295,7 @@ def replay(registry, snapshots, store, settings, stem_ref=None):
             continue
         payload = store.read_call(record["call_id"])
         call = payload["call"]
-        output = json.loads(payload["output_text"])
+        output = from_wire(json.loads(payload["output_text"]))
         page_text = snapshots.norm_path(call["page_id"], call["snapshot_id"], call["normalizer_version"]).read_text("utf-8")
         meta = {"call_id": record["call_id"], "model_name": record["model_name"],
                 "prompt_version": record["prompt_version"], "schema_version": record["schema_version"],

@@ -54,7 +54,8 @@ def test_value_must_appear_in_evidence():
 @pytest.mark.parametrize("value,text,ok", [
     (100, "score of 100", True), (100, "score of 1000", False), (100, "score of 100.5", False),
     (90, "at least 90.", True), (1250, "$1,250 per credit", True), (1250.0, "$1,250.00", True),
-    (5.0, "5.0 overall", True), (5.0, "a score of 5", True), (79, "279 total", False),
+    (5.0, "5.0 overall", True), (5.0, "a score of 5", True), (79, "279 total", False), (5, "5.0 overall", True),
+    (90, "90.0 total", True),
 ])
 def test_numbers_match_on_word_boundaries(value, text, ok):
     assert number_in_evidence(value, text) is ok
@@ -108,6 +109,11 @@ def test_values_out_of_range_fail(key, value):
 
 def test_enum_values_are_not_compared_with_evidence():
     assert check_entry("gre_policy", e(value="optional"), PAGE) == []
+
+
+@pytest.mark.parametrize("key,value", [("gre_policy", "maybe"), ("gmat_policy", "Required"), ("stem_claim_on_page", "x")])
+def test_free_text_enums_are_checked_in_code(key, value):
+    assert check_entry(key, e(value=value), PAGE) == ["value_out_of_range"]
 
 
 def test_tuition_amount_must_appear():

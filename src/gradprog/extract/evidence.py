@@ -3,6 +3,8 @@
 import calendar
 import re
 
+from gradprog.extract.fields import POLICIES, STEM_CLAIMS
+
 EVIDENCE_MAX = 200
 SPACES = re.compile(r"\s+")
 MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
@@ -36,7 +38,7 @@ def number_in_evidence(value, evidence):
     """Whole-number match, ignoring thousands separators in the evidence (08 §6 item 3)."""
     text = re.sub(r"(?<=\d),(?=\d{3}\b)", "", evidence)
     for form in _number_forms(value):
-        if re.search(rf"(?<![\d.]){re.escape(form.replace(',', ''))}(?!\d)(?!\.\d)", text):
+        if re.search(rf"(?<![\d.]){re.escape(form.replace(',', ''))}(?:\.0+)?(?!\d)(?!\.\d)", text):
             return True
     return False
 
@@ -102,6 +104,7 @@ RANGES = {
     "app_fee_usd": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 0,
     "cip_code": _valid_cip,
 }
+ENUMS = {"gre_policy": POLICIES, "gmat_policy": POLICIES, "stem_claim_on_page": STEM_CLAIMS}   # free text in the schema
 NUMERIC_VALUE = ("toefl_total", "ielts_min_overall", "credits_required", "app_fee_usd")
 
 
@@ -133,7 +136,7 @@ def _check_found(key, entry, evidence):
     value = entry["value"]
     if value is None:
         return ["value_missing"]
-    if key in RANGES and not RANGES[key](value):
+    if (key in RANGES and not RANGES[key](value)) or (key in ENUMS and value not in ENUMS[key]):
         return ["value_out_of_range"]
     if key in NUMERIC_VALUE and not number_in_evidence(value, evidence):
         return ["value_not_in_evidence"]
