@@ -86,9 +86,20 @@ def undated_term(term_as_written, intake_terms):
     kind, season, year = parse_term(term_as_written)
     if kind == "season_year":
         return TermResult(f"{season} {year}", "stated")
-    if kind == "academic_year" and only_season(intake_terms) == "Fall":
-        return TermResult(f"Fall {year}", "inferred_from_date", review=("term_inferred",))
     return TermResult(TERM_UNKNOWN, "unknown", review=("term_unknown",))
+
+
+def academic_year_as_written(term_as_written):
+    """The academic year in a term wording, or None."""
+    m = ACADEMIC_YEAR.search(term_as_written or "")
+    return m.group(0) if m else None
+
+
+def tuition_term(term_as_written, intake_terms):
+    """An academic year on tuition belongs in tuition_year and names no term (08 §7.1)."""
+    if academic_year_as_written(term_as_written):
+        return TermResult("", "unknown")
+    return undated_term(term_as_written, intake_terms)
 
 
 def deadline_term(term_as_written, month, day, year, intake_terms, retrieved_on):
@@ -96,17 +107,15 @@ def deadline_term(term_as_written, month, day, year, intake_terms, retrieved_on)
     written = (term_as_written or "").strip()
     kind, season, stated_year = parse_term(written)
     if month is None or day is None:                  # rolling, no date
-        return _without_date(kind, season, stated_year, intake_terms)
+        return _without_date(kind, season, stated_year)
     if year is not None:
         return _with_full_date(kind, season, stated_year, written, date(year, month, day), intake_terms, retrieved_on)
     return _without_year(kind, season, stated_year, written, month, day, intake_terms, retrieved_on)
 
 
-def _without_date(kind, season, stated_year, intake_terms):
+def _without_date(kind, season, stated_year):
     if kind == "season_year":
         return TermResult(f"{season} {stated_year}", "stated")
-    if kind == "academic_year" and only_season(intake_terms) == "Fall":
-        return TermResult(f"Fall {stated_year}", "inferred_from_date", review=("term_inferred",))
     return TermResult(TERM_UNKNOWN, "unknown", review=("term_unknown",))
 
 
@@ -117,8 +126,8 @@ def _with_full_date(kind, season, stated_year, written, d, intake_terms, retriev
         mismatch = season != "Summer" and term_of_date(season, d) != term
         return TermResult(term, "stated", d, stale, ("term_date_mismatch",) if mismatch else ())
     if kind == "academic_year":
-        if only_season(intake_terms) == "Fall":
-            return TermResult(f"Fall {stated_year}", "inferred_from_date", d, stale, ("term_inferred",))
+        if only_season(intake_terms) == "Fall":       # the wording names the cycle, so the date decides (08 §7.1)
+            return TermResult(term_of_date("Fall", d), "inferred_from_date", d, stale, ("term_inferred",))
         return TermResult(TERM_UNKNOWN, "unknown", d, stale, ("term_unknown",))
     if written and kind is None:                      # "2026 applications", "October 2026 Start"
         return TermResult(TERM_UNKNOWN, "unknown", d, stale, ("term_unknown",))

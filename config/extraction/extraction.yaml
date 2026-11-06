@@ -2,7 +2,6 @@
 model: claude-haiku-5-5   # development model; the production model is chosen after the gold-set evaluation
 effort: medium
 max_tokens: 16000
-confidence_threshold: 0.7   # 08 §10 row 6, until the gold set sets it
 max_usd: 5.0                # stop a run when the recorded total reaches this
 api_key_expires: 2026-12-06
 api_key_warn_days: 14

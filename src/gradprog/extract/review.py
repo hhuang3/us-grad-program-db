@@ -1,4 +1,7 @@
-"""Reasons an observation is listed first in the review queue (08 §10). Row 7 waits for the fact layer."""
+"""Reasons an observation is listed first in the review queue (08 §10).
+
+Row 7 waits for the fact layer. Row 6 (low confidence) is suspended until the gold set shows what confidence is worth.
+"""
 
 from collections import defaultdict
 
@@ -27,11 +30,9 @@ def only_stale_deadlines(program_rows):
     return bool(dated) and all(r["stale"] for r in dated)
 
 
-def row_reasons(row, threshold):
-    reasons = list(row["review_from_rules"])    # rows 1, 2, 3, 9, 10, 13, 14: set where they were decided
+def row_reasons(row):
+    reasons = list(row["review_from_rules"])    # rows 1, 2, 3, 9, 10, 13, 14, 15: set where they were decided
     reasons.extend(f"conflict:{c}" for c in row["conflict_type"])              # row 4
-    if row["value_status"] == "found" and row["confidence"] is not None and row["confidence"] < threshold:
-        reasons.append("low_confidence")                                       # row 6
     if row["snapshot_classification"] == "suspected_redesign":
         reasons.append("suspected_redesign")                                   # row 8
     if row["audience"] != "applicants":
@@ -39,7 +40,7 @@ def row_reasons(row, threshold):
     return reasons
 
 
-def review_reasons(rows, threshold, urls_by_program):
+def review_reasons(rows, urls_by_program):
     """{observation_id: [reasons]} over the current rows."""
     by_program = defaultdict(list)
     for row in rows:
@@ -48,7 +49,7 @@ def review_reasons(rows, threshold, urls_by_program):
     for program, program_rows in by_program.items():
         stale_only = only_stale_deadlines(program_rows)
         for row in program_rows:
-            reasons = row_reasons(row, threshold)
+            reasons = row_reasons(row)
             if row["value_status"] == "referenced_elsewhere" and coverage_gap(
                     row, program_rows, urls_by_program.get(program, set())):
                 reasons.append("coverage_gap")

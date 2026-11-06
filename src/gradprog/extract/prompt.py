@@ -5,10 +5,11 @@ from pathlib import Path
 
 import yaml
 
-PROMPT_VERSION = 1
+PROMPT_VERSION = 2
 SCHEMA_VERSION = 1
-EXTRACT_RULES_VERSION = 1   # 08 §11: bumping it replays stored outputs without calling the LLM
-PROMPT_SHA256 = {1: "687420e5e66b214076b88e566fdfe09f23d8194ed07875bb5ddcee28bba3c2da"}
+EXTRACT_RULES_VERSION = 2   # 08 §11: bumping it replays stored outputs without calling the LLM
+PROMPT_SHA256 = {1: "687420e5e66b214076b88e566fdfe09f23d8194ed07875bb5ddcee28bba3c2da",
+                 2: "1380267939aef727aabd24519ec9fcfa4961f479f4b439eb4159f4d911c2d6bd"}
 SCHEMA_SHA256 = {1: "a977415d4477f12f56c48730b371cff81d1d12d2124504311b1afe91c2d7b947"}
 CONFIG_DIR = Path(__file__).resolve().parents[3] / "config" / "extraction"
 USER_FIELDS = ("program_name", "degree_type", "page_url", "page_type", "owner_level", "scope_note")

@@ -175,8 +175,8 @@ def test_jhu_economics_cip_from_the_program_page_is_confirmed_by_school(stem_ref
 
 
 # §10
-def reasons(*rows, threshold=0.7, urls=None):
-    return review_reasons(list(rows), threshold, urls or {})
+def reasons(*rows, urls=None):
+    return review_reasons(list(rows), urls or {})
 
 
 def test_clean_row_has_no_reasons():
@@ -189,10 +189,9 @@ def test_reasons_from_earlier_rules_and_conflicts_are_kept():
     assert reasons(r)[r["observation_id"]] == ["conflict:level_mismatch", "term_date_mismatch"]
 
 
-def test_low_confidence_uses_the_threshold():
-    a, b = row(confidence=0.69), row(confidence=0.7, field="gre_policy", value="optional")
-    out = reasons(a, b)
-    assert out[a["observation_id"]] == ["low_confidence"] and out[b["observation_id"]] == []
+def test_low_confidence_does_not_send_a_row_to_review():
+    r = row(confidence=0.1)
+    assert reasons(r)[r["observation_id"]] == [] and r["confidence"] == 0.1
 
 
 def test_suspected_redesign_and_doubtful_audience():

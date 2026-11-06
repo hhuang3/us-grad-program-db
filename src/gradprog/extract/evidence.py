@@ -7,6 +7,8 @@ from gradprog.extract.fields import POLICIES, STEM_CLAIMS
 
 EVIDENCE_MAX = 200
 SPACES = re.compile(r"\s+")
+SAME_CHARS = str.maketrans({"\u201c": '"', "\u201d": '"', "\u2018": "'", "\u2019": "'",
+                            **dict.fromkeys("\u2010\u2011\u2012\u2013\u2014\u2015\u2212", "-")})
 MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
           "November", "December")
 MONTH_ALIASES = {9: ("Sept",)}
@@ -16,6 +18,11 @@ OLD_SCALE = re.compile(r"\bold scale\b|\blegacy\b|\bibt total\b", re.IGNORECASE)
 
 def squeeze(text):
     return SPACES.sub(" ", text or "").strip()
+
+
+def comparable(text):
+    """The form evidence and page text are compared in (08 §6 item 1)."""
+    return squeeze(text).translate(SAME_CHARS)
 
 
 def is_half_step(value, low, high):
@@ -114,7 +121,7 @@ def check_entry(key, entry, page_text):
     evidence = entry.get("evidence_text") or ""
     if not evidence.strip():
         return ["evidence_missing"]
-    if squeeze(evidence) not in squeeze(page_text):
+    if comparable(evidence) not in comparable(page_text):
         return ["evidence_not_verbatim"]
     if len(evidence) > EVIDENCE_MAX:
         return ["evidence_too_long"]
@@ -162,7 +169,7 @@ def _check_deadline(entry, evidence):
 
 def _check_tuition(entry, evidence):
     amount = entry["tuition_amount_usd"]
-    if amount is None or entry["tuition_basis"] is None:
+    if amount is None:                 # a missing basis keeps the amount and goes to review (08 §3.1)
         return ["value_missing"]
     if not _positive(amount):
         return ["value_out_of_range"]

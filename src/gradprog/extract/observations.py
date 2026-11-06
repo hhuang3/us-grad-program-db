@@ -8,7 +8,7 @@ from gradprog.extract.derive import cip_source, stem_status
 from gradprog.extract.evidence import check_entry, toefl_scale
 from gradprog.extract.fields import ALL_FIELDS, GROUPS, OBSERVATION_FIELDS
 from gradprog.extract.prompt import EXTRACT_RULES_VERSION
-from gradprog.extract.terms import deadline_term, undated_term
+from gradprog.extract.terms import academic_year_as_written, deadline_term, tuition_term, undated_term
 
 TOEFL_FIELDS = {"legacy": "toefl_min_legacy", "new": "toefl_min_new_scale"}
 TUITION_FIELDS = ("tuition_basis", "tuition_amount_usd", "tuition_year")
@@ -75,15 +75,20 @@ def _tuition(builder, entry, index):
         for field in TUITION_FIELDS:
             builder.add(field, entry["value_status"], entry=entry)
         return
-    term = undated_term(entry["term_as_written"], builder.call["intake_terms"])
+    term = tuition_term(entry["term_as_written"], builder.call["intake_terms"])
     group_id = f"{builder.meta['call_id']}-t{index}"
-    key = f"{entry['tuition_basis']}|{entry['tuition_year'] or ''}"
+    basis = entry["tuition_basis"]
+    year = entry["tuition_year"] or academic_year_as_written(entry["term_as_written"])
+    key = f"{basis or ''}|{year or ''}"
     extras = {"includes_fees": bool(entry["includes_fees"])}
-    builder.add("tuition_basis", "found", entry["tuition_basis"], entry, term, term.review, group_id, key)
-    builder.add("tuition_amount_usd", "found", entry["tuition_amount_usd"], entry, term, term.review, group_id, key,
-                extras)
-    if entry["tuition_year"]:
-        builder.add("tuition_year", "found", entry["tuition_year"], entry, term, term.review, group_id, key)
+    if basis:
+        builder.add("tuition_basis", "found", basis, entry, term, term.review, group_id, key)
+    else:
+        builder.add("tuition_basis", "not_mentioned", group_id=group_id, group_key=key)
+    review = [*term.review, *(() if basis else ("tuition_basis_missing",))]     # 08 §3.1
+    builder.add("tuition_amount_usd", "found", entry["tuition_amount_usd"], entry, term, review, group_id, key, extras)
+    if year:
+        builder.add("tuition_year", "found", year, entry, term, term.review, group_id, key)
     else:
         builder.add("tuition_year", "not_mentioned", group_id=group_id, group_key=key)
 

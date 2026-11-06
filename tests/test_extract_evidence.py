@@ -116,6 +116,29 @@ def test_free_text_enums_are_checked_in_code(key, value):
     assert check_entry(key, e(value=value), PAGE) == ["value_out_of_range"]
 
 
+@pytest.mark.parametrize("page,evidence", [
+    ("Score of \u201c100\u201d applies.", 'Score of "100" applies.'),
+    ('Score of "100" applies.', "Score of \u201c100\u201d applies."),
+    ("The Program\u2019s score is 100.", "The Program's score is 100."),
+    ("The \u2018program\u2019 score is 100.", "The 'program' score is 100."),
+    ("Score 100\u2013110 is fine.", "Score 100-110 is fine."),
+    ("Score 100\u2014fine.", "Score 100\u2013fine."),
+    ("Score 100\u2212fine.", "Score 100\u2011fine."),
+])
+def test_quotes_and_dashes_compare_as_the_same(page, evidence):
+    assert check_entry("toefl_total", e(evidence_text=evidence), page) == []
+
+
+def test_other_punctuation_is_still_exact():
+    assert check_entry("toefl_total", e(evidence_text="Score: 100."), "Score; 100.") == ["evidence_not_verbatim"]
+
+
+def test_tuition_amount_may_come_without_a_basis():
+    base = {"value_status": "found", "tuition_basis": None, "evidence_text": "The fee is $1,250 per credit",
+            "confidence": 0.9, "tuition_year": None, "includes_fees": None}
+    assert check_entry("tuition", {**base, "tuition_amount_usd": 1250}, PAGE) == []
+
+
 def test_tuition_amount_must_appear():
     base = {"value_status": "found", "tuition_basis": "per_credit", "evidence_text": "The fee is $1,250 per credit",
             "confidence": 0.9, "tuition_year": None, "includes_fees": None}

@@ -149,6 +149,37 @@ def test_tuition_group_splits_into_three_linked_rows():
     assert by_field(rows, "tuition_amount_usd")[0]["extras"] == {"includes_fees": False}
 
 
+# §3.1: an amount with no stated basis
+def test_tuition_amount_without_a_basis_is_kept_and_reviewed():
+    e = entry("tuition", "Tuition is $1,250 per credit for 2026-27", tuition_basis=None, tuition_amount_usd=1250,
+              tuition_year=None, includes_fees=False)
+    rows = rows_of(tuition=[e])
+    amount = by_field(rows, "tuition_amount_usd")[0]
+    assert (amount["value_status"], amount["value"]) == ("found", 1250)
+    assert amount["review_from_rules"] == ["tuition_basis_missing"]
+    basis = by_field(rows, "tuition_basis")[0]
+    assert (basis["value_status"], basis["value"], basis["review_from_rules"]) == ("not_mentioned", None, [])
+    assert basis["group_id"] == amount["group_id"]
+
+
+# §7.1: an academic year on tuition goes to tuition_year
+def test_academic_year_on_tuition_fills_the_year_and_leaves_the_term_empty():
+    e = entry("tuition", "Tuition is $1,250 per credit for 2026-27", tuition_basis="per_credit", tuition_amount_usd=1250,
+              tuition_year=None, includes_fees=False, term_as_written="2026-27")
+    rows = rows_of(tuition=[e])
+    year = by_field(rows, "tuition_year")[0]
+    assert (year["value_status"], year["value"]) == ("found", "2026-27")
+    for field in ("tuition_basis", "tuition_amount_usd", "tuition_year"):
+        row = by_field(rows, field)[0]
+        assert (row["valid_for_term"], row["review_from_rules"]) == ("", [])
+
+
+def test_a_written_tuition_year_is_not_replaced():
+    e = entry("tuition", "Tuition is $1,250 per credit for 2026-27", tuition_basis="per_credit", tuition_amount_usd=1250,
+              tuition_year="AY26", includes_fees=False, term_as_written="2026-27")
+    assert by_field(rows_of(tuition=[e]), "tuition_year")[0]["value"] == "AY26"
+
+
 # §3.2, §8.4
 def test_cip_source_is_derived(stem_ref):
     e = entry("cip_code", "CIP code 30.7001", value="30.7001", cip_context="program_intro")
@@ -448,8 +479,9 @@ def test_replay_needs_no_llm_and_nothing_is_added_twice(env, monkeypatch):
     before = len(store.read_observations())
     assert replay(registry, snaps, store, settings) == 0
     assert len(store.read_observations()) == before
-    monkeypatch.setattr(pipeline, "EXTRACT_RULES_VERSION", 2)
-    monkeypatch.setattr(observations, "EXTRACT_RULES_VERSION", 2)
+    newer = pipeline.EXTRACT_RULES_VERSION + 1
+    monkeypatch.setattr(pipeline, "EXTRACT_RULES_VERSION", newer)
+    monkeypatch.setattr(observations, "EXTRACT_RULES_VERSION", newer)
     assert replay(registry, snaps, store, settings) == 1
     assert len(store.read_observations()) == 2 * before
     assert replay(registry, snaps, store, settings) == 0
@@ -462,10 +494,11 @@ def test_view_uses_only_the_newest_rules_version(env, monkeypatch):
     add_snapshot(snaps)
     go(env, FakeLLM(ok()))
     n = len(store.read_observations())
-    monkeypatch.setattr(pipeline, "EXTRACT_RULES_VERSION", 2)
-    monkeypatch.setattr(observations, "EXTRACT_RULES_VERSION", 2)
+    newer = pipeline.EXTRACT_RULES_VERSION + 1
+    monkeypatch.setattr(pipeline, "EXTRACT_RULES_VERSION", newer)
+    monkeypatch.setattr(observations, "EXTRACT_RULES_VERSION", newer)
     replay(registry, snaps, store, settings)
-    assert pipeline.current_rows(store.read_records(), store.read_observations())[0]["extract_rules_version"] == 2
+    assert pipeline.current_rows(store.read_records(), store.read_observations())[0]["extract_rules_version"] == newer
     assert len(pipeline.current_rows(store.read_records(), store.read_observations())) == n
 
 

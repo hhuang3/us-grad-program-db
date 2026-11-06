@@ -260,7 +260,7 @@ def rebuild_view(registry, store, settings):
     for row in rows:
         row["conflict_type"] = sorted(set(row["conflict_type"]) | set(cross.get(row["observation_id"], [])))
     _add_tuition_totals(rows)
-    reasons = review_reasons(rows, settings["confidence_threshold"], _program_urls(registry))
+    reasons = review_reasons(rows, _program_urls(registry))
     view = []
     for row in rows:
         out = {c: row.get(c) for c in VIEW_COLUMNS}

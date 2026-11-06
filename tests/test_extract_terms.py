@@ -5,7 +5,7 @@ from datetime import date
 import pytest
 
 from gradprog.extract.terms import (
-    TERM_UNKNOWN, deadline_term, next_occurrence, parse_term, term_of_date, undated_term,
+    TERM_UNKNOWN, deadline_term, next_occurrence, parse_term, term_of_date, tuition_term, undated_term,
 )
 
 OCT11 = date(2026, 10, 11)
@@ -120,10 +120,40 @@ def test_summer_stated_with_a_full_date_is_not_checked():
     assert (r.valid_for_term, r.term_basis, r.review) == ("Summer 2027", "stated", ())
 
 
-def test_academic_year_only_converts_for_fall_only_programs():
-    assert undated_term("2026-27", "fall").valid_for_term == "Fall 2026"
-    assert undated_term("2026-27", "fall").term_basis == "inferred_from_date"
-    assert undated_term("2026-27", "fall;spring").valid_for_term == TERM_UNKNOWN
+def test_academic_year_on_a_full_dated_deadline_uses_the_fall_window():
+    # BU pg-0026: "2026-2027" names the application cycle, so October 2026 is for Fall 2027
+    r = deadline_term("2026-2027", 10, 15, 2026, "fall", OCT11)
+    assert (r.valid_for_term, r.term_basis, r.review) == ("Fall 2027", "inferred_from_date", ("term_inferred",))
+    assert deadline_term("2026-2027", 3, 15, 2027, "fall", OCT11).valid_for_term == "Fall 2027"
+
+
+def test_academic_year_on_a_deadline_is_unknown_unless_fall_only():
+    r = deadline_term("2026-27", 10, 15, 2026, "fall;spring", OCT11)
+    assert (r.valid_for_term, r.review) == (TERM_UNKNOWN, ("term_unknown",))
+
+
+@pytest.mark.parametrize("month,day", [(1, 2), (None, None)])
+def test_academic_year_on_a_deadline_without_a_full_date_is_unknown(month, day):
+    r = deadline_term("2026-27", month, day, None, "fall", OCT11)
+    assert (r.valid_for_term, r.review) == (TERM_UNKNOWN, ("term_unknown",))
+
+
+@pytest.mark.parametrize("written", ["2026-27", "AY 2026-2027"])
+def test_academic_year_on_tuition_leaves_the_term_empty(written):
+    r = tuition_term(written, "fall;spring")
+    assert (r.valid_for_term, r.term_basis, r.review) == ("", "unknown", ())
+    assert tuition_term(written, "fall") == r
+
+
+def test_other_tuition_wordings_follow_the_undated_rules():
+    assert tuition_term("Fall 2027", "fall").valid_for_term == "Fall 2027"
+    assert tuition_term(None, "fall").valid_for_term == ""
+    assert tuition_term("2026 applications", "fall").valid_for_term == TERM_UNKNOWN
+
+
+def test_academic_year_on_another_undated_field_is_unknown():
+    r = undated_term("2026-27", "fall")
+    assert (r.valid_for_term, r.review) == (TERM_UNKNOWN, ("term_unknown",))
 
 
 def test_no_term_written_never_borrows_the_page_term():

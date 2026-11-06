@@ -6,7 +6,7 @@ import anthropic
 
 
 class LLMCallFailed(Exception):
-    """The API failed after the SDK's own retries (08 §2.1)."""
+    """The API failed after the retries, or with an error no retry helps (08 §2.1)."""
 
     def __init__(self, reason, usage=None):
         super().__init__(reason)
@@ -27,6 +27,9 @@ class LLMResult:
     usage: dict = field(default_factory=dict)
 
 
+MAX_RETRIES = 3   # 08 §2.1: the SDK backs off on 408, 409, 429, 5xx and connection errors
+
+
 def cost_usd(usage, prices):
     """USD for one call. `usage` holds input, cache_write, cache_read and output token counts."""
     return sum(usage.get(k, 0) * prices[k] for k in ("input", "cache_write", "cache_read", "output")) / 1_000_000
@@ -42,7 +45,7 @@ class AnthropicClient:
     """One Messages call. No sampling parameters: the API rejects them (08 §1)."""
 
     def __init__(self, api_key, client=None):
-        self.client = client or anthropic.Anthropic(api_key=api_key)
+        self.client = client or anthropic.Anthropic(api_key=api_key, max_retries=MAX_RETRIES)
 
     def extract(self, system, user, schema, settings):
         try:

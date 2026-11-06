@@ -83,3 +83,7 @@ def test_request_problems_stop_the_run(cls, code):
     with pytest.raises(LLMSetupError) as e:
         call(status_error(cls, code))
     assert "page text" not in str(e.value)
+
+
+def test_transient_errors_get_three_retries_inside_the_run():
+    assert AnthropicClient("key").client.max_retries == 3

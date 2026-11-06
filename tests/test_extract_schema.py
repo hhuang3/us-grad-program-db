@@ -179,8 +179,24 @@ def test_user_message_fills_values_and_leaves_page_text_alone():
     assert "<page_text>\nFee is {{program_name}}\n</page_text>" in user
 
 
+def test_prompt_v2_states_the_rules_from_the_first_run():
+    system, _ = prompt.build_prompt(dict.fromkeys(prompt.USER_FIELDS, "x"), "body")
+    for phrase in ("must contain the date itself", "quotation marks and dashes", "paper-based",
+                   "record it in both", "leaves the decision to", "`tuition_basis` is `none`",
+                   "several dates share one round name", "section heading"):
+        assert phrase in system, phrase
+    assert "0.9 or higher" in system
+
+
+def test_earlier_prompts_stay_pinned():
+    h = hashlib.sha256()
+    for f in prompt.prompt_files(1):
+        h.update(f.read_bytes())
+    assert prompt.PROMPT_SHA256[1] == h.hexdigest()
+
+
 def test_settings_give_the_development_model_and_limits():
     s = prompt.load_settings()
     assert s["model"] == "claude-haiku-5-5"
-    assert s["max_usd"] == 5.0 and s["confidence_threshold"] == 0.7
+    assert s["max_usd"] == 5.0 and "confidence_threshold" not in s
     assert s["model"] in s["prices"]
