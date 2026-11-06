@@ -1,7 +1,7 @@
 # 08 字段抽取（Phase 4）
 
-> 状态：draft v0.4（Phase 4b，2026-11-06）。v0.4：取消“温度 0”（§1）；整次调用失败的重试规则（§2.1）；共用页面按项目分别调用（§2.3）；LLM 输出形状（§4.1）；日期比对写法（§6）；写明学期与日期的处理（§7.1、§7.2、§7.4）；冲突的存储位置与跨页判断（§8）；审核条件第 13、14 条（§10）；判断代码版本（§11）。v0.3（2026-10-18）：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
-> 依据：`02_field_dictionary.md` v0.4、`05_data_model.md` v1.5、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
+> 状态：draft v0.5（Phase 4b，2026-11-06，第 7 步试跑后）。v0.5：API 错误分类与退避重试（§2.1）；只有金额的学费（§3.1、§4.1、§10 第 15 条）；LLM 输出改为三个数组、用空值形式（§4、§4.1）；证据比对中引号和破折号视为相同（§6）；学年写法只换算没有日期的字段（§7.1）；`confidence` 暂不触发审核（§4、§10 第 6 条）。v0.4（2026-11-06）：取消“温度 0”（§1）；整次调用失败的重试规则（§2.1）；共用页面按项目分别调用（§2.3）；LLM 输出形状（§4.1）；日期比对写法（§6）；写明学期与日期的处理（§7.1、§7.2、§7.4）；冲突的存储位置与跨页判断（§8）；审核条件第 13、14 条（§10）；判断代码版本（§11）。v0.3（2026-10-18）：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
+> 依据：`02_field_dictionary.md` v0.5、`05_data_model.md` v1.5、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
 
 本文件定义 05 的第二层 **observation**：从 snapshot 的规范化正文中抽取字段，写成 observation。observation 不直接成为 fact，进入 fact 必须经过人工审核（05 §1.3）。
 
@@ -24,7 +24,11 @@
 - **之后**：只抽取“规范化正文相对于上次抽取所用快照有变化”的页面，即最新成功快照的 `norm_sha256` 与上次抽取所用快照的 `norm_sha256` 不同。不按 07 的分类判断（`unchanged` 只是相对上一次取得，不是相对上一次抽取）。
 - **最新一次取得失败**（`blocked / unavailable / fetch_error`）：不调用 LLM；按 05 §4，为该页面关联的每个 `(program_id, field)` 写一条 `value_status = page_unavailable` 的 observation，关联那条失败的 snapshot。上一次成功抽取的 observation 保留不动。
 - 同一 `normalizer_version` 下比较 `norm_sha256`；规范化版本变化的处理见 §11。
-- **整次调用失败**（2026-11-06）：API 报错（SDK 重试后仍失败）、拒答（`stop_reason = refusal`）或输出被截断（`stop_reason = max_tokens`）。
+- **API 错误分三类**（2026-11-06，试跑后）：
+  - **请求本身不可用**（HTTP 400、401、403、404，例如 key 无效、余额不足、schema 被拒、模型名错误）：**整轮立即停止**，不算任何页面失败，不写 observation，也不计入下面的连续失败次数。这类错误与页面无关，继续只会让所有页面失败。
+  - **暂时性错误**（HTTP 408、409、429、5xx、过载、连接错误或超时）：在本轮内退避重试，**最多重试 3 次**；仍失败才算该“页面 × 项目”一次整次调用失败。
+  - **其他 HTTP 错误**（例如 413 请求过大）：不重试，直接算一次整次调用失败。
+- **整次调用失败**（2026-11-06）：API 报错（按上一条重试后仍失败）、拒答（`stop_reason = refusal`）或输出被截断（`stop_reason = max_tokens`）。
   - 为该次调用涉及的每个 `(program_id, field)` 写一条 `value_status = extraction_failed` 的 observation，页面级记录写明失败原因（不含页面文字）。
   - 失败的调用**不算“上次抽取”**，下次运行自动再试。上一次成功抽取的 observation 保留不动。
   - 同一页面**连续 2 次**整次调用失败后进入审核（§10 第 13 条），不再自动重试。按“页面 × 项目”计数。
@@ -67,7 +71,8 @@ v1 只抽取下列字段。字段定义以 02 为准，新增和修改见 §12�
   - `per_term` × 学期数（由 `length_months_*` 推得的学期数由审核人确认，代码不猜）；
   - `per_year` × 年数（同上）；
   - `program_total` 原样。
-  - 缺少任何输入就不换算（值为空），不进审核。
+  - 缺少任何输入就不换算（值为空），不进审核。例外是页面只有金额、没写口径，见下一条。
+- **页面只有金额、没写口径**（2026-11-06）：保留金额（`tuition_amount_usd = found`），`tuition_basis` 记 `not_mentioned`，不换算，金额这一行进入审核（§10 第 15 条）。LLM 不得猜口径。
 - `credits_required` 只为换算而抽取；它在 02 中已有定义。
 
 ### 3.2 STEM
@@ -99,17 +104,17 @@ LLM 对每个页面输出一个 JSON 对象：
 
 | 键 | 含义 |
 |---|---|
-| `value` | 字段值，类型与枚举按 02（§12 修订后）；`value_status ≠ found` 时为 null |
-| `value_status` | `found / referenced_elsewhere / mentioned_without_value`（判断标准见 05 §4；`not_mentioned` 由空数组表示，见 §4.1；`extraction_failed`、`page_unavailable` 由代码写） |
+| `value` | 字段值，类型与枚举按 02（§12 修订后）；`value_status ≠ found` 时 observation 中为 null（LLM 输出中用空值形式，见 §4.1） |
+| `value_status` | `found / referenced_elsewhere / mentioned_without_value`（判断标准见 05 §4；`not_mentioned` 由没有条目表示，见 §4.1；`extraction_failed`、`page_unavailable` 由代码写） |
 | `reference_target` | 仅 `referenced_elsewhere`：页面上指向的链接文字或网址，原样 |
 | `evidence_text` | 支持该值的原文片段，≤ 200 字符，从正文中原样复制 |
-| `term_as_written` | 该条目所对应学期在页面上的原文写法；页面没写就为 null |
+| `term_as_written` | 该条目所对应学期在页面上的原文写法，含写明学期的小节标题；页面没写就为 null |
 | `confidence` | 0–1 |
 | 附加标记 | `includes_fees`（学费含杂费）；其他标记见 §8 |
 
 - 代码补全每条 observation 的 `evidence_url`（快照的 `final_url`）、`snapshot_id`、`retrieved_at`、`program_id`、`model_name`、`prompt_version`、`schema_version`、`extracted_at`，以及 §7 得出的 `valid_for_term` 和 `term_basis`（§12）。
 - 同一字段在页面上出现多个不同的值（例如托福 90 和 95）时，LLM 每个值输出一项，不自行选择；代码按 §8.3 处理。
-- **`confidence` 只用于排序和触发审核**（§10），不作为准确率指标，也不对外发布。
+- **`confidence` 照常记录，目前不触发审核**（§10 第 6 条，2026-11-06），也不作为准确率指标、不对外发布。
 - **存储**：observation 含 `evidence_text`（页面原文），按 00 §2 只保存在本地，不进 git，目录 `data/extraction/`（已在 .gitignore 中）。git 中只放提示词、schema、配置（`config/extraction/`），以及不含原文的汇总统计（`data/extraction_stats/runs.csv`：计数、token、费用）。
   - `data/extraction/calls/<call_id>.json`：每次调用的完整原始输出、用量、`request_id`，写入后不改。
   - `data/extraction/page_records.jsonl`：页面级记录（05 §1.2）。
@@ -126,8 +131,9 @@ LLM 的输出形状与 observation 不完全一一对应，下列三组由代码
 | 截止日期 | 月、日、可为空的年，以及 `round_name`、`deadline_type`、`deadline_tz`、`applicant_scope`、`is_rolling` | 按 §7 补全 `deadline_date`；LLM 不推算年份，也不输出 ISO 日期 |
 | 学费 | 金额、口径、年度、`includes_fees` 作为一组 | 拆成 `tuition_basis`、`tuition_amount_usd`、`tuition_year` 三条单字段 observation，用同一个 `group_id` 关联，多个值时不会配错 |
 
-- 每个字段（组）在 LLM 输出中是一个数组。**空数组表示 `not_mentioned`**，由代码写成 observation；LLM 只输出 `found / referenced_elsewhere / mentioned_without_value`。
-  - **空数组只用于页面完全没提到该字段**。页面提到了字段但没给值，必须输出 `mentioned_without_value`；指向别的页面，必须输出 `referenced_elsewhere`，不能返回空数组。提示词中写明这一点。
+- **输出结构**（2026-11-06，试跑后）：API 限制可空类型的数量（最多 16 个）和编译后的语法大小，schema 只能写成三个数组：`deadlines`、`tuition`、`fields`（其余字段共用，每项用 `field` 指明字段）。可空的值用空值形式表示：`""`、`0`、`false` 或枚举成员 `none`。代码先还原成每个字段的形状（空值形式变回 null），再做 §6 以后的处理。这是传输格式，observation 不受影响。
+- **某字段没有条目表示 `not_mentioned`**，由代码写成 observation；LLM 只输出 `found / referenced_elsewhere / mentioned_without_value`。
+  - **没有条目只用于页面完全没提到该字段**。页面提到了字段但没给值，必须输出 `mentioned_without_value`；指向别的页面，必须输出 `referenced_elsewhere`，不能省略。提示词中写明这一点。
   - 测试用例（合成）：“须提交英语成绩”→ 托福 `mentioned_without_value`；“见研究生院要求页面”→ `referenced_elsewhere`，`reference_target` 为页面上的链接文字；两者都不得写成 `not_mentioned`。
 - 条目级标记：`other_program_mentioned`、`excluded_by_scope_note`（§8.4）；TOEFL、雅思条目可带 `conditional_admission_range`（§9）。
 - 页面级：`terms_mentioned`，以及页面受众存疑的标记（§10 第 11 条）。
@@ -149,7 +155,7 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
 
 每条 `value_status ∈ {found, referenced_elsewhere, mentioned_without_value}` 的结果都必须带 `evidence_text`；第 1、2、4 项对三者都适用，第 3 项只对 `found`。写入前依次检查，任何一项不通过：该条作废，记为 `value_status = extraction_failed`（值为空），并进入审核（§10）。原始输出另存，供审核查看。
 
-1. **逐字出现**：`evidence_text` 与规范化正文各自做空白规范化（连续空白合并为一个空格、去掉首尾空白）后，`evidence_text` 必须是正文的子串。不做大小写或标点的模糊匹配。
+1. **逐字出现**：`evidence_text` 与规范化正文各自做空白规范化（连续空白合并为一个空格、去掉首尾空白）后，`evidence_text` 必须是正文的子串。比对时只把下列字符视为相同（2026-11-06）：弯双引号（“ ”）与直双引号（"）；弯单引号（‘ ’）与直单引号（'）；各种连字符和破折号（- ‐ ‑ ‒ – — ― −）。除此以外不做大小写或标点的模糊匹配。保存的 `evidence_text` 不改写。
 2. **长度**：≤ 200 字符。
 3. **值与证据一致**：数值、日期、金额必须能在 `evidence_text` 中找到对应写法（例如 `toefl_min_legacy = 100` 时证据中有 “100”）。数字按词边界比对，金额忽略千分位逗号。日期按 LLM 给出的月、日（和年，如有）比对常见写法：`October 7, 2026`、`Oct. 7, 2026`、`Sept 7`、`October 7th`、`7 October`、`10/07/2026`、`10/07`、`2026-10-07`（2026-11-06 补充没写年份和序数词的写法）。枚举字段（`gre_policy` 等）不做此项；`is_rolling = true` 且没有日期的条目不比对日期。
 4. **类型与范围**：符合 02 的类型和取值范围（例如 `toefl_min_legacy` 为 0–120 的整数，`toefl_min_new_scale` 为 1.0–6.0、步长 0.5，`ielts_min_overall` 为 0–9、步长 0.5）。
@@ -165,7 +171,10 @@ LLM 不做推理：不推算学期、不判断是否过期、不比较页面、�
   - **日期没写年份**（如 “Fall 2027: January 2”，2026-11-06）→ 在该学期的区间内取日期（2027-01-02），`term_basis = stated`，早于取得日时按 §7.3 标 `stale`。不用 §7.2 的“下一次出现”，否则取得日在该日期之后时会推到下一年、与写明的学期矛盾。夏季没有区间：年份取下一次出现，并进入审核（§10 第 14 条，原因 `summer_date_unverified`）。
 - 只写季节、没写年份（如 “for the fall semester”）→ 季节按写明的，年份按 §7.2 的区间由日期推算，`term_basis = inferred_from_date`。季节为夏季，或没有日期可用时 → `term_unknown`，进入审核。
 - 写法含糊、无法确定是入学季还是申请年份（如 Columbia DS 的 “GRE optional for the 2026 applications”）→ `term_unknown`。
-- 学年写法（如 `2026-27`、`AY 2026-2027`）→ 只招秋季的项目（`intake_terms = fall`）换算为该学年的秋季（`2026-27` → `Fall 2026`），`term_basis = inferred_from_date`；其他项目 → `term_unknown`（2026-11-06）。
+- 学年写法（如 `2026-27`、`AY 2026-2027`）（2026-11-06，试跑后修订）。用于截止日期时，指的往往是申请周期，不是入学学年：
+  - **带完整日期的截止日期**：只招秋季的项目不用学年写法换算，按 §7.2 的秋季区间由日期推算，`term_basis = inferred_from_date`；其他项目 → `term_unknown`。
+  - **没写年份的日期，或没有日期的截止条目**（如滚动录取）→ `term_unknown`。
+- 学年写法出现在**学费**上（2026-11-06）：存进 `tuition_year`，`valid_for_term` 留空（`term_basis = unknown`），不进审核，不区分项目是否只招秋季。“2026-27 tuition” 就是该学年的学费标准，没有歧义，也有专门的字段存。出现在其他没有日期的字段上时，按上面“写法含糊”一条记 `term_unknown`。
 - 只写月份和年份的入学时间（如 `October 2026 Start`）→ `term_unknown`，不换算为季节。
 
 ### 7.2 由日期推算学期
@@ -242,6 +251,10 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | 合成：写明 `Fall 2027`，“January 2”，取得日 2027-02-10 | 2027-01-02，`Fall 2027`，`stated`，`stale`，不进审核 |
 | 合成：写明 `Summer 2027`，“March 1”，取得日 2026-10-11 | 2027-03-01，`Summer 2027`，`stated`，进审核（`summer_date_unverified`） |
 | 合成：`2026-27`，`intake_terms = fall;spring` | `term_unknown`，进审核 |
+| BU pg-0026：写 `2026-2027`，截止日期 2026 年 10 月至 2027 年 3 月，`intake_terms = fall` | 按秋季区间得 `Fall 2027`，`inferred_from_date`，进审核。不得记为 `Fall 2026` |
+| 合成：学费条目写 `2026-27`（`intake_terms` 不限） | `tuition_year = 2026-27`，`valid_for_term` 留空，不进审核 |
+| 合成：写 `2026-27`，“January 2”（无年份），`intake_terms = fall` | `term_unknown`，进审核 |
+| 合成：写 `2026-27`，滚动录取、没有日期，`intake_terms = fall` | `term_unknown`，进审核 |
 | 合成：页面只出现 `Fall 2027`，某截止日期 `term_as_written` 为空，`intake_terms = fall;spring` | `term_unknown`，进审核，不套用 `Fall 2027` |
 
 ## 8. 冲突处理
@@ -318,7 +331,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | 3 | 证据校验不通过（§6），或值不合类型、范围 |
 | 4 | 任何冲突类型（§8）：`level_mismatch`、`below_graduate_school_minimum`、`deadline_mismatch`、`in_page_contradiction`、`cross_program_contamination` |
 | 5 | 目标学期没有未过期的截止日期、只有上一季的过期截止日期（§7.3） |
-| 6 | `confidence` 低于阈值（阈值用 09 标准答案集定出，确定前默认 0.7） |
+| 6 | **暂停使用**（2026-11-06）：`confidence` 照常记录，但不触发审核。试跑中同一页的同一个值两次调用分别给出 0.9 和 0.6，现阶段没有参考价值，却占了 52 行审核。标准答案集完成后，分析 `confidence` 与实际对错的关系，再决定是否启用和阈值（09 §1） |
 | 7 | 新 observation 的值与 `review_status = corrected` 的 fact 不同（05 §1.3）；fact 层实现后才生效 |
 | 8 | 来源快照分类为 `suspected_redesign` |
 | 9 | 季节和年份都没写、且项目有多个入学季；或季节为夏季、没写年份（§7.2） |
@@ -327,6 +340,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 | 11 | 页面受众存疑：LLM 报告页面是给在读学生或其他项目的（P2 报告 §6.2.5，例如 Columbia `/ma-student-faqs/`） |
 | 13 | 同一页面连续 2 次整次调用失败（§2.1），原因 `repeated_call_failure` |
 | 14 | 写明的学期与日期不一致（`term_date_mismatch`），或夏季学期的日期没写年份（`summer_date_unverified`）（§7.1） |
+| 15 | 页面只有学费金额、没写口径（§3.1），原因 `tuition_basis_missing` |
 
 不进入审核的 observation 仍然不会自动成为 fact（05 §1.3）；“进入审核”指在审核队列中优先列出并标明原因。
 
@@ -379,3 +393,4 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 ## 13. 留给 P5 的事项
 
 - `term_basis = recurring_no_year` 的截止日期（页面没写年份、按每年固定日期推算，§7.2），对用户展示时要标明“按往年推算”，与页面写明年份的日期区分显示（2026-10-12 负责人要求）。
+- 想法：`tuition_year` 早于当前申请季时，展示时提示可能是旧标准（2026-11-06）。

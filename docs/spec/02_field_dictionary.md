@@ -1,4 +1,4 @@
-# 字段定义 draft v0.4
+# 字段定义 draft v0.5
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -68,7 +68,7 @@
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
 | tuition_basis | 学费计费方式 | enum：per_credit / per_term / per_year / program_total | Bursar / Cost 页 | 页面原始口径；v0.3 新增 per_year |
-| tuition_amount_usd | 学费金额 | float，可空 | 同上 | **页面原始口径下的原始金额**，与 tuition_basis 配套，不换算；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
+| tuition_amount_usd | 学费金额 | float，可空 | 同上 | **页面原始口径下的原始金额**，与 tuition_basis 配套，不换算；页面没写口径时金额仍保留，tuition_basis 记 `not_mentioned` 并进审核（08 §3.1）；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
 | tuition_program_total_usd_est | 整个项目学费估算 | float，可空 | – | **派生字段**，由代码按 08 §3.1 换算，记录换算方法和输入；缺少输入时为空。v0.3 新增 |
 | credits_required | 总学分 | int，可空 | Curriculum | per_credit 时用于估算总额 |
 | tuition_year | 学费适用年度 | str，如 "2026-27" | 同上 | |
@@ -115,6 +115,7 @@
 
 ## 8. 修订记录
 
+- v0.5（2026-11-06，Phase 4b）：页面只有学费金额、没写口径时保留金额（08 §3.1）。
 - v0.4（2026-11-06，Phase 4b）：按 `08_extraction.md` v0.4 修订。`deadline_date` 由代码补全，写明带年份的学期时在该学期区间内取；新增元数据 `group_id`；`conflict_type` 注明跨页类型只在派生视图中。
 - v0.3 补充（2026-10-18）：`value_status` 新增 `mentioned_without_value`、`referenced_elsewhere`（判断标准见 05 §4）；`gre_policy` / `gmat_policy` 新增 `not_required` 并给出映射表。
 - v0.3（2026-10-12，Phase 4a）：按 `08_extraction.md` §12 修订。新增 `stem_claim_on_page`、`tuition_program_total_usd_est`（派生）、截止日期子表 `deadline_type`；`tuition_basis` 新增 per_year，`tuition_amount_usd` 改为页面原始口径；没写年份的 `deadline_date` 按每年固定日期推算；元数据新增 `term_as_written`、`term_basis`（含 recurring_no_year）、`stale`、`conflict_type`、`includes_fees`；§7 关闭“研究生院页与系页冲突”。
