@@ -162,29 +162,31 @@ def run_extract(registry, snapshots, store, client, settings, pages=None, retry_
     counts, totals, all_rows = Counter(), dict(EMPTY_TOTALS), []
     spent = store.spent_usd()
     made = 0
-    for c in plan:
-        if c.action == "unavailable":
-            all_rows.extend(_unavailable(c, store, now))
-            counts["unavailable"] += 1
-        elif c.action == "needs_review":
-            counts["needs_review"] += 1
-        elif c.action == "call":
-            if spent >= cap:
-                counts["stopped_by_budget"] += 1
-                continue
-            if limit is not None and made >= limit:
-                continue
-            status, rows, usage, usd = _extract_one(c, snapshots, store, client, settings, schema, stem_ref, now)
-            made += 1
-            counts[status] += 1
-            all_rows.extend(rows)
-            spent += usd
-            totals["usd"] += usd
-            for k in ("input", "cache_write", "cache_read", "output"):
-                totals[k] += usage.get(k, 0)
-    view = rebuild_view(registry, store, settings)
-    run_row = _run_row(started, now(), settings, made, counts, all_rows, view, totals)
-    store.append_run(run_row)
+    try:
+        for c in plan:
+            if c.action == "unavailable":
+                all_rows.extend(_unavailable(c, store, now))
+                counts["unavailable"] += 1
+            elif c.action == "needs_review":
+                counts["needs_review"] += 1
+            elif c.action == "call":
+                if spent >= cap:
+                    counts["stopped_by_budget"] += 1
+                    continue
+                if limit is not None and made >= limit:
+                    continue
+                status, rows, usage, usd = _extract_one(c, snapshots, store, client, settings, schema, stem_ref, now)
+                made += 1
+                counts[status] += 1
+                all_rows.extend(rows)
+                spent += usd
+                totals["usd"] += usd
+                for k in ("input", "cache_write", "cache_read", "output"):
+                    totals[k] += usage.get(k, 0)
+    finally:     # calls already paid for stay on record even when the run stops early
+        view = rebuild_view(registry, store, settings)
+        run_row = _run_row(started, now(), settings, made, counts, all_rows, view, totals)
+        store.append_run(run_row)
     return {"plan": plan, "counts": counts, "run": run_row, "spent_usd": spent, "cap_usd": cap}
 
 
@@ -311,3 +313,28 @@ def summarize(view):
             "review_reasons": Counter(x for r in view for x in r["review_reasons"]),
             "conflicts": Counter(x for r in view for x in r["conflict_type"]),
             "by_basis": Counter(r["term_basis"] for r in view if r["value_status"] == "found")}
+
+
+def page_statuses(view, pages=None):
+    """{(page_id, program_id): {field: {status: count}}}: statuses only, no values and no page text."""
+    out = {}
+    for row in view:
+        if not pages or row["page_id"] in pages:
+            fields = out.setdefault((row["page_id"], row["program_id"]), {})
+            fields.setdefault(row["field"], Counter())[row["value_status"]] += 1
+    return out
+
+
+def render_summary(view, pages=None):
+    rows = [r for r in view if not pages or r["page_id"] in pages]
+    lines = []
+    for (page, program), fields in sorted(page_statuses(rows).items()):
+        lines.append(f"{page} {program}")
+        for field, statuses in fields.items():
+            lines.append(f"  {field}: " + ", ".join(f"{s} {n}" for s, n in sorted(statuses.items())))
+    s = summarize(rows)
+    failed = Counter(x.split(":", 1)[1] for r in rows for x in r["review_reasons"] if x.startswith("evidence_failed:"))
+    lines += [f"status: {dict(s['by_status'])}", f"evidence failures: {sum(failed.values())} {dict(failed)}",
+              f"review reasons: {dict(s['review_reasons'])}", f"conflicts: {dict(s['conflicts'])}",
+              f"term basis of found rows: {dict(s['by_basis'])}"]
+    return "\n".join(lines)

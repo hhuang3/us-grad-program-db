@@ -6,9 +6,11 @@ from datetime import date
 import pytest
 
 from gradprog.extract.fields import COMMON, GROUPS
-from gradprog.extract.llm import LLMCallFailed, LLMResult, cost_usd
+from gradprog.extract.llm import LLMCallFailed, LLMResult, LLMSetupError, cost_usd
 from gradprog.extract.observations import build_rows
-from gradprog.extract.pipeline import estimate_usd, key_expiry_warning, make_plan, replay, run_extract, summarize
+from gradprog.extract.pipeline import (
+    estimate_usd, key_expiry_warning, make_plan, rebuild_view, render_summary, replay, run_extract, summarize,
+)
 from gradprog.extract.prompt import load_settings
 from gradprog.extract.store import ExtractionStore
 from gradprog.snapshot.store import INDEX_COLUMNS, SnapshotStore
@@ -442,7 +444,6 @@ def test_summary_holds_counts_only(env):
     registry, snaps, store, settings = env
     add_snapshot(snaps)
     go(env, FakeLLM(ok(output(toefl_total=[entry("toefl_total", "a minimum TOEFL of 90", value=90)]))))
-    from gradprog.extract.pipeline import rebuild_view
     text = str(summarize(rebuild_view(registry, store, settings)))
     assert "minimum TOEFL" not in text and "'found'" in text
 
@@ -465,8 +466,9 @@ def test_key_expiry_warning(today, expected):
     assert warning is None if expected is None else expected in warning
 
 
-def test_cli_plan_makes_no_calls_and_run_is_not_connected_yet(tmp_path, monkeypatch, capsys, registry_dir):
+def test_cli_plan_makes_no_calls_and_run_needs_the_key(tmp_path, monkeypatch, capsys, registry_dir):
     import gradprog.cli as cli
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.setattr(cli, "REGISTRY", registry_dir)
     monkeypatch.setattr(cli, "SNAPSHOTS", tmp_path / "snapshots")
     monkeypatch.setattr(cli, "EXTRACTION", tmp_path / "extraction")
@@ -475,4 +477,28 @@ def test_cli_plan_makes_no_calls_and_run_is_not_connected_yet(tmp_path, monkeypa
     out = capsys.readouterr().out
     assert "no_snapshot" in out and "claude-haiku-5-5" in out and "of $5.00" in out
     assert cli.main(["extract", "run"]) == 1
+    assert "ANTHROPIC_API_KEY is not set" in capsys.readouterr().err
     assert not (tmp_path / "extraction").exists()
+
+
+def test_setup_error_stops_the_run_and_blames_no_page(env):
+    registry, snaps, store, settings = env
+    add_snapshot(snaps)
+    with pytest.raises(LLMSetupError):
+        go(env, FakeLLM(LLMSetupError("rejected")))
+    assert store.read_records() == [] and store.read_observations() == []
+    assert actions(env) == ["call"]
+    assert len(store.runs_path.read_text(encoding="utf-8").splitlines()) == 2
+
+
+def test_summary_lists_statuses_by_page_without_values(env):
+    registry, snaps, store, settings = env
+    add_snapshot(snaps)
+    good = entry("toefl_total", "a minimum TOEFL of 90", value=90)
+    bad = entry("gre_policy", "made up text", value="required")
+    go(env, FakeLLM(ok(output(toefl_total=[good], gre_policy=[bad]))))
+    text = render_summary(rebuild_view(registry, store, settings))
+    assert "pg-0001 alpha-ms-datascience" in text
+    assert "toefl_min_legacy: found 1" in text and "gre_policy: extraction_failed 1" in text
+    assert "evidence failures: 1 {'evidence_not_verbatim': 1}" in text
+    assert "made up" not in text and "minimum TOEFL" not in text and "90" not in text.replace("0.90", "")

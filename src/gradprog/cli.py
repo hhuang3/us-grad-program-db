@@ -1,6 +1,7 @@
 """Command line entry point: `uv run gradprog <command>`."""
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -220,7 +221,10 @@ def cmd_extract(args):
     from collections import Counter
     from datetime import datetime, timezone
 
-    from gradprog.extract.pipeline import estimate_usd, key_expiry_warning, make_plan, replay
+    from gradprog.extract.llm import AnthropicClient
+    from gradprog.extract.pipeline import (
+        estimate_usd, key_expiry_warning, make_plan, rebuild_view, render_summary, replay, run_extract,
+    )
     from gradprog.extract.prompt import load_settings
     from gradprog.extract.store import ExtractionStore
     from gradprog.ref.stem import StemReference
@@ -240,8 +244,19 @@ def cmd_extract(args):
               f"spent ${store.spent_usd():.2f} of ${settings['max_usd']:.2f}")
     elif args.extract_command == "replay":
         print(f"replayed {replay(registry, snapshots, store, settings, StemReference.load(REF))} call(s)")
+    elif args.extract_command == "summary":
+        print(render_summary(rebuild_view(registry, store, settings), pages))
     elif args.extract_command == "run":
-        raise ValueError("the API client is not connected yet; it arrives with the first real extraction run")
+        key = os.environ.get("ANTHROPIC_API_KEY")
+        if not key:
+            raise ValueError("ANTHROPIC_API_KEY is not set; run: set -a; . ~/.config/gradprog/env; set +a")
+        result = run_extract(registry, snapshots, store, AnthropicClient(key), settings, pages, args.retry_failed,
+                             args.limit, args.max_usd, StemReference.load(REF))
+        run = result["run"]
+        print(f"{run['run_id']}: {run['calls']} call(s), {dict(result['counts'])}")
+        print(f"tokens: input {run['input_tokens']}, cache write {run['cache_write_tokens']}, "
+              f"cache read {run['cache_read_tokens']}, output {run['output_tokens']}")
+        print(f"cost ${run['usd']:.4f}; total ${result['spent_usd']:.4f} of ${result['cap_usd']:.2f}")
 
 
 def main(argv=None):
@@ -313,6 +328,8 @@ def main(argv=None):
     er.add_argument("--max-usd", type=float, help="a lower cap than the one in config/extraction/extraction.yaml")
     er.add_argument("--retry-failed", action="store_true", help="retry pages held back after repeated call failures")
     esub.add_parser("replay", help="rerun the rule code on stored outputs, without calling the API")
+    es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
+    es.add_argument("--pages", help="comma-separated page_ids")
     ext.set_defaults(func=cmd_extract)
 
     args = p.parse_args(argv)
