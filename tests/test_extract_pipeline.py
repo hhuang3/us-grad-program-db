@@ -149,6 +149,45 @@ def test_tuition_group_splits_into_three_linked_rows():
     assert by_field(rows, "tuition_amount_usd")[0]["extras"] == {"includes_fees": False}
 
 
+# §8: tuition with and without fees are different quantities
+TWO_AMOUNTS = "Tuition is $1,250 per credit for 2026-27. With fees it is $1,400 per credit."
+
+
+def two_tuition_rows(second_includes_fees):
+    first = entry("tuition", "Tuition is $1,250 per credit for 2026-27", tuition_basis="per_credit",
+                  tuition_amount_usd=1250, tuition_year="2026-27", includes_fees=False)
+    second = {**first, "evidence_text": "With fees it is $1,400 per credit", "tuition_amount_usd": 1400,
+              "includes_fees": second_includes_fees}
+    rows = build_rows(CALL, output(tuition=[first, second]), TWO_AMOUNTS, META)
+    amounts = by_field(rows, "tuition_amount_usd")
+    assert [r["value"] for r in amounts] == [1250, 1400]
+    return amounts
+
+
+def test_tuition_with_and_without_fees_is_not_a_contradiction():
+    rows = two_tuition_rows(second_includes_fees=True)
+    assert len({r["group_key"] for r in rows}) == 2
+    assert all(r["conflict_type"] == [] for r in rows)
+
+
+def test_two_tuition_amounts_on_the_same_footing_are_still_a_contradiction():
+    assert all("in_page_contradiction" in r["conflict_type"] for r in two_tuition_rows(second_includes_fees=False))
+
+
+# §3.3a: a per-band IELTS rule is kept as a note, with no value
+def test_notes_are_kept_on_a_row_without_a_value():
+    e = entry("ielts_min_overall", "English scores must be submitted.", value_status="mentioned_without_value",
+              notes="per-band minimum")
+    row = by_field(rows_of(ielts_min_overall=[e]), "ielts_min_overall")[0]
+    assert row["value"] is None and row["extras"] == {"notes": "per-band minimum"}
+    assert row["review_from_rules"] == []
+
+
+def test_rows_without_notes_keep_empty_extras():
+    e = entry("gre_policy", "the GRE is required", value="required")
+    assert by_field(rows_of(gre_policy=[e]), "gre_policy")[0]["extras"] == {}
+
+
 # §3.1: an amount with no stated basis
 def test_tuition_amount_without_a_basis_is_kept_and_reviewed():
     e = entry("tuition", "Tuition is $1,250 per credit for 2026-27", tuition_basis=None, tuition_amount_usd=1250,

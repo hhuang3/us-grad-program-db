@@ -82,7 +82,7 @@ def build_schema():
         "tuition": _array_of({**COMMON, **GROUPS["tuition"]}),
         "fields": _array_of({"field": {"type": "string", "enum": list(SIMPLE_KEYS)}, **COMMON, "number_value": NUMBER,
                              "text_value": STRING, "conditional_admission_range": STRING,
-                             "cip_context": _enum(CIP_CONTEXTS)}),
+                             "cip_context": _enum(CIP_CONTEXTS), "notes": STRING}),
     }
     return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
 
@@ -126,6 +126,7 @@ def _blank_to_none(entry, enums):
 def _simple_entry(wire):
     key = wire["field"]
     entry = {k: wire[k] for k in COMMON}
+    entry["notes"] = wire.get("notes", "")   # outputs stored under schema v1 have none (08 §11)
     value = wire["number_value"] if key in NUMBER_KEYS else wire["text_value"]
     if key in WHOLE_KEYS and isinstance(value, float) and value.is_integer():
         value = int(value)

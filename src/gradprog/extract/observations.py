@@ -26,6 +26,8 @@ class _Builder:
     def add(self, field, status, value=None, entry=None, term=None, review=(), group_id="", group_key="", extras=None,
             derived=None):
         entry = entry or {}
+        if entry.get("notes"):
+            extras = {**(extras or {}), "notes": entry["notes"]}
         n = len(self.rows)
         raw = f"{self.meta['call_id']}|{self.call['program_id']}|{self.call['page_id']}|{EXTRACT_RULES_VERSION}|{n}"
         self.rows.append({
@@ -79,8 +81,8 @@ def _tuition(builder, entry, index):
     group_id = f"{builder.meta['call_id']}-t{index}"
     basis = entry["tuition_basis"]
     year = entry["tuition_year"] or academic_year_as_written(entry["term_as_written"])
-    key = f"{basis or ''}|{year or ''}"
     extras = {"includes_fees": bool(entry["includes_fees"])}
+    key = f"{basis or ''}|{year or ''}|{'with_fees' if extras['includes_fees'] else 'no_fees'}"     # 08 §8
     if basis:
         builder.add("tuition_basis", "found", basis, entry, term, term.review, group_id, key)
     else:

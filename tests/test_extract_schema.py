@@ -114,6 +114,29 @@ def test_from_wire_drops_values_beside_other_statuses():
     assert fields.from_wire(wire)["gre_policy"][0]["value"] is None
 
 
+def test_notes_survive_beside_a_status_without_a_value():
+    wire = simple("ielts_min_overall", value_status="mentioned_without_value", notes="per-band minimum")
+    entry = fields.from_wire(output(fields=[wire]))["ielts_min_overall"][0]
+    assert entry["value"] is None and entry["notes"] == "per-band minimum"
+
+
+def test_empty_notes_become_none():
+    assert fields.from_wire(output(fields=[simple("app_fee_usd", number_value=9)]))["app_fee_usd"][0]["notes"] is None
+
+
+def test_outputs_stored_under_schema_v1_still_load_for_replay():
+    wire = simple("app_fee_usd", number_value=9)
+    del wire["notes"]
+    assert fields.from_wire(output(fields=[wire]))["app_fee_usd"][0]["notes"] is None
+
+
+def test_notes_exist_only_on_the_shared_fields_array():
+    properties = build_schema()["properties"]
+    assert "notes" in properties["fields"]["items"]["properties"]
+    assert "notes" not in properties["deadlines"]["items"]["properties"]
+    assert "notes" not in properties["tuition"]["items"]["properties"]
+
+
 def test_page_text_that_says_none_is_kept_in_free_text():
     out = fields.from_wire(output(fields=[simple("gre_policy", evidence_text="none")]))
     assert out["gre_policy"][0]["evidence_text"] == "none"
@@ -188,11 +211,24 @@ def test_prompt_v2_states_the_rules_from_the_first_run():
     assert "0.9 or higher" in system
 
 
-def test_earlier_prompts_stay_pinned():
+def test_prompt_v3_states_the_rules_from_the_second_run():
+    system, _ = prompt.build_prompt(dict.fromkeys(prompt.USER_FIELDS, "x"), "body")
+    for phrase in ("Only words that name a term or year count", "new 1-6 scale", "listed separately from fees",
+                   "only the amount that applies to international applicants", "each band", "record only the overall",
+                   "`notes`"):
+        assert phrase in system, phrase
+
+
+@pytest.mark.parametrize("version", [1, 2])
+def test_earlier_prompts_stay_pinned(version):
     h = hashlib.sha256()
-    for f in prompt.prompt_files(1):
+    for f in prompt.prompt_files(version):
         h.update(f.read_bytes())
-    assert prompt.PROMPT_SHA256[1] == h.hexdigest()
+    assert prompt.PROMPT_SHA256[version] == h.hexdigest()
+
+
+def test_earlier_schema_stays_pinned():
+    assert prompt.SCHEMA_SHA256[1] == hashlib.sha256(prompt.schema_file(1).read_bytes()).hexdigest()
 
 
 def test_settings_give_the_development_model_and_limits():
