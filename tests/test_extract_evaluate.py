@@ -185,3 +185,12 @@ def test_run_evaluation_keeps_values_out_of_the_committed_file(tmp_path):
     assert "独立标注" in report
     assert "31" not in (tmp_path / "eval_t.json").read_text(encoding="utf-8")
     assert "31" in (tmp_path / "eval_t_differences.csv").read_text(encoding="utf-8")
+
+
+def test_evaluate_command_takes_another_answer_file():
+    from gradprog.cli import GOLD_SET, build_parser
+
+    args = build_parser().parse_args(["extract", "evaluate", "--label", "x"])
+    assert args.gold == GOLD_SET
+    args = build_parser().parse_args(["extract", "evaluate", "--label", "x", "--gold", "data/gold/holdout_v1.csv"])
+    assert str(args.gold) == "data/gold/holdout_v1.csv"

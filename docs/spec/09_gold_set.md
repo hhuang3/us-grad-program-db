@@ -157,3 +157,12 @@
 - **分组**：按 `annotated_by` 分“独立标注”（`Noah`）和“Claude 协助”（`Noah+Claude`）报告，不合并为一个总数（§1）。独立组样本小，不单独下结论。
 - **快照不一致**：抽取用最新快照时，正文可能和 §2 的快照不同。评估列出这些页面；受影响的值写在 `config/extraction/eval_exclusions.yaml`，写明原因，不计入。标准答案不随之修改（§1）。
 - **文件**：只含计数的结果写到 `data/extraction_stats/eval_<名称>.json`，进 git；逐值明细写到 `data/extraction/derived/`，不进 git。
+
+## 6. 独立抽检集（holdout，2026-11-08）
+
+- **用途**：标准答案集的 5 个项目参与了 v5 规则和提示词的调整，又有 Claude 协助标注，准确率可能偏高。另取 2 个没参与调整的项目，由负责人独立标注，用来估计新页面上的准确率。
+- **项目**：从试点项目中排除标准答案集的 6 个，再排除调整规则时讨论过的项目（UVA、UIUC、WashU、Rochester、JHU 的其他项目、Columbia MS DS、NYU、UTD、UChicago、与标准答案集共用页面的 UW–Madison 项目）。在剩下的项目里取页面结构不同的 2 个：`uconn-ms-businessanalyticsprojectmanagement`、`columbia-ma-statistics`。
+- **快照**：固定为提示词 v5 全量所用的快照（模板 `snapshot_ids` 列）。之后页面变化时不更新。
+- **规则**：标注规则同 §3。负责人独立标注：不看抽取结果，不用 Claude 协助（`annotated_by = Noah`）。负责人交答案前，任何汇报都不提这 2 个项目的抽取结果。
+- **评估**：交答案后，直接用 v5 全量的结果计算，不重跑：`gradprog extract evaluate --gold data/gold/holdout_v1.csv --label holdout_v5`。口径同 §5。
+- **文件**：`data/gold/holdout_v1.csv`（进 git，不含原文）；`data/gold/local/holdout_v1_with_evidence.csv`（本地，多一列 `evidence_text`）。

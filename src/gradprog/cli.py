@@ -248,7 +248,7 @@ def cmd_extract(args):
     elif args.extract_command == "replay":
         print(f"replayed {replay(registry, snapshots, store, settings, StemReference.load(REF))} call(s)")
     elif args.extract_command == "evaluate":
-        print(run_evaluation(GOLD_SET, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
+        print(run_evaluation(args.gold, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
                              EXTRACTION_STATS, EXTRACTION / "derived"))
     elif args.extract_command == "summary":
         print(render_summary(rebuild_view(registry, store, settings), pages))
@@ -266,7 +266,7 @@ def cmd_extract(args):
         print(f"cost ${run['usd']:.4f}; total ${result['spent_usd']:.4f} of ${result['cap_usd']:.2f}")
 
 
-def main(argv=None):
+def build_parser():
     p = argparse.ArgumentParser(prog="gradprog")
     sub = p.add_subparsers(dest="command", required=True)
 
@@ -337,10 +337,15 @@ def main(argv=None):
     esub.add_parser("replay", help="rerun the rule code on stored outputs, without calling the API")
     ev = esub.add_parser("evaluate", help="score the current results against the gold set (09 §5)")
     ev.add_argument("--label", required=True, help="name of this evaluation, such as baseline")
+    ev.add_argument("--gold", type=Path, default=GOLD_SET, help="answer file (09 §4, §6); defaults to the gold set")
     es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
     es.add_argument("--pages", help="comma-separated page_ids")
     ext.set_defaults(func=cmd_extract)
+    return p
 
+
+def main(argv=None):
+    p = build_parser()
     args = p.parse_args(argv)
     if getattr(args, "ready", False) and not args.batch:
         p.error("--ready requires --batch")
