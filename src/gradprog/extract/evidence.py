@@ -14,6 +14,9 @@ MONTHS = ("January", "February", "March", "April", "May", "June", "July", "Augus
 MONTH_ALIASES = {9: ("Sept",)}
 NEW_SCALE = re.compile(r"\bnew (?:toefl|scale)\b|\bband\b", re.IGNORECASE)
 OLD_SCALE = re.compile(r"\bold scale\b|\blegacy\b|\bibt total\b", re.IGNORECASE)
+NO_FEE = re.compile(r"\b(?:do|does|will)(?: not|n't) (?:charge|require)\b[^.]{0,40}\bfee\b|\bno (?:application )?(?:fee|charge)\b",
+                    re.IGNORECASE)      # 08 §6 item 3
+CREDIT_RANGE = re.compile(r"(?<![\d.])(\d{1,3})\s*(?:-|to)\s*(\d{1,3})\s*(?:[a-z-]+\s+)?(?:credits?|hours?|units?)\b", re.IGNORECASE)
 
 
 def squeeze(text):
@@ -48,6 +51,15 @@ def number_in_evidence(value, evidence):
         if re.search(rf"(?<![\d.]){re.escape(form.replace(',', ''))}(?:\.0+)?(?!\d)(?!\.\d)", text):
             return True
     return False
+
+
+def credit_range(value, evidence):
+    """(lower bound, range as written) when the value is one end of a credit range in the evidence (08 §3.3a)."""
+    for m in CREDIT_RANGE.finditer(comparable(evidence)):
+        low, high = int(m.group(1)), int(m.group(2))
+        if low < high and value in (low, high):
+            return low, m.group(0)
+    return None
 
 
 def _names(month):
@@ -145,6 +157,8 @@ def _check_found(key, entry, evidence):
         return ["value_missing"]
     if (key in RANGES and not RANGES[key](value)) or (key in ENUMS and value not in ENUMS[key]):
         return ["value_out_of_range"]
+    if key == "app_fee_usd" and value == 0 and NO_FEE.search(comparable(evidence)):
+        return []
     if key in NUMERIC_VALUE and not number_in_evidence(value, evidence):
         return ["value_not_in_evidence"]
     if key == "cip_code" and value.strip() not in evidence:

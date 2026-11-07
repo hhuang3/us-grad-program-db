@@ -7,7 +7,7 @@ import yaml
 
 PROMPT_VERSION = 4
 SCHEMA_VERSION = 2
-EXTRACT_RULES_VERSION = 4   # 08 §11: bumping it replays stored outputs without calling the LLM
+EXTRACT_RULES_VERSION = 5   # 08 §11: bumping it replays stored outputs without calling the LLM
 PROMPT_SHA256 = {1: "687420e5e66b214076b88e566fdfe09f23d8194ed07875bb5ddcee28bba3c2da",
                  2: "1380267939aef727aabd24519ec9fcfa4961f479f4b439eb4159f4d911c2d6bd",
                  3: "5011a25378fe1e9fc9f171f6f71ee59df3c4e58234575e91978f5000f0c61912",

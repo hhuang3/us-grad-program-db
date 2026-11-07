@@ -230,6 +230,7 @@ def cmd_extract(args):
     from gradprog.ref.stem import StemReference
     from gradprog.registry.tables import load_registry
     from gradprog.snapshot.store import SnapshotStore
+    from gradprog.util.awake import keep_awake
 
     registry, snapshots = load_registry(REGISTRY), SnapshotStore(SNAPSHOTS)
     store, settings = ExtractionStore(EXTRACTION, EXTRACTION_STATS), load_settings()
@@ -250,8 +251,9 @@ def cmd_extract(args):
         key = os.environ.get("ANTHROPIC_API_KEY")
         if not key:
             raise ValueError("ANTHROPIC_API_KEY is not set; run: set -a; . ~/.config/gradprog/env; set +a")
-        result = run_extract(registry, snapshots, store, AnthropicClient(key), settings, pages, args.retry_failed,
-                             args.limit, args.max_usd, StemReference.load(REF))
+        with keep_awake():
+            result = run_extract(registry, snapshots, store, AnthropicClient(key), settings, pages, args.retry_failed,
+                                 args.limit, args.max_usd, StemReference.load(REF))
         run = result["run"]
         print(f"{run['run_id']}: {run['calls']} call(s), {dict(result['counts'])}")
         print(f"tokens: input {run['input_tokens']}, cache write {run['cache_write_tokens']}, "

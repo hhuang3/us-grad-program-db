@@ -5,10 +5,12 @@ from datetime import date
 
 from gradprog.extract.conflicts import in_page_conflicts
 from gradprog.extract.derive import cip_source, stem_status
-from gradprog.extract.evidence import check_entry, toefl_scale
+from gradprog.extract.evidence import check_entry, credit_range, toefl_scale
 from gradprog.extract.fields import ALL_FIELDS, GROUPS, OBSERVATION_FIELDS
 from gradprog.extract.prompt import EXTRACT_RULES_VERSION
-from gradprog.extract.terms import academic_year_as_written, deadline_term, tuition_term, undated_term
+from gradprog.extract.terms import (
+    TermResult, academic_year_as_written, deadline_term, effective_term, tuition_term, undated_term,
+)
 
 TOEFL_FIELDS = {"legacy": "toefl_min_legacy", "new": "toefl_min_new_scale"}
 TUITION_FIELDS = ("tuition_basis", "tuition_amount_usd", "tuition_year")
@@ -19,9 +21,16 @@ def _retrieved_on(call):
 
 
 class _Builder:
-    def __init__(self, call, meta, audience="applicants", stem_ref=None):
-        self.call, self.meta, self.audience, self.stem_ref = call, meta, audience, stem_ref
+    def __init__(self, call, meta, audience="applicants", stem_ref=None, page_text=""):
+        self.call, self.meta, self.audience, self.stem_ref, self.page_text = call, meta, audience, stem_ref, page_text
         self.rows = []
+
+    def undated(self, entry, rule=undated_term):
+        """(term, extras) of a field with no date (08 §7.1)."""
+        start = effective_term(entry["term_as_written"], self.page_text)
+        if start:
+            return TermResult("", "unknown"), {"effective_from": start}
+        return rule(entry["term_as_written"], self.call["intake_terms"]), {}
 
     def add(self, field, status, value=None, entry=None, term=None, review=(), group_id="", group_key="", extras=None,
             derived=None):
@@ -77,11 +86,11 @@ def _tuition(builder, entry, index):
         for field in TUITION_FIELDS:
             builder.add(field, entry["value_status"], entry=entry)
         return
-    term = tuition_term(entry["term_as_written"], builder.call["intake_terms"])
+    term, start = builder.undated(entry, tuition_term)
     group_id = f"{builder.meta['call_id']}-t{index}"
     basis = entry["tuition_basis"]
     year = entry["tuition_year"] or academic_year_as_written(entry["term_as_written"])
-    extras = {"includes_fees": bool(entry["includes_fees"])}
+    extras = {"includes_fees": bool(entry["includes_fees"]), **start}
     key = f"{basis or ''}|{year or ''}|{'with_fees' if extras['includes_fees'] else 'no_fees'}"     # 08 §8
     if basis:
         builder.add("tuition_basis", "found", basis, entry, term, term.review, group_id, key)
@@ -107,9 +116,9 @@ def _toefl(builder, entries):
             builder.add(TOEFL_FIELDS["legacy"], "extraction_failed", review=["toefl_scale_unrecognized"])
             continue
         scale = scale or _by_value(entry["value"])
-        term = undated_term(entry["term_as_written"], builder.call["intake_terms"])
+        term, start = builder.undated(entry)
         scales.add(scale)
-        extras = {"conditional_admission_range": entry["conditional_admission_range"]}
+        extras = {"conditional_admission_range": entry["conditional_admission_range"], **start}
         builder.add(TOEFL_FIELDS[scale], "found", _toefl_number(entry["value"], scale), entry, term, term.review,
                     extras=extras)
         if problem:
@@ -142,8 +151,8 @@ def _simple(builder, key, entry):
     if entry["value_status"] != "found":
         builder.add(key, entry["value_status"], entry=entry)
         return
-    term = undated_term(entry["term_as_written"], builder.call["intake_terms"])
-    extras, derived = {}, {}
+    term, extras = builder.undated(entry)
+    derived = {}
     if "conditional_admission_range" in entry:
         extras["conditional_admission_range"] = entry["conditional_admission_range"]
     value = entry["value"]
@@ -156,9 +165,22 @@ def _simple(builder, key, entry):
     builder.add(key, "found", value, entry, term, term.review, extras=extras, derived=derived)
 
 
+def _credit_ranges(entries):
+    """One entry per credit range, holding its lower bound and the range as written (08 §3.3a)."""
+    out, seen = [], set()
+    for i, entry in entries:
+        found = credit_range(entry["value"], entry["evidence_text"]) if entry["value_status"] == "found" else None
+        if not found:
+            out.append((i, entry))
+        elif (found, entry["evidence_text"]) not in seen:
+            seen.add((found, entry["evidence_text"]))
+            out.append((i, {**entry, "value": found[0], "notes": found[1]}))
+    return out
+
+
 def build_rows(call, output, page_text, meta, stem_ref=None):
     """Observation rows for one successful call; in-page conflicts are written here (08 §8)."""
-    builder = _Builder(call, meta, output["audience"], stem_ref)
+    builder = _Builder(call, meta, output["audience"], stem_ref, page_text)
     scale_conflicts = []
     for key in GROUPS:
         entries = output[key]
@@ -169,6 +191,8 @@ def build_rows(call, output, page_text, meta, stem_ref=None):
                 _failed(builder, key, reasons)
             else:
                 good.append((i, entry))
+        if key == "credits_required":
+            good = _credit_ranges(good)
         if not entries:
             for field in OBSERVATION_FIELDS.get(key, (key,)):
                 builder.add(field, "not_mentioned")

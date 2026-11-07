@@ -89,6 +89,16 @@ def undated_term(term_as_written, intake_terms):
     return TermResult(TERM_UNKNOWN, "unknown", review=("term_unknown",))
 
 
+def effective_term(term_as_written, page_text):
+    """"Fall 2025" when the page says the requirement holds from that term on (08 §7.1), else None."""
+    kind, season, year = parse_term(term_as_written)
+    if kind != "season_year":
+        return None
+    names = {"Fall": "fall|autumn"}.get(season, season.lower())
+    start = rf"\b(?:beginning|starting|as of|effective)\s+(?:(?:in|from)\s+)?(?:the\s+)?(?:{names})(?:\s+\w+){{0,2}}?\s+{year}\b"
+    return f"{season} {year}" if re.search(start, f"{term_as_written}\n{page_text}", re.IGNORECASE) else None
+
+
 def academic_year_as_written(term_as_written):
     """The academic year in a term wording, or None."""
     m = ACADEMIC_YEAR.search(term_as_written or "")
