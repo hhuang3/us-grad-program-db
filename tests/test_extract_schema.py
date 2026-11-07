@@ -224,7 +224,7 @@ def test_prompt_v3_states_the_rules_from_the_second_run():
         assert phrase in system, phrase
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
+@pytest.mark.parametrize("version", [1, 2, 3, 4])
 def test_earlier_prompts_stay_pinned(version):
     h = hashlib.sha256()
     for f in prompt.prompt_files(version):

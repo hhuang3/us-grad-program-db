@@ -5,13 +5,14 @@ from pathlib import Path
 
 import yaml
 
-PROMPT_VERSION = 4
+PROMPT_VERSION = 5
 SCHEMA_VERSION = 2
 EXTRACT_RULES_VERSION = 5   # 08 §11: bumping it replays stored outputs without calling the LLM
 PROMPT_SHA256 = {1: "687420e5e66b214076b88e566fdfe09f23d8194ed07875bb5ddcee28bba3c2da",
                  2: "1380267939aef727aabd24519ec9fcfa4961f479f4b439eb4159f4d911c2d6bd",
                  3: "5011a25378fe1e9fc9f171f6f71ee59df3c4e58234575e91978f5000f0c61912",
-                 4: "bbe11413dc80ef383f3e7b9a77e35832446ee8a9ad3218b07ce49789f72f3285"}
+                 4: "bbe11413dc80ef383f3e7b9a77e35832446ee8a9ad3218b07ce49789f72f3285",
+                 5: "320a19e18f3bcd8e7f4a0895da5507b45dae9c7a81b2995101f8af9766500e8d"}
 SCHEMA_SHA256 = {1: "a977415d4477f12f56c48730b371cff81d1d12d2124504311b1afe91c2d7b947",
                  2: "9c4d9e63494d6c636cc24964944170260c69699422f29767710cefaa2f54052f"}
 CONFIG_DIR = Path(__file__).resolve().parents[3] / "config" / "extraction"
