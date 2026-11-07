@@ -1,7 +1,7 @@
 # 08 字段抽取（Phase 4）
 
-> 状态：draft v0.5（Phase 4b，2026-11-06，第 7 步试跑后）。v0.5：API 错误分类与退避重试（§2.1）；只有金额的学费（§3.1、§4.1、§10 第 15 条）；LLM 输出改为三个数组、用空值形式（§4、§4.1）；证据比对中引号和破折号视为相同（§6）；学年写法只换算没有日期的字段（§7.1）；`confidence` 暂不触发审核（§4、§10 第 6 条）。v0.4（2026-11-06）：取消“温度 0”（§1）；整次调用失败的重试规则（§2.1）；共用页面按项目分别调用（§2.3）；LLM 输出形状（§4.1）；日期比对写法（§6）；写明学期与日期的处理（§7.1、§7.2、§7.4）；冲突的存储位置与跨页判断（§8）；审核条件第 13、14 条（§10）；判断代码版本（§11）。v0.3（2026-10-18）：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
-> 依据：`02_field_dictionary.md` v0.5、`05_data_model.md` v1.5、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
+> 状态：draft v0.6（Phase 4b，2026-11-07，第二次试跑后）。v0.6：申请费只记国际学生适用的金额、雅思单项要求不算总分（§3.3a）；条目新增 `notes`（§4、§4.1）；学费比较按 `includes_fees` 分组（§8）。v0.5（2026-11-06，第 7 步试跑后）：API 错误分类与退避重试（§2.1）；只有金额的学费（§3.1、§4.1、§10 第 15 条）；LLM 输出改为三个数组、用空值形式（§4、§4.1）；证据比对中引号和破折号视为相同（§6）；学年写法只换算没有日期的字段（§7.1）；`confidence` 暂不触发审核（§4、§10 第 6 条）。v0.4（2026-11-06）：取消“温度 0”（§1）；整次调用失败的重试规则（§2.1）；共用页面按项目分别调用（§2.3）；LLM 输出形状（§4.1）；日期比对写法（§6）；写明学期与日期的处理（§7.1、§7.2、§7.4）；冲突的存储位置与跨页判断（§8）；审核条件第 13、14 条（§10）；判断代码版本（§11）。v0.3（2026-10-18）：`value_status` 新增两种（§4、§6）、共用总览页不算污染（§8.4）、覆盖缺口进审核（§10 第 12 条）。v0.2（2026-10-12）：只定义规则，本阶段不写代码、不调用 LLM。v0.2：§7.2 学期推算改为秋季、春季两个区间并按 `intake_terms` 确定季节；§12 的改动已确认并写入 02、05、06、07。
+> 依据：`02_field_dictionary.md` v0.6、`05_data_model.md` v1.5、`06_source_registry.md`、`07_snapshots.md`。本文件需要 02、05、06、07 配合修改的地方集中列在 §12，已于 2026-10-12 经负责人确认并写入（02 v0.3、05 v1.4）。
 
 本文件定义 05 的第二层 **observation**：从 snapshot 的规范化正文中抽取字段，写成 observation。observation 不直接成为 fact，进入 fact 必须经过人工审核（05 §1.3）。
 
@@ -84,6 +84,11 @@ v1 只抽取下列字段。字段定义以 02 为准，新增和修改见 §12�
 - 页面只写“STEM-designated”而没有 CIP 时，按 03 `stem_status = unknown`（没有 CIP 信息），`stem_claim_on_page = yes` 另行保存，供审核和发布参考。
 - 测试用例：JHU MA Economics pg-0045 写明 CIP 45.0603 → `cip_source = program_page` → `confirmed_by_school`（P2 报告 §6.1）。
 
+### 3.3a 申请费与雅思的取值（2026-11-07）
+
+- **申请费**：页面按人群分档时，只记国际学生适用的金额（例如 UCLA pg-0049 美国申请者 $135、其他申请者 $155 → 只记 155），规则与学费相同（02 §4）。页面只写一个金额时照常记录。
+- **雅思**：“每个单项不低于 X” 不算总分，记 `mentioned_without_value`，`notes` 写明是单项要求（例如 BU pg-0026）。页面同时写了总分和单项要求时，只取总分。
+
 ### 3.3 推迟的字段及理由
 
 | 字段 | 推迟理由 |
@@ -110,6 +115,7 @@ LLM 对每个页面输出一个 JSON 对象：
 | `evidence_text` | 支持该值的原文片段，≤ 200 字符，从正文中原样复制 |
 | `term_as_written` | 该条目所对应学期在页面上的原文写法，含写明学期的小节标题；页面没写就为 null |
 | `confidence` | 0–1 |
+| `notes` | 只用于 `fields` 数组中的条目，目前只在雅思单项要求时填写（§3.3a）；其他情况为空。只记录，不参与任何判断 |
 | 附加标记 | `includes_fees`（学费含杂费）；其他标记见 §8 |
 
 - 代码补全每条 observation 的 `evidence_url`（快照的 `final_url`）、`snapshot_id`、`retrieved_at`、`program_id`、`model_name`、`prompt_version`、`schema_version`、`extracted_at`，以及 §7 得出的 `valid_for_term` 和 `term_basis`（§12）。
@@ -135,7 +141,7 @@ LLM 的输出形状与 observation 不完全一一对应，下列三组由代码
 - **某字段没有条目表示 `not_mentioned`**，由代码写成 observation；LLM 只输出 `found / referenced_elsewhere / mentioned_without_value`。
   - **没有条目只用于页面完全没提到该字段**。页面提到了字段但没给值，必须输出 `mentioned_without_value`；指向别的页面，必须输出 `referenced_elsewhere`，不能省略。提示词中写明这一点。
   - 测试用例（合成）：“须提交英语成绩”→ 托福 `mentioned_without_value`；“见研究生院要求页面”→ `referenced_elsewhere`，`reference_target` 为页面上的链接文字；两者都不得写成 `not_mentioned`。
-- 条目级标记：`other_program_mentioned`、`excluded_by_scope_note`（§8.4）；TOEFL、雅思条目可带 `conditional_admission_range`（§9）。
+- 条目级标记：`other_program_mentioned`、`excluded_by_scope_note`（§8.4）；TOEFL、雅思条目可带 `conditional_admission_range`（§9）；`fields` 中的条目带 `notes`（§3.3a）。
 - 页面级：`terms_mentioned`，以及页面受众存疑的标记（§10 第 11 条）。
 - 正文在提示词中作为数据放在标签内，页面文字中的任何指示都不执行。
 
@@ -269,6 +275,8 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 
 只比较 `value_status = found` 的值，并按“字段 + 学期”分组；`valid_for_term` 留空的只和留空的比较。
 
+学费金额再按口径、年度和 `includes_fees` 分组（2026-11-07）：含杂费和不含杂费的金额不是同一个量，不互相比较，同页和跨页都一样。
+
 ### 8.1 研究生院页与系页（项目页）数值不同
 
 - 层级由 `pages.owner_level` 给出：`program` > `department` > `graduate_school` > `university`（越具体越优先）。
@@ -290,6 +298,7 @@ columbia-ma-statistics 最初被误判为有春季入学：pg-0053 是 GSAS 所�
 - 案例：
   - BU：同一页上托福写了 90 和 95；首页列 6 轮截止、申请页列 5 轮（后者为跨页面，按 §8.2）；学制写法不一致（P2 报告 §6.2.2）。
   - WashU pg-0066：新制托福写法自相矛盾（§9）。
+- 不算矛盾（2026-11-07）：UCLA pg-0049 学费 $61,824（不含杂费）与总费用 $71,330.19（含杂费）。
 
 ### 8.4 跨项目内容污染
 

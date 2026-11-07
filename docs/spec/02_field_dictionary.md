@@ -1,4 +1,4 @@
-# 字段定义 draft v0.5
+# 字段定义 draft v0.6
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -33,7 +33,7 @@
 | toefl_min_new_scale | TOEFL 最低总分（新制，2026-01-21 起） | float 1.0–6.0，步长 0.5，可空 | 同上 | 与旧制分开存 |
 | toefl_scale_on_page | 页面使用的 TOEFL 分制 | enum：legacy / new / both | 同上 | |
 | toefl_section_mins | 单项最低分 | json：{"scale": "legacy"\|"new", "reading":…, "listening":…, "speaking":…, "writing":…} | 同上 | |
-| ielts_min_overall | 雅思最低总分 | float 0–9，步长 0.5，可空 | 同上 | |
+| ielts_min_overall | 雅思最低总分 | float 0–9，步长 0.5，可空 | 同上 | “每个单项不低于 X” 不算总分（08 §3.3a） |
 | ielts_band_min | 雅思单项最低 | float 0–9，步长 0.5，可空 | 同上 | |
 | duolingo_min | 多邻国最低分 | int，可空 | 同上 | |
 | english_req_level | 语言要求的来源层级 | enum：program / graduate_school | 同上 | 很多项目直接沿用研究生院标准 |
@@ -53,7 +53,7 @@
 
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
-| app_fee_usd | 申请费 | float，可空 | Apply 页 | |
+| app_fee_usd | 申请费 | float，可空 | Apply 页 | 按人群分档时只记国际学生适用的金额（08 §3.3a） |
 | fee_waiver | 申请费减免 | enum：available / not_available | Apply 页 | |
 | fee_waiver_conditions | 减免条件 | str（短摘要） | Apply 页 | |
 | rec_letters_required | 推荐信数量 | int，可空 | Apply 页 | |
@@ -106,6 +106,7 @@
 | conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination；跨页类型只在派生视图中（08 §8） |
 | group_id | 同组字段的关联键 | str，可空；目前只用于学费三个字段（08 §4.1） |
 | includes_fees | 学费金额含杂费 | bool，只用于学费字段 |
+| notes | 抽取备注 | str，可空；目前只用于雅思单项要求（08 §3.3a），不参与判断 |
 
 ## 7. 待定事项
 
@@ -115,6 +116,7 @@
 
 ## 8. 修订记录
 
+- v0.6（2026-11-07，Phase 4b）：申请费按人群分档时只记国际学生金额；雅思单项要求不算总分；元数据新增 `notes`。
 - v0.5（2026-11-06，Phase 4b）：页面只有学费金额、没写口径时保留金额（08 §3.1）。
 - v0.4（2026-11-06，Phase 4b）：按 `08_extraction.md` v0.4 修订。`deadline_date` 由代码补全，写明带年份的学期时在该学期区间内取；新增元数据 `group_id`；`conflict_type` 注明跨页类型只在派生视图中。
 - v0.3 补充（2026-10-18）：`value_status` 新增 `mentioned_without_value`、`referenced_elsewhere`（判断标准见 05 §4）；`gre_policy` / `gmat_policy` 新增 `not_required` 并给出映射表。
