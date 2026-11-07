@@ -1,4 +1,4 @@
-# 字段定义 draft v0.6
+# 字段定义 draft v0.7
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -106,7 +106,8 @@
 | conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination；跨页类型只在派生视图中（08 §8） |
 | group_id | 同组字段的关联键 | str，可空；目前只用于学费三个字段（08 §4.1） |
 | includes_fees | 学费金额含杂费 | bool，只用于学费字段 |
-| notes | 抽取备注 | str，可空；目前只用于雅思单项要求（08 §3.3a），不参与判断 |
+| effective_from | 没有日期的字段从哪个学期起生效 | str，如 "Fall 2025"，可空；此时 valid_for_term 留空（08 §7.1） |
+| notes | 抽取备注 | str，可空；目前用于雅思单项要求和学分区间（08 §3.3a），不参与判断 |
 
 ## 7. 待定事项
 
@@ -117,6 +118,7 @@
 ## 8. 修订记录
 
 - v0.6（2026-11-07，Phase 4b）：申请费按人群分档时只记国际学生金额；雅思单项要求不算总分；元数据新增 `notes`。
+- v0.7（2026-11-08，Phase 4b）：新增元数据 `effective_from`（08 §7.1）。
 - v0.5（2026-11-06，Phase 4b）：页面只有学费金额、没写口径时保留金额（08 §3.1）。
 - v0.4（2026-11-06，Phase 4b）：按 `08_extraction.md` v0.4 修订。`deadline_date` 由代码补全，写明带年份的学期时在该学期区间内取；新增元数据 `group_id`；`conflict_type` 注明跨页类型只在派生视图中。
 - v0.3 补充（2026-10-18）：`value_status` 新增 `mentioned_without_value`、`referenced_elsewhere`（判断标准见 05 §4）；`gre_policy` / `gmat_policy` 新增 `not_required` 并给出映射表。

@@ -27,7 +27,7 @@
 |---|---|---|
 | `unt-ms-datascience` | pg-0007（snap-20261011T005919Z）、pg-0008（snap-20261007T001931Z）、pg-0009（snap-20261011T010245Z） | 过期的截止日期（Fall 2026，08 §7.5）；有春季入学，学期推算受限（08 §7.2） |
 | `duke-other-mqmbusinessanalytics` | pg-0054（snap-20261011T010442Z）、pg-0055（snap-20261011T010445Z）、pg-0056（snap-20261011T010449Z）、pg-0057（snap-20261011T010452Z） | 倒计时区块；2025 年签证截止日期；4 轮截止日期表与 `deadline_type` |
-| `jhu-ms-businessanalyticsai` | pg-0061（snap-20261006T153726Z）、pg-0062（snap-20261004T150238Z）、pg-0063（snap-20261004T150247Z）、pg-0064（snap-20261004T150253Z） | 跨项目内容污染（08 §8.4）；面授与在职线上版写在同一页；scope_note |
+| `jhu-ms-businessanalyticsai` | pg-0061（snap-20261006T153726Z）、pg-0062（snap-20261004T150238Z）、pg-0063（snap-20261004T150247Z）、pg-0064（snap-20261004T150253Z） | 原计划检验跨项目内容污染（08 §8.4）和 scope_note；gold 快照里 pg-0061 已是本项目内容（2026-11-08 核对），因此没有 `contamination` 行 |
 | `bu-ms-businessanalytics` | pg-0025（snap-20261011T010347Z）、pg-0026（snap-20261011T010352Z） | 同一页内数值矛盾（托福 90 / 95）；跨页面轮次数不同；跨项目内容污染 |
 | `ucla-other-quantitativeeconomics` | pg-0048（snap-20261011T010427Z）、pg-0049（snap-20261011T010431Z）、pg-0050（snap-20261011T010435Z） | 同一页多个学期；第一个有效变化实例；研究生院层级页（pg-0050） |
 | `uwmadison-ms-statistics`（对照） | pg-0031（snap-20261011T010407Z）、pg-0033（snap-20261011T010414Z）、pg-0070（snap-20261018T101205Z，研究生院英语要求页，2026-10-18 补登） | 页面结构简单时的基线；`referenced_elsewhere` 与层级规则；有条件录取的英语分数区间 |
@@ -55,6 +55,7 @@
   - 截止日期：`YYYY-MM-DD`。
   - TOEFL：旧制填 `toefl_min_legacy`，新制填 `toefl_min_new_scale`；两种都写了两行都填，`toefl_scale_on_page` 填 `both`。
   - 申请费按人群分档时只填国际学生适用的金额；雅思只写“每个单项不低于 X” 时填 `mentioned_without_value`，`notes` 写明是单项要求（08 §3.3a，2026-11-07）。
+  - 学分写成区间时填下限，`notes` 写原文区间；页面明确写不收申请费时填 0（08 §3.3a，2026-11-08）。
   - 英语最低分只填**标准要求**。页面另给“有条件录取”的分数区间（低于最低要求、入学后须参加英语测试或修英语课）时，该区间写进 `notes`，不作为最低分数（2026-10-18）。
   - CIP：只填页面写明的 6 位代码；`stem_claim_on_page` 填页面是否声称 STEM。
 - 原文片段只填在本地副本的 `evidence_text` 列（§4）。
