@@ -1,0 +1,6 @@
+# Values left out of evaluation because the page changed after the gold snapshot (09 §5).
+- reason: "pg-0049 moved the first Fast Track response date from 2026-12-01 to 2026-12-15 after the gold snapshot"
+  gold_rows:
+    - ucla-other-quantitativeeconomics:deadline:2
+  observed:
+    - {program_id: ucla-other-quantitativeeconomics, field: deadline, date: "2026-12-15"}

@@ -142,3 +142,18 @@
 | `annotated_by` | 负责人 | `Noah` 为独立标注，`Noah+Claude` 为 Claude 协助（§1） |
 | `annotated_at` | 负责人 | `YYYY-MM-DD` |
 | `evidence_text` | 负责人 | **仅本地副本**，≤ 200 字符 |
+
+## 5. 评估口径（2026-11-08）
+
+命令：`gradprog extract evaluate --label <名称>`。只比较标准答案集中的项目和页面，用 `derived/current.csv` 同一份当前结果。
+
+- **汇总**：抽取结果按“项目 × 字段”汇总。状态取 `found` > `referenced_elsewhere` > `mentioned_without_value` > `not_mentioned`；`extraction_failed` 和 `page_unavailable` 排在最后，标准答案为 `found` 时算漏抽。
+- **普通字段**：比较去重后的值集合。数字按数值比，文字忽略大小写，学年统一为 `YYYY-YYYY`（`2026/27`、`2026–2027` 都算 `2026-2027`）。
+- **截止日期**：按“日期 + `deadline_type`”匹配，不比 `round_name` 和 `applicant_scope`。只写滚动录取、没有日期的抽取条目，在标准答案有 `is_rolling = true` 的行时不计入。
+- **各指标的单位**（定义见 §1）：准确率、漏抽率按去重后的值计；无值状态正确率、误报率按“项目 × 字段”计；学期正确率按匹配上的值计，这个值的所有抽取行都与标准答案一致才算对。
+- **审核召回**：按带标记的标准答案行计。同时给两个数：匹配行有任何审核原因；匹配行有对应的信号（`contradictory` 要有冲突类型，`stale` 要有 `stale` 标记）。匹配不上算没召回。
+- **污染标记**：08 §8.4 规定带 `cross_program_contamination` 的条目不自动采用，所以主口径不计这些行；另给一组计入它们的数字，用来看误标的代价。
+- **`confidence`**：按 `<0.7`、`0.7–0.9`、`≥0.9` 分桶统计对错，只分析，不启用阈值。
+- **分组**：按 `annotated_by` 分“独立标注”（`Noah`）和“Claude 协助”（`Noah+Claude`）报告，不合并为一个总数（§1）。独立组样本小，不单独下结论。
+- **快照不一致**：抽取用最新快照时，正文可能和 §2 的快照不同。评估列出这些页面；受影响的值写在 `config/extraction/eval_exclusions.yaml`，写明原因，不计入。标准答案不随之修改（§1）。
+- **文件**：只含计数的结果写到 `data/extraction_stats/eval_<名称>.json`，进 git；逐值明细写到 `data/extraction/derived/`，不进 git。

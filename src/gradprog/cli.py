@@ -14,6 +14,7 @@ REGISTRY = REPO / "data" / "registry"
 CANDIDATES = REPO / "data" / "ref" / "candidates.csv"
 SNAPSHOTS = REPO / "data" / "snapshots"
 EXTRACTION = REPO / "data" / "extraction"
+GOLD_SET = REPO / "data" / "gold" / "gold_set_v1.csv"
 EXTRACTION_STATS = REPO / "data" / "extraction_stats"
 REF = REPO / "data" / "ref"
 
@@ -225,6 +226,7 @@ def cmd_extract(args):
     from gradprog.extract.pipeline import (
         estimate_usd, key_expiry_warning, make_plan, rebuild_view, render_summary, replay, run_extract,
     )
+    from gradprog.extract.evaluate import run_evaluation
     from gradprog.extract.prompt import load_settings
     from gradprog.extract.store import ExtractionStore
     from gradprog.ref.stem import StemReference
@@ -245,6 +247,9 @@ def cmd_extract(args):
               f"spent ${store.spent_usd():.2f} of ${settings['max_usd']:.2f}")
     elif args.extract_command == "replay":
         print(f"replayed {replay(registry, snapshots, store, settings, StemReference.load(REF))} call(s)")
+    elif args.extract_command == "evaluate":
+        print(run_evaluation(GOLD_SET, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
+                             EXTRACTION_STATS, EXTRACTION / "derived"))
     elif args.extract_command == "summary":
         print(render_summary(rebuild_view(registry, store, settings), pages))
     elif args.extract_command == "run":
@@ -330,6 +335,8 @@ def main(argv=None):
     er.add_argument("--max-usd", type=float, help="a lower cap than the one in config/extraction/extraction.yaml")
     er.add_argument("--retry-failed", action="store_true", help="retry pages held back after repeated call failures")
     esub.add_parser("replay", help="rerun the rule code on stored outputs, without calling the API")
+    ev = esub.add_parser("evaluate", help="score the current results against the gold set (09 §5)")
+    ev.add_argument("--label", required=True, help="name of this evaluation, such as baseline")
     es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
     es.add_argument("--pages", help="comma-separated page_ids")
     ext.set_defaults(func=cmd_extract)
