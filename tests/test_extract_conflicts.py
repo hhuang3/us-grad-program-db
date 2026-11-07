@@ -72,6 +72,24 @@ def test_tuition_compares_within_its_basis_and_year():
     assert types([a, row("tuition_amount_usd", 1100, group_key="per_credit|2026-27")])[0] == ["in_page_contradiction"]
 
 
+def test_tuition_without_a_basis_is_not_compared_on_one_page():
+    a = row("tuition_amount_usd", 36512, group_key="|2026-27|no_fees")
+    b = row("tuition_amount_usd", 13692, group_key="|2026-27|no_fees")
+    assert types([a, b]) == [[], []]
+
+
+def test_tuition_without_a_basis_is_not_compared_across_pages():
+    a = row("tuition_amount_usd", 36512, page="pg-1", group_key="|2026-27|no_fees")
+    b = row("tuition_amount_usd", 13692, page="pg-2", group_key="|2026-27|no_fees")
+    assert cross_page_conflicts([a, b]) == {}
+
+
+def test_tuition_with_a_basis_is_still_compared_across_pages():
+    a = row("tuition_amount_usd", 1000, page="pg-1", group_key="per_credit|2026-27|no_fees")
+    b = row("tuition_amount_usd", 1100, page="pg-2", group_key="per_credit|2026-27|no_fees")
+    assert len(cross_page_conflicts([a, b])) == 2
+
+
 # §8.4
 def test_other_program_name_marks_contamination():
     assert types([row(other_program_mentioned="MBA")]) == [["cross_program_contamination"]]

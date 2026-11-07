@@ -12,9 +12,13 @@ NOT_COMPARED = ("toefl_scale_on_page", "tuition_basis", "tuition_year")   # read
 SPECIFIC_LEVELS = ("program", "department")
 
 
+def _no_basis(row):
+    return row["field"] == "tuition_amount_usd" and row["group_key"].startswith("|")   # already in review (§8.3)
+
+
 def _comparable(row):
     return (row["value_status"] == "found" and row["field"] not in NOT_COMPARED and row["value"] is not None
-            and row["valid_for_term"] != "term_unknown" and not row["excluded_by_scope_note"])
+            and row["valid_for_term"] != "term_unknown" and not row["excluded_by_scope_note"] and not _no_basis(row))
 
 
 def _value(row):

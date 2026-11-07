@@ -211,6 +211,11 @@ def test_prompt_v2_states_the_rules_from_the_first_run():
     assert "0.9 or higher" in system
 
 
+def test_prompt_v4_keeps_only_the_total_of_a_term_table():
+    system, _ = prompt.build_prompt(dict.fromkeys(prompt.USER_FIELDS, "x"), "body")
+    assert "splits tuition by term and also gives a total" in system
+
+
 def test_prompt_v3_states_the_rules_from_the_second_run():
     system, _ = prompt.build_prompt(dict.fromkeys(prompt.USER_FIELDS, "x"), "body")
     for phrase in ("Only words that name a term or year count", "new 1-6 scale", "listed separately from fees",
@@ -219,7 +224,7 @@ def test_prompt_v3_states_the_rules_from_the_second_run():
         assert phrase in system, phrase
 
 
-@pytest.mark.parametrize("version", [1, 2])
+@pytest.mark.parametrize("version", [1, 2, 3])
 def test_earlier_prompts_stay_pinned(version):
     h = hashlib.sha256()
     for f in prompt.prompt_files(version):
