@@ -1,4 +1,4 @@
-# 字段定义 draft v0.3
+# 字段定义 draft v0.7
 
 > 状态：草案。Phase 1 不实现，作为 Phase 2 之后的规格。
 > 数据分层、申请季、项目身份等规则见 `05_data_model.md`，本文件只定义字段。
@@ -33,7 +33,7 @@
 | toefl_min_new_scale | TOEFL 最低总分（新制，2026-01-21 起） | float 1.0–6.0，步长 0.5，可空 | 同上 | 与旧制分开存 |
 | toefl_scale_on_page | 页面使用的 TOEFL 分制 | enum：legacy / new / both | 同上 | |
 | toefl_section_mins | 单项最低分 | json：{"scale": "legacy"\|"new", "reading":…, "listening":…, "speaking":…, "writing":…} | 同上 | |
-| ielts_min_overall | 雅思最低总分 | float 0–9，步长 0.5，可空 | 同上 | |
+| ielts_min_overall | 雅思最低总分 | float 0–9，步长 0.5，可空 | 同上 | “每个单项不低于 X” 不算总分（08 §3.3a） |
 | ielts_band_min | 雅思单项最低 | float 0–9，步长 0.5，可空 | 同上 | |
 | duolingo_min | 多邻国最低分 | int，可空 | 同上 | |
 | english_req_level | 语言要求的来源层级 | enum：program / graduate_school | 同上 | 很多项目直接沿用研究生院标准 |
@@ -53,7 +53,7 @@
 
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
-| app_fee_usd | 申请费 | float，可空 | Apply 页 | |
+| app_fee_usd | 申请费 | float，可空 | Apply 页 | 按人群分档时只记国际学生适用的金额（08 §3.3a） |
 | fee_waiver | 申请费减免 | enum：available / not_available | Apply 页 | |
 | fee_waiver_conditions | 减免条件 | str（短摘要） | Apply 页 | |
 | rec_letters_required | 推荐信数量 | int，可空 | Apply 页 | |
@@ -68,7 +68,7 @@
 | 字段 | 含义 | 类型 / 取值 | 官网通常位置 | 备注 |
 |---|---|---|---|---|
 | tuition_basis | 学费计费方式 | enum：per_credit / per_term / per_year / program_total | Bursar / Cost 页 | 页面原始口径；v0.3 新增 per_year |
-| tuition_amount_usd | 学费金额 | float，可空 | 同上 | **页面原始口径下的原始金额**，与 tuition_basis 配套，不换算；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
+| tuition_amount_usd | 学费金额 | float，可空 | 同上 | **页面原始口径下的原始金额**，与 tuition_basis 配套，不换算；页面没写口径时金额仍保留，tuition_basis 记 `not_mentioned` 并进审核（08 §3.1）；**只记录国际学生适用的金额**（公立校即州外学费），不记州内学费 |
 | tuition_program_total_usd_est | 整个项目学费估算 | float，可空 | – | **派生字段**，由代码按 08 §3.1 换算，记录换算方法和输入；缺少输入时为空。v0.3 新增 |
 | credits_required | 总学分 | int，可空 | Curriculum | per_credit 时用于估算总额 |
 | tuition_year | 学费适用年度 | str，如 "2026-27" | 同上 | |
@@ -82,7 +82,7 @@
 | term | 入学季 | str，如 "Fall 2027" | 必填；判断不出则 term_unknown 并进审核 |
 | round_name | 轮次 | str，如 Priority / Round 1 | 原样保留官方写法 |
 | deadline_type | 日期类型 | enum：application / international_docs / deposit / decision_release / other | v0.3 新增。international_docs：国际学生材料（签证文件、I-20 申请等）的截止 |
-| deadline_date | 截止日期 | date | 页面没写年份时按每年固定日期推算（08 §7.2，`term_basis = recurring_no_year`） |
+| deadline_date | 截止日期 | date | 由代码补全，LLM 只给月、日和页面写明的年（08 §4.1）。页面没写年份时，写明带年份的学期则在该学期区间内取（08 §7.1），否则按每年固定日期推算（08 §7.2，`term_basis = recurring_no_year`） |
 | deadline_tz | 时区 | str（IANA），可空 | 如 America/New_York |
 | applicant_scope | 适用对象 | enum：all / international / domestic / funding_consideration | |
 | is_rolling | 是否滚动录取 | bool | |
@@ -103,8 +103,11 @@
 | term_as_written | 条目对应学期在页面上的原文 | str，可空 | 
 | term_basis | valid_for_term 的依据 | enum：stated / inferred_from_date / recurring_no_year / unknown |
 | stale | 截止日期早于取得日期 | bool |
-| conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination |
+| conflict_type | 冲突类型（可多值） | list enum：level_mismatch / below_graduate_school_minimum / deadline_mismatch / in_page_contradiction / cross_program_contamination；跨页类型只在派生视图中（08 §8） |
+| group_id | 同组字段的关联键 | str，可空；目前只用于学费三个字段（08 §4.1） |
 | includes_fees | 学费金额含杂费 | bool，只用于学费字段 |
+| effective_from | 没有日期的字段从哪个学期起生效 | str，如 "Fall 2025"，可空；此时 valid_for_term 留空（08 §7.1） |
+| notes | 抽取备注 | str，可空；目前用于雅思单项要求和学分区间（08 §3.3a），不参与判断 |
 
 ## 7. 待定事项
 
@@ -114,6 +117,10 @@
 
 ## 8. 修订记录
 
+- v0.6（2026-11-07，Phase 4b）：申请费按人群分档时只记国际学生金额；雅思单项要求不算总分；元数据新增 `notes`。
+- v0.7（2026-11-08，Phase 4b）：新增元数据 `effective_from`（08 §7.1）。
+- v0.5（2026-11-06，Phase 4b）：页面只有学费金额、没写口径时保留金额（08 §3.1）。
+- v0.4（2026-11-06，Phase 4b）：按 `08_extraction.md` v0.4 修订。`deadline_date` 由代码补全，写明带年份的学期时在该学期区间内取；新增元数据 `group_id`；`conflict_type` 注明跨页类型只在派生视图中。
 - v0.3 补充（2026-10-18）：`value_status` 新增 `mentioned_without_value`、`referenced_elsewhere`（判断标准见 05 §4）；`gre_policy` / `gmat_policy` 新增 `not_required` 并给出映射表。
 - v0.3（2026-10-12，Phase 4a）：按 `08_extraction.md` §12 修订。新增 `stem_claim_on_page`、`tuition_program_total_usd_est`（派生）、截止日期子表 `deadline_type`；`tuition_basis` 新增 per_year，`tuition_amount_usd` 改为页面原始口径；没写年份的 `deadline_date` 按每年固定日期推算；元数据新增 `term_as_written`、`term_basis`（含 recurring_no_year）、`stale`、`conflict_type`、`includes_fees`；§7 关闭“研究生院页与系页冲突”。
 - v0.2（2026-10-01，Phase 2a）：学费只记国际学生适用金额（公立校即州外学费）；§7 关闭“学费是否区分州内/州外”与“track/concentration 是否拆分”两项，“研究生院页与系页冲突”改为 P2 两页都登记、P4 定优先规则。

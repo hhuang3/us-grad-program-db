@@ -1,6 +1,7 @@
 """Command line entry point: `uv run gradprog <command>`."""
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -12,6 +13,10 @@ MANIFEST = REPO / "data" / "manifest" / "manifest.csv"
 REGISTRY = REPO / "data" / "registry"
 CANDIDATES = REPO / "data" / "ref" / "candidates.csv"
 SNAPSHOTS = REPO / "data" / "snapshots"
+EXTRACTION = REPO / "data" / "extraction"
+GOLD_SET = REPO / "data" / "gold" / "gold_set_v1.csv"
+EXTRACTION_STATS = REPO / "data" / "extraction_stats"
+REF = REPO / "data" / "ref"
 
 
 def cmd_register_manual(args):
@@ -213,6 +218,54 @@ def cmd_snapshot(args):
                   f"({sum(r['rule_losses'] for r in flagged)} lines); see data/snapshots/reports/")
 
 
+def cmd_extract(args):
+    from collections import Counter
+    from datetime import datetime, timezone
+
+    from gradprog.extract.llm import AnthropicClient
+    from gradprog.extract.pipeline import (
+        estimate_usd, key_expiry_warning, make_plan, rebuild_view, render_summary, replay, run_extract,
+    )
+    from gradprog.extract.evaluate import run_evaluation
+    from gradprog.extract.prompt import load_settings
+    from gradprog.extract.store import ExtractionStore
+    from gradprog.ref.stem import StemReference
+    from gradprog.registry.tables import load_registry
+    from gradprog.snapshot.store import SnapshotStore
+    from gradprog.util.awake import keep_awake
+
+    registry, snapshots = load_registry(REGISTRY), SnapshotStore(SNAPSHOTS)
+    store, settings = ExtractionStore(EXTRACTION, EXTRACTION_STATS), load_settings()
+    warning = key_expiry_warning(settings, datetime.now(timezone.utc).date())
+    if warning:
+        print(f"warning: {warning}", file=sys.stderr)
+    pages = set(args.pages.split(",")) if getattr(args, "pages", None) else None
+    if args.extract_command == "plan":
+        plan = make_plan(registry, snapshots, store, settings, pages)
+        print(dict(Counter(c.action for c in plan)))
+        print(f"model {settings['model']}; upper estimate ${estimate_usd(plan, settings):.2f}; "
+              f"spent ${store.spent_usd():.2f} of ${settings['max_usd']:.2f}")
+    elif args.extract_command == "replay":
+        print(f"replayed {replay(registry, snapshots, store, settings, StemReference.load(REF))} call(s)")
+    elif args.extract_command == "evaluate":
+        print(run_evaluation(GOLD_SET, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
+                             EXTRACTION_STATS, EXTRACTION / "derived"))
+    elif args.extract_command == "summary":
+        print(render_summary(rebuild_view(registry, store, settings), pages))
+    elif args.extract_command == "run":
+        key = os.environ.get("ANTHROPIC_API_KEY")
+        if not key:
+            raise ValueError("ANTHROPIC_API_KEY is not set; run: set -a; . ~/.config/gradprog/env; set +a")
+        with keep_awake():
+            result = run_extract(registry, snapshots, store, AnthropicClient(key), settings, pages, args.retry_failed,
+                                 args.limit, args.max_usd, StemReference.load(REF))
+        run = result["run"]
+        print(f"{run['run_id']}: {run['calls']} call(s), {dict(result['counts'])}")
+        print(f"tokens: input {run['input_tokens']}, cache write {run['cache_write_tokens']}, "
+              f"cache read {run['cache_read_tokens']}, output {run['output_tokens']}")
+        print(f"cost ${run['usd']:.4f}; total ${result['spent_usd']:.4f} of ${result['cap_usd']:.2f}")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="gradprog")
     sub = p.add_subparsers(dest="command", required=True)
@@ -271,6 +324,22 @@ def main(argv=None):
     sb = ssub.add_parser("backup", help="incremental copy of data/snapshots")
     sb.add_argument("--dest", required=True, type=Path)
     snap.set_defaults(func=cmd_snapshot)
+
+    ext = sub.add_parser("extract", help="Phase 4 field extraction (08)")
+    esub = ext.add_subparsers(dest="extract_command", required=True)
+    ep = esub.add_parser("plan", help="list what a run would do, without calling the API")
+    ep.add_argument("--pages", help="comma-separated page_ids")
+    er = esub.add_parser("run", help="extract the planned pages")
+    er.add_argument("--pages", help="comma-separated page_ids")
+    er.add_argument("--limit", type=int, help="make at most this many calls")
+    er.add_argument("--max-usd", type=float, help="a lower cap than the one in config/extraction/extraction.yaml")
+    er.add_argument("--retry-failed", action="store_true", help="retry pages held back after repeated call failures")
+    esub.add_parser("replay", help="rerun the rule code on stored outputs, without calling the API")
+    ev = esub.add_parser("evaluate", help="score the current results against the gold set (09 §5)")
+    ev.add_argument("--label", required=True, help="name of this evaluation, such as baseline")
+    es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
+    es.add_argument("--pages", help="comma-separated page_ids")
+    ext.set_defaults(func=cmd_extract)
 
     args = p.parse_args(argv)
     if getattr(args, "ready", False) and not args.batch:

@@ -1,0 +1,272 @@
+{
+  "type": "object",
+  "properties": {
+    "terms_mentioned": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "applicants",
+        "current_students",
+        "other_program"
+      ]
+    },
+    "deadlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": "string"
+          },
+          "evidence_text": {
+            "type": "string"
+          },
+          "term_as_written": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": "string"
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "deadline_month": {
+            "type": "integer"
+          },
+          "deadline_day": {
+            "type": "integer"
+          },
+          "deadline_year": {
+            "type": "integer"
+          },
+          "round_name": {
+            "type": "string"
+          },
+          "deadline_type": {
+            "type": "string",
+            "enum": [
+              "application",
+              "international_docs",
+              "deposit",
+              "decision_release",
+              "other",
+              "none"
+            ]
+          },
+          "deadline_tz": {
+            "type": "string"
+          },
+          "applicant_scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "international",
+              "domestic",
+              "funding_consideration",
+              "none"
+            ]
+          },
+          "is_rolling": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "deadline_month",
+          "deadline_day",
+          "deadline_year",
+          "round_name",
+          "deadline_type",
+          "deadline_tz",
+          "applicant_scope",
+          "is_rolling"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tuition": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": "string"
+          },
+          "evidence_text": {
+            "type": "string"
+          },
+          "term_as_written": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": "string"
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "tuition_basis": {
+            "type": "string",
+            "enum": [
+              "per_credit",
+              "per_term",
+              "per_year",
+              "program_total",
+              "none"
+            ]
+          },
+          "tuition_amount_usd": {
+            "type": "number"
+          },
+          "tuition_year": {
+            "type": "string"
+          },
+          "includes_fees": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "tuition_basis",
+          "tuition_amount_usd",
+          "tuition_year",
+          "includes_fees"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "toefl_total",
+              "ielts_min_overall",
+              "gre_policy",
+              "gmat_policy",
+              "length_months_min",
+              "length_months_max",
+              "credits_required",
+              "cip_code",
+              "stem_claim_on_page",
+              "app_fee_usd"
+            ]
+          },
+          "value_status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "referenced_elsewhere",
+              "mentioned_without_value"
+            ]
+          },
+          "reference_target": {
+            "type": "string"
+          },
+          "evidence_text": {
+            "type": "string"
+          },
+          "term_as_written": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "other_program_mentioned": {
+            "type": "string"
+          },
+          "excluded_by_scope_note": {
+            "type": "boolean"
+          },
+          "number_value": {
+            "type": "number"
+          },
+          "text_value": {
+            "type": "string"
+          },
+          "conditional_admission_range": {
+            "type": "string"
+          },
+          "cip_context": {
+            "type": "string",
+            "enum": [
+              "stem_list",
+              "program_intro",
+              "i20_statement",
+              "other",
+              "none"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "value_status",
+          "reference_target",
+          "evidence_text",
+          "term_as_written",
+          "confidence",
+          "other_program_mentioned",
+          "excluded_by_scope_note",
+          "number_value",
+          "text_value",
+          "conditional_admission_range",
+          "cip_context",
+          "notes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "terms_mentioned",
+    "audience",
+    "deadlines",
+    "tuition",
+    "fields"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,565 @@
+{
+ "label": "baseline",
+ "prompt_and_rules_versions": [
+  [
+   4,
+   5
+  ]
+ ],
+ "changed_pages": [
+  "pg-0049",
+  "pg-0055",
+  "pg-0063"
+ ],
+ "exclusions": [
+  "pg-0049 moved the first Fast Track response date from 2026-12-01 to 2026-12-15 after the gold snapshot"
+ ],
+ "groups": {
+  "independent": {
+   "total": {
+    "extracted_values": 8,
+    "correct_values": 8,
+    "gold_values": 8,
+    "missed_values": 0,
+    "no_value_total": 8,
+    "no_value_correct": 8,
+    "false_positives": 0,
+    "term_total": 8,
+    "term_correct": 8
+   },
+   "by_field": {
+    "toefl_min_legacy": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "toefl_min_new_scale": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "toefl_scale_on_page": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "ielts_min_overall": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "gre_policy": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "gmat_policy": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "tuition_basis": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "tuition_amount_usd": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "tuition_year": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "credits_required": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "length_months_min": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "length_months_max": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    },
+    "cip_code": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "stem_claim_on_page": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "app_fee_usd": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "deadline": {
+     "extracted_values": 1,
+     "correct_values": 1,
+     "gold_values": 1,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 1,
+     "term_correct": 1
+    }
+   },
+   "by_program": {
+    "uwmadison-ms-statistics": {
+     "extracted_values": 8,
+     "correct_values": 8,
+     "gold_values": 8,
+     "missed_values": 0,
+     "no_value_total": 8,
+     "no_value_correct": 8,
+     "false_positives": 0,
+     "term_total": 8,
+     "term_correct": 8
+    }
+   },
+   "review_recall": {
+    "contradictory": {
+     "total": 0,
+     "in_review": 0,
+     "with_signal": 0
+    },
+    "stale": {
+     "total": 0,
+     "in_review": 0,
+     "with_signal": 0
+    },
+    "contamination": {
+     "total": 0,
+     "in_review": 0,
+     "with_signal": 0
+    }
+   },
+   "confidence": {
+    "<0.7": {
+     "right": 0,
+     "wrong": 0
+    },
+    "0.7-0.9": {
+     "right": 0,
+     "wrong": 0
+    },
+    ">=0.9": {
+     "right": 7,
+     "wrong": 0
+    },
+    "none": {
+     "right": 1,
+     "wrong": 0
+    }
+   }
+  },
+  "assisted": {
+   "total": {
+    "extracted_values": 105,
+    "correct_values": 98,
+    "gold_values": 105,
+    "missed_values": 7,
+    "no_value_total": 25,
+    "no_value_correct": 23,
+    "false_positives": 0,
+    "term_total": 98,
+    "term_correct": 88
+   },
+   "by_field": {
+    "toefl_min_legacy": {
+     "extracted_values": 5,
+     "correct_values": 5,
+     "gold_values": 5,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 5,
+     "term_correct": 5
+    },
+    "toefl_min_new_scale": {
+     "extracted_values": 3,
+     "correct_values": 3,
+     "gold_values": 3,
+     "missed_values": 0,
+     "no_value_total": 2,
+     "no_value_correct": 2,
+     "false_positives": 0,
+     "term_total": 3,
+     "term_correct": 3
+    },
+    "toefl_scale_on_page": {
+     "extracted_values": 4,
+     "correct_values": 4,
+     "gold_values": 4,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 4,
+     "term_correct": 4
+    },
+    "ielts_min_overall": {
+     "extracted_values": 3,
+     "correct_values": 3,
+     "gold_values": 3,
+     "missed_values": 0,
+     "no_value_total": 2,
+     "no_value_correct": 2,
+     "false_positives": 0,
+     "term_total": 3,
+     "term_correct": 3
+    },
+    "gre_policy": {
+     "extracted_values": 5,
+     "correct_values": 4,
+     "gold_values": 5,
+     "missed_values": 1,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 4,
+     "term_correct": 4
+    },
+    "gmat_policy": {
+     "extracted_values": 4,
+     "correct_values": 3,
+     "gold_values": 4,
+     "missed_values": 1,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 3,
+     "term_correct": 3
+    },
+    "tuition_basis": {
+     "extracted_values": 3,
+     "correct_values": 2,
+     "gold_values": 2,
+     "missed_values": 0,
+     "no_value_total": 3,
+     "no_value_correct": 2,
+     "false_positives": 0,
+     "term_total": 2,
+     "term_correct": 2
+    },
+    "tuition_amount_usd": {
+     "extracted_values": 4,
+     "correct_values": 3,
+     "gold_values": 6,
+     "missed_values": 3,
+     "no_value_total": 2,
+     "no_value_correct": 2,
+     "false_positives": 0,
+     "term_total": 3,
+     "term_correct": 3
+    },
+    "tuition_year": {
+     "extracted_values": 2,
+     "correct_values": 2,
+     "gold_values": 2,
+     "missed_values": 0,
+     "no_value_total": 3,
+     "no_value_correct": 2,
+     "false_positives": 0,
+     "term_total": 2,
+     "term_correct": 2
+    },
+    "credits_required": {
+     "extracted_values": 2,
+     "correct_values": 2,
+     "gold_values": 2,
+     "missed_values": 0,
+     "no_value_total": 3,
+     "no_value_correct": 3,
+     "false_positives": 0,
+     "term_total": 2,
+     "term_correct": 1
+    },
+    "length_months_min": {
+     "extracted_values": 6,
+     "correct_values": 4,
+     "gold_values": 4,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 4,
+     "term_correct": 4
+    },
+    "length_months_max": {
+     "extracted_values": 5,
+     "correct_values": 4,
+     "gold_values": 4,
+     "missed_values": 0,
+     "no_value_total": 1,
+     "no_value_correct": 1,
+     "false_positives": 0,
+     "term_total": 4,
+     "term_correct": 4
+    },
+    "cip_code": {
+     "extracted_values": 0,
+     "correct_values": 0,
+     "gold_values": 0,
+     "missed_values": 0,
+     "no_value_total": 5,
+     "no_value_correct": 5,
+     "false_positives": 0,
+     "term_total": 0,
+     "term_correct": 0
+    },
+    "stem_claim_on_page": {
+     "extracted_values": 4,
+     "correct_values": 4,
+     "gold_values": 5,
+     "missed_values": 1,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 4,
+     "term_correct": 4
+    },
+    "app_fee_usd": {
+     "extracted_values": 5,
+     "correct_values": 5,
+     "gold_values": 5,
+     "missed_values": 0,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 5,
+     "term_correct": 5
+    },
+    "deadline": {
+     "extracted_values": 50,
+     "correct_values": 50,
+     "gold_values": 51,
+     "missed_values": 1,
+     "no_value_total": 0,
+     "no_value_correct": 0,
+     "false_positives": 0,
+     "term_total": 50,
+     "term_correct": 41
+    }
+   },
+   "by_program": {
+    "unt-ms-datascience": {
+     "extracted_values": 10,
+     "correct_values": 10,
+     "gold_values": 10,
+     "missed_values": 0,
+     "no_value_total": 10,
+     "no_value_correct": 10,
+     "false_positives": 0,
+     "term_total": 10,
+     "term_correct": 9
+    },
+    "duke-other-mqmbusinessanalytics": {
+     "extracted_values": 29,
+     "correct_values": 27,
+     "gold_values": 29,
+     "missed_values": 2,
+     "no_value_total": 5,
+     "no_value_correct": 5,
+     "false_positives": 0,
+     "term_total": 27,
+     "term_correct": 27
+    },
+    "jhu-ms-businessanalyticsai": {
+     "extracted_values": 27,
+     "correct_values": 27,
+     "gold_values": 27,
+     "missed_values": 0,
+     "no_value_total": 4,
+     "no_value_correct": 2,
+     "false_positives": 0,
+     "term_total": 27,
+     "term_correct": 27
+    },
+    "bu-ms-businessanalytics": {
+     "extracted_values": 21,
+     "correct_values": 18,
+     "gold_values": 23,
+     "missed_values": 5,
+     "no_value_total": 3,
+     "no_value_correct": 3,
+     "false_positives": 0,
+     "term_total": 18,
+     "term_correct": 12
+    },
+    "ucla-other-quantitativeeconomics": {
+     "extracted_values": 18,
+     "correct_values": 16,
+     "gold_values": 16,
+     "missed_values": 0,
+     "no_value_total": 3,
+     "no_value_correct": 3,
+     "false_positives": 0,
+     "term_total": 16,
+     "term_correct": 13
+    }
+   },
+   "review_recall": {
+    "contradictory": {
+     "total": 8,
+     "in_review": 4,
+     "with_signal": 2
+    },
+    "stale": {
+     "total": 4,
+     "in_review": 4,
+     "with_signal": 4
+    },
+    "contamination": {
+     "total": 0,
+     "in_review": 0,
+     "with_signal": 0
+    }
+   },
+   "confidence": {
+    "<0.7": {
+     "right": 0,
+     "wrong": 0
+    },
+    "0.7-0.9": {
+     "right": 26,
+     "wrong": 7
+    },
+    ">=0.9": {
+     "right": 93,
+     "wrong": 0
+    },
+    "none": {
+     "right": 4,
+     "wrong": 0
+    }
+   }
+  }
+ },
+ "groups_counting_contaminated_rows": {
+  "independent": {
+   "extracted_values": 8,
+   "correct_values": 8,
+   "gold_values": 8,
+   "missed_values": 0,
+   "no_value_total": 8,
+   "no_value_correct": 8,
+   "false_positives": 0,
+   "term_total": 8,
+   "term_correct": 8
+  },
+  "assisted": {
+   "extracted_values": 105,
+   "correct_values": 98,
+   "gold_values": 105,
+   "missed_values": 7,
+   "no_value_total": 25,
+   "no_value_correct": 22,
+   "false_positives": 0,
+   "term_total": 98,
+   "term_correct": 88
+  }
+ }
+}
