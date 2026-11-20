@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from datetime import date
 from pathlib import Path
 
 from gradprog.util.download import DownloadError, Downloader, register_manual
@@ -175,7 +176,8 @@ def cmd_snapshot(args):
 
         from gradprog.snapshot.manual import manual_due, render_manual_due
 
-        due = manual_due(reg, store, today=datetime.now(timezone.utc).date().isoformat(), url_check=_url_check())
+        today = args.on or datetime.now(timezone.utc).date().isoformat()
+        due = manual_due(reg, store, today=today, url_check=_url_check())
         path = SNAPSHOTS / "manual_due.md"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(render_manual_due(due), encoding="utf-8")
@@ -248,7 +250,7 @@ def cmd_extract(args):
     elif args.extract_command == "replay":
         print(f"replayed {replay(registry, snapshots, store, settings, StemReference.load(REF))} call(s)")
     elif args.extract_command == "evaluate":
-        print(run_evaluation(GOLD_SET, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
+        print(run_evaluation(args.gold, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
                              EXTRACTION_STATS, EXTRACTION / "derived"))
     elif args.extract_command == "summary":
         print(render_summary(rebuild_view(registry, store, settings), pages))
@@ -266,7 +268,7 @@ def cmd_extract(args):
         print(f"cost ${run['usd']:.4f}; total ${result['spent_usd']:.4f} of ${result['cap_usd']:.2f}")
 
 
-def main(argv=None):
+def build_parser():
     p = argparse.ArgumentParser(prog="gradprog")
     sub = p.add_subparsers(dest="command", required=True)
 
@@ -313,7 +315,9 @@ def main(argv=None):
     sr = ssub.add_parser("run", help="fetch automatically captured pages")
     sr.add_argument("--page", action="append", help="only this page_id (repeatable)")
     sr.add_argument("--dry-run", action="store_true", help="list the pages that would be requested")
-    ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    md = ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    md.add_argument("--on", type=lambda s: date.fromisoformat(s).isoformat(),
+                    help="list what is due on this date (YYYY-MM-DD), such as the planned capture day; default today (UTC)")
     sm = ssub.add_parser("register-manual", help="register browser-saved .mhtml/.pdf files")
     sm.add_argument("--page")
     sm.add_argument("--file", type=Path)
@@ -337,10 +341,15 @@ def main(argv=None):
     esub.add_parser("replay", help="rerun the rule code on stored outputs, without calling the API")
     ev = esub.add_parser("evaluate", help="score the current results against the gold set (09 §5)")
     ev.add_argument("--label", required=True, help="name of this evaluation, such as baseline")
+    ev.add_argument("--gold", type=Path, default=GOLD_SET, help="answer file (09 §4, §6); defaults to the gold set")
     es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
     es.add_argument("--pages", help="comma-separated page_ids")
     ext.set_defaults(func=cmd_extract)
+    return p
 
+
+def main(argv=None):
+    p = build_parser()
     args = p.parse_args(argv)
     if getattr(args, "ready", False) and not args.batch:
         p.error("--ready requires --batch")
