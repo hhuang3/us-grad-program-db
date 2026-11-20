@@ -160,6 +160,8 @@
 
 ## 6. 独立抽检集（holdout，2026-11-08）
 
+> **暂缓**（2026-11-20）：负责人决定先做 P5 最小版本，拿给留学顾问验证需求，抽检暂不进行。模板、阅读材料和固定快照都保留。恢复时注意：评估读取的是当前结果，固定快照所在页面如果已重新抽取，需要先改为按 `snapshot_ids` 取当时的 observation。
+
 - **用途**：标准答案集的 5 个项目参与了 v5 规则和提示词的调整，又有 Claude 协助标注，准确率可能偏高。另取 2 个没参与调整的项目，由负责人独立标注，用来估计新页面上的准确率。
 - **项目**：从试点项目中排除标准答案集的 6 个，再排除调整规则时讨论过的项目（UVA、UIUC、WashU、Rochester、JHU 的其他项目、Columbia MS DS、NYU、UTD、UChicago、与标准答案集共用页面的 UW–Madison 项目）。在剩下的项目里取页面结构不同的 2 个：`uconn-ms-businessanalyticsprojectmanagement`、`columbia-ma-statistics`。
 - **快照**：固定为提示词 v5 全量所用的快照（模板 `snapshot_ids` 列）。之后页面变化时不更新。
