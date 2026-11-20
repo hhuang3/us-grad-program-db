@@ -268,6 +268,25 @@ def cmd_extract(args):
         print(f"cost ${run['usd']:.4f}; total ${result['spent_usd']:.4f} of ${result['cap_usd']:.2f}")
 
 
+def cmd_export(args):
+    from datetime import datetime, timezone
+
+    import pandas as pd
+
+    from gradprog.export.workbook import build, read_csv, write
+    from gradprog.registry.tables import load_registry
+
+    on = args.on or datetime.now(timezone.utc).date().isoformat()
+    holdout = {r["program_id"] for r in read_csv(REPO / "data" / "gold" / "holdout_v1.csv")}
+    index = pd.read_csv(SNAPSHOTS / "index.csv", dtype=str, keep_default_na=False)
+    sheets, counts = build(read_csv(EXTRACTION / "derived" / "current.csv"), load_registry(REGISTRY), index,
+                           read_csv(REPO / "data" / "changes" / "change_log.csv"), on, holdout, args.include_holdout)
+    path = args.out or REPO / "data" / "exports" / f"advisor_{on}.xlsx"
+    write(sheets, path)
+    print(f"wrote {path}")
+    print(counts)
+
+
 def build_parser():
     p = argparse.ArgumentParser(prog="gradprog")
     sub = p.add_subparsers(dest="command", required=True)
@@ -345,6 +364,13 @@ def build_parser():
     es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
     es.add_argument("--pages", help="comma-separated page_ids")
     ext.set_defaults(func=cmd_extract)
+
+    exp = sub.add_parser("export", help="P5 workbook for advisors (10)")
+    exp.add_argument("--out", type=Path, help="output .xlsx; default data/exports/advisor_<date>.xlsx")
+    exp.add_argument("--on", type=lambda s: date.fromisoformat(s).isoformat(),
+                     help="date deadlines are judged expired against (YYYY-MM-DD); default today (UTC)")
+    exp.add_argument("--include-holdout", action="store_true", help="also export the paused holdout programs (09 §6)")
+    exp.set_defaults(func=cmd_export)
     return p
 
 
