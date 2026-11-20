@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from datetime import date
 from pathlib import Path
 
 from gradprog.util.download import DownloadError, Downloader, register_manual
@@ -175,7 +176,8 @@ def cmd_snapshot(args):
 
         from gradprog.snapshot.manual import manual_due, render_manual_due
 
-        due = manual_due(reg, store, today=datetime.now(timezone.utc).date().isoformat(), url_check=_url_check())
+        today = args.on or datetime.now(timezone.utc).date().isoformat()
+        due = manual_due(reg, store, today=today, url_check=_url_check())
         path = SNAPSHOTS / "manual_due.md"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(render_manual_due(due), encoding="utf-8")
@@ -313,7 +315,9 @@ def build_parser():
     sr = ssub.add_parser("run", help="fetch automatically captured pages")
     sr.add_argument("--page", action="append", help="only this page_id (repeatable)")
     sr.add_argument("--dry-run", action="store_true", help="list the pages that would be requested")
-    ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    md = ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    md.add_argument("--on", type=lambda s: date.fromisoformat(s).isoformat(),
+                    help="list what is due on this date (YYYY-MM-DD), such as the planned capture day; default today (UTC)")
     sm = ssub.add_parser("register-manual", help="register browser-saved .mhtml/.pdf files")
     sm.add_argument("--page")
     sm.add_argument("--file", type=Path)
