@@ -10,6 +10,7 @@ import pandas as pd
 
 from gradprog.ref.targets import GROUP_ORDER
 from gradprog.registry import tables as t
+from gradprog.registry.names import degree_abbreviation
 from gradprog.registry.robots import crawl_allowed_for
 from gradprog.registry.urls import UrlError, domain_of, normalize_url
 from gradprog.util.manifest import UTC_TIMESTAMP
@@ -153,7 +154,7 @@ def _check_values(registry, errors):
 
 
 def _check_display_names(registry, errors, warnings):
-    """06 §3.1 (2026-11-20): short and Chinese school names, and the degree name for degree_type = other."""
+    """06 §3.1 (2026-11-22): school short names, and the degree name for degree_type = other."""
     by_school = {}
     for r in registry.programs.itertuples(index=False):
         pid = r.program_id
@@ -163,12 +164,13 @@ def _check_display_names(registry, errors, warnings):
             if first[1] != names:
                 errors.append(f"programs: {pid}: institution_short / institution_name_zh differ from {first[0]} "
                               "at the same institution")
-        if r.status == "selected" and not all(names):
-            warnings.append(f"programs: {pid}: institution_short and institution_name_zh are not set yet")
+        if r.status == "selected" and not r.institution_short.strip():
+            errors.append(f"programs: {pid}: institution_short is required when status=selected")
         if r.degree_label and r.degree_type != "other":
             errors.append(f"programs: {pid}: degree_label is only for degree_type=other")
-        if r.status == "selected" and r.degree_type == "other" and not r.degree_label:
-            warnings.append(f"programs: {pid}: degree_type=other needs a degree_label, such as MQE")
+        if (r.status == "selected" and r.degree_type == "other" and not r.degree_label
+                and not degree_abbreviation(r.program_name)):
+            errors.append(f"programs: {pid}: no degree abbreviation in program_name; fill degree_label, such as MQE")
 
 
 def _check_programs(registry, candidates, errors):

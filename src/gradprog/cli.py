@@ -278,8 +278,9 @@ def cmd_export(args):
     from gradprog.snapshot.store import SnapshotStore
     from gradprog.registry.tables import load_registry
 
+    if args.audience == "student":
+        raise ValueError("the student version waits for the owner to confirm its design (10 §8)")
     on = args.on or datetime.now(timezone.utc).date().isoformat()
-    holdout = {r["program_id"] for r in read_csv(REPO / "data" / "gold" / "holdout_v1.csv")}
     index = pd.read_csv(SNAPSHOTS / "index.csv", dtype=str, keep_default_na=False)
     snapshots = index.drop_duplicates("snapshot_id", keep="last").set_index("snapshot_id")
     cache = {}
@@ -295,9 +296,9 @@ def cmd_export(args):
         return resolve(row.get("reference_target"), cache[sid])
 
     sheets, counts = build(read_csv(EXTRACTION / "derived" / "current.csv"), load_registry(REGISTRY), index,
-                           read_csv(REPO / "data" / "changes" / "change_log.csv"), on, holdout, args.include_holdout,
+                           read_csv(REPO / "data" / "changes" / "change_log.csv"), on,
                            read_csv(REPO / "data" / "gold" / "gold_set_v1.csv"), link_of)
-    path = args.out or REPO / "data" / "exports" / f"advisor_{on}.xlsx"
+    path = args.out or REPO / "data" / "exports" / f"{args.audience}_{on}.xlsx"
     write(sheets, path)
     print(f"wrote {path}")
     print(counts)
@@ -385,7 +386,8 @@ def build_parser():
     exp.add_argument("--out", type=Path, help="output .xlsx; default data/exports/advisor_<date>.xlsx")
     exp.add_argument("--on", type=lambda s: date.fromisoformat(s).isoformat(),
                      help="date deadlines are judged expired against (YYYY-MM-DD); default today (UTC)")
-    exp.add_argument("--include-holdout", action="store_true", help="also export the paused holdout programs (09 §6)")
+    exp.add_argument("--audience", choices=["advisor", "student"], default="advisor",
+                     help="advisor: full detail with review reasons; student: the short version (10 §8)")
     exp.set_defaults(func=cmd_export)
     return p
 

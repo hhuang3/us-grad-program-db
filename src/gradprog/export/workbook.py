@@ -18,7 +18,7 @@ DISCLAIMER = "数据整理自各校官网，申请前请以官网最新信息为
 FILLS = {REVIEW: PatternFill("solid", fgColor="FFF2CC"), STALE: PatternFill("solid", fgColor="E7E6E6")}
 GREY = Font(color="808080")
 LINK = Font(color="0563C1", underline="single")
-WIDTHS = {"学校简称": 30, "学校": 28, "项目": 34, "学费": 34, "官网链接": 40, "来源链接": 40, "页面链接": 40, "待核实说明": 48, "变化": 60}
+WIDTHS = {"学校简称": 14, "学费估算总额": 26, "学校": 28, "项目": 34, "学费": 34, "官网链接": 40, "来源链接": 40, "页面链接": 40, "待核实说明": 48, "变化": 60}
 
 
 def read_csv(path):
@@ -26,7 +26,7 @@ def read_csv(path):
         return list(csv.DictReader(fh))
 
 
-def _programs(registry, holdout, include_holdout):
+def _programs(registry):
     pages = registry.pages.set_index("page_id")
     links = defaultdict(list)
     for link in registry.program_pages.itertuples():
@@ -35,8 +35,6 @@ def _programs(registry, holdout, include_holdout):
     out = []
     for program in registry.programs.to_dict("records"):
         if program["status"] != "selected" or not links[program["program_id"]]:
-            continue
-        if program["program_id"] in holdout and not include_holdout:
             continue
         out.append((program, links[program["program_id"]]))
     return out, pages
@@ -108,12 +106,11 @@ class GoldCheck:
         return (date, row["value"].get("deadline_type")) not in {(a["value"], a["deadline_type"]) for a in answers}
 
 
-def build(view_rows, registry, index, changes, on_date, holdout=(), include_holdout=False, gold_rows=(),
-          link_of=None):
+def build(view_rows, registry, index, changes, on_date, gold_rows=(), link_of=None):
     """{sheet: (columns, rows)} and counts; rows are lists of Cell."""
     view = [parse_view_row(r) for r in view_rows]
     gold = GoldCheck(gold_rows, view, _norm_sha(index))
-    chosen, pages = _programs(registry, set(holdout), include_holdout)
+    chosen, pages = _programs(registry)
     by_program = defaultdict(list)
     for row in view:
         by_program[row["program_id"]].append(row)
@@ -149,6 +146,10 @@ def build(view_rows, registry, index, changes, on_date, holdout=(), include_hold
             ["待核实", "这个值进了审核队列，或页面上有多个不同的值，还没有人工核对。单元格标黄，原因写在“待核实说明”列。"],
             ["已过期", "截止日期早于导出日期。标灰，排在截止日期表最后。"],
             ["学期", "只招秋季的项目，学期按日期推算。"],
+            ["页面未写明", "我们收录的官网页面没有写这一项。不代表没有这项要求，也不代表答案是“否”，请到官网确认。"],
+            ["见其他页面", "官网让读者去另一个页面看这一项；单元格链接到那个页面。"],
+            ["时长", "有多个方向（轨道）时合并为一个区间，例如 9–16 个月。"],
+            ["学费估算总额", "按页面写的学费和学分估算的整个项目学费，不含杂费和生活费；页面只给项目总额时就是该数额；算不出时留空。"],
             ["项目数", str(counts["programs"])]]
     sheets = {
         "说明": (["项目", "内容"], [[Cell(a), Cell(b)] for a, b in info]),
@@ -180,5 +181,6 @@ def write(sheets, path):
         for i, column in enumerate(columns, 1):
             sheet.column_dimensions[get_column_letter(i)].width = WIDTHS.get(column, 14 if name != "说明" else 60)
         sheet.freeze_panes = "A2"
+        sheet.auto_filter.ref = sheet.dimensions
     path.parent.mkdir(parents=True, exist_ok=True)
     book.save(path)

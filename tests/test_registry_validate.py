@@ -557,17 +557,24 @@ def test_intake_terms_checked_when_not_selected(registry, registry_candidates):
 
 # --- display names (06 §3.1, 2026-11-20) ---------------------------------------
 
-def test_missing_display_names_only_warn(registry, registry_candidates):
-    r = run(registry, registry_candidates)
-    assert not r.errors
-    assert any("alpha-ms-datascience" in w and "institution_short" in w for w in r.warnings)
+def test_selected_programs_need_a_short_name(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "institution_short", "")
+    set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "institution_short", "")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "institution_short is required")
+
+
+def test_other_degrees_need_an_abbreviation_from_the_name_or_a_label(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "program_id", "alpha-other-datascience")
+    set_cell(registry.programs, "program_id", "alpha-other-datascience", "degree_type", "other")
+    set_cell(registry.programs, "program_id", "alpha-other-datascience", "program_name", "Master of Data Things")
+    assert_error(run(registry, registry_candidates), "alpha-other-datascience", "no degree abbreviation")
+    set_cell(registry.programs, "program_id", "alpha-other-datascience", "program_name", "Master of Data Things (MDT)")
+    assert not [e for e in run(registry, registry_candidates).errors if "degree" in e]
 
 
 def test_display_names_must_agree_within_an_institution(registry, registry_candidates):
     set_cell(registry.programs, "program_id", "alpha-ms-datascience", "institution_short", "Alpha")
-    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "institution_name_zh", "阿尔法大学")
     set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "institution_short", "AU")
-    set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "institution_name_zh", "阿尔法大学")
     assert_error(run(registry, registry_candidates), "alpha-ms-businessanalytics", "same institution")
 
 

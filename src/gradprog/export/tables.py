@@ -1,8 +1,12 @@
 """The advisor export's tables (10 §2–§7). Pure functions: no files, no LLM, no page text."""
 
 import json
+import re
 from collections import defaultdict
 from dataclasses import dataclass
+
+from gradprog.extract.evaluate import normalize_value
+from gradprog.registry.names import degree_name
 
 LEVEL_RANK = {"program": 0, "department": 1, "graduate_school": 2, "university": 3}
 STATUS_RANK = ["found", "referenced_elsewhere", "mentioned_without_value", "not_mentioned", "extraction_failed",
@@ -17,7 +21,7 @@ SCOPE = {"all": "全部", "international": "国际学生", "domestic": "美国�
 SEASON = {"fall": "秋季", "spring": "春季", "summer": "夏季"}
 AREA = {"ds": "数据科学", "analytics": "商业分析", "stats": "统计", "econ": "经济", "mgmt_sci": "管理科学"}
 SEASON_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2}
-NO_VALUE = {"referenced_elsewhere": "见其他页面", "mentioned_without_value": "提到但未给值", "not_mentioned": "未提及",
+NO_VALUE = {"referenced_elsewhere": "见其他页面", "mentioned_without_value": "提到但未给值", "not_mentioned": "页面未写明",
             "extraction_failed": "待核实（抽取失败）", "page_unavailable": "待核实（页面无法访问）"}
 REASONS = {
     "term_unknown": "无法确定适用学期", "term_inferred": "学期由日期推算", "season_undetermined": "无法确定是哪一季",
@@ -32,7 +36,7 @@ REASONS = {
     "gold_mismatch": "抽取结果与人工标注不一致",
 }
 PROGRAM_COLUMNS = ["方向", "学校简称", "学校", "项目", "学位", "STEM", "时长", "托福（旧制）", "托福（新制）", "雅思", "GRE", "GMAT", "申请费",
-                   "学费", "入学季", "官网链接", "最后检查日期", "待核实说明"]
+                   "学费", "学费估算总额", "入学季", "官网链接", "最后检查日期", "待核实说明"]
 DEADLINE_COLUMNS = ["学校简称", "学校", "项目", "学期", "轮次", "类型", "适用对象", "日期", "状态", "待核实说明", "来源链接"]
 CHANGE_COLUMNS = ["日期", "学校简称", "学校", "项目", "变化", "页面链接"]
 REVIEW, STALE = "review", "stale"
@@ -46,9 +50,11 @@ class Cell:
 
 
 def school(program):
-    """"Columbia / 哥伦比亚大学"; the English name until the registry has both (06 §3.1)."""
+    """The short name (06 §3.1), with the Chinese name when the registry has one; the full name as a fallback."""
     short, zh = program.get("institution_short", ""), program.get("institution_name_zh", "")
-    return f"{short} / {zh}" if short and zh else program["institution_name"]
+    if not short:
+        return program["institution_name"]
+    return f"{short} / {zh}" if zh else short
 
 
 def school_key(program):
@@ -56,9 +62,7 @@ def school_key(program):
 
 
 def degree(program):
-    if program.get("degree_label"):
-        return program["degree_label"]
-    return "其他" if program["degree_type"] == "other" else program["degree_type"].upper()
+    return degree_name(program) or "其他"
 
 
 def term_key(term):
@@ -86,8 +90,8 @@ def reason_text(reason):
 def parse_view_row(row):
     """A row of derived/current.csv with its JSON columns decoded."""
     out = dict(row)
-    for key in ("conflict_type", "review_reasons", "extras"):
-        out[key] = json.loads(row[key]) if row[key] else ([] if key != "extras" else {})
+    for key in ("conflict_type", "review_reasons", "extras", "derived"):
+        out[key] = json.loads(row[key]) if row.get(key) else ([] if key in ("conflict_type", "review_reasons") else {})
     if row["field"] == "deadline" and row["value"]:
         out["value"] = json.loads(row["value"])
     out["stale"] = row["stale"] == "True"
@@ -187,7 +191,7 @@ def _tuition_text(amount, basis, year):
     if basis:
         text += f" / {BASIS.get(basis['value'], basis['value'])}"
     if year:
-        text += f"（{year['value'].replace('–', '-').replace('—', '-')}）"
+        text += f"（{normalize_value('tuition_year', year['value'])}）"
     if amount["extras"].get("includes_fees"):
         text += "，含杂费"
     return text
@@ -221,7 +225,7 @@ def program_row(program, rows, home_url, last_checked, gold_check=no_check, link
         cell("GRE", "gre_policy", lambda r: POLICY.get(r["value"], r["value"])),
         cell("GMAT", "gmat_policy", lambda r: POLICY.get(r["value"], r["value"])),
         cell("申请费", "app_fee_usd", lambda r: "免申请费" if float(r["value"]) == 0 else _money(r["value"])),
-        tuition,
+        tuition, _estimate(tuition, by_field),
         Cell("、".join(SEASON[s] for s in ("fall", "spring", "summer") if s in seasons(program["intake_terms"]))),
         Cell(home_url, home_url), Cell(last_checked),
     ]
@@ -229,14 +233,25 @@ def program_row(program, rows, home_url, last_checked, gold_check=no_check, link
     return cells
 
 
+LENGTH_IGNORED = ("conflict:", "multiple_values")
+
+
 def _length(out, by_field):
-    low = out.cell("时长", by_field["length_months_min"], lambda r: _number(r["value"]), field="length_months_min")
-    high = out.cell("时长", by_field["length_months_max"], lambda r: _number(r["value"]), field="length_months_max")
-    if choose(by_field["length_months_min"])[0] != "found" or choose(by_field["length_months_max"])[0] != "found":
-        return low
-    flag = "（待核实）" if REVIEW in (low.mark, high.mark) else ""
-    a, b = low.text.removesuffix("（待核实）"), high.text.removesuffix("（待核实）")
-    return Cell((f"{a} 个月" if a == b else f"{a}–{b} 个月") + flag, low.link or high.link, REVIEW if flag else "")
+    """Tracks of different lengths make one range (10 §3.1); their differences are not a reason to check."""
+    low_rows, high_rows = by_field["length_months_min"], by_field["length_months_max"]
+    (low_status, lows), (high_status, highs) = choose(low_rows), choose(high_rows)
+    if low_status != "found" or high_status != "found":
+        return out.cell("时长", low_rows, lambda r: _number(r["value"]), field="length_months_min")
+    low = min(float(r["value"]) for r in lows)
+    high = max(float(r["value"]) for r in highs)
+    reasons = [x for r in lows + highs for x in adjusted_reasons(r, out.intake_terms)
+               if not x.startswith(LENGTH_IGNORED)]
+    pid = out.program["program_id"]
+    if (out.gold_check(pid, "length_months_min", "found", [r for r in lows if float(r["value"]) == low])
+            or out.gold_check(pid, "length_months_max", "found", [r for r in highs if float(r["value"]) == high])):
+        reasons.append("gold_mismatch")
+    a, b = _number(low), _number(high)
+    return out._mark("时长", Cell(f"{a} 个月" if a == b else f"{a}–{b} 个月", lows[0]["evidence_url"]), reasons)
 
 
 def _tuition(out, by_field):
@@ -252,6 +267,30 @@ def _tuition(out, by_field):
 
     return out.cell("学费", by_field["tuition_amount_usd"], render, multi_check=False, sep="；",
                     field="tuition_amount_usd")
+
+
+PER_CREDIT = re.compile(r"per_credit x (\d+) credits")
+
+
+def _estimate(tuition, by_field):
+    """学费估算总额 (10 §3.1): tuition_program_total_usd_est of the chosen amounts; blank when none can be worked out."""
+    status, chosen = choose(by_field["tuition_amount_usd"])
+    if status != "found":
+        return Cell("")
+    by_total = {}
+    for row in chosen:
+        derived = row.get("derived") or {}
+        total = derived.get("tuition_program_total_usd_est")
+        if total is None:
+            continue
+        m = PER_CREDIT.match(derived.get("method") or "")
+        text = _money(total) + (f"（{_money(row['value'])} × {m.group(1)} 学分）" if m else "")
+        if float(total) not in by_total or not m:      # one entry per amount; a stated total wins over the product
+            by_total[float(total)] = text
+    texts = list(by_total.values())
+    if not texts:
+        return Cell("")
+    return Cell("；".join(texts) + ("（待核实）" if tuition.mark == REVIEW else ""), tuition.link, tuition.mark)
 
 
 def deadline_rows(program, rows, on_date, gold_check=no_check):

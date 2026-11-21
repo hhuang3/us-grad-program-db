@@ -83,10 +83,10 @@ def test_missing_values_are_named_not_left_blank():
     c = cells([row("gre_policy", status="referenced_elsewhere", ref="Graduate School page"),
                row("gmat_policy", status="not_mentioned"), row("app_fee_usd", status="mentioned_without_value"),
                row("toefl_min_legacy", status="extraction_failed")])
-    assert c["GRE"].text == "见其他页面：Graduate School page" and c["GMAT"].text == "未提及"
+    assert c["GRE"].text == "见其他页面：Graduate School page" and c["GMAT"].text == "页面未写明"
     assert c["申请费"].text == "提到但未给值"
     assert c["托福（旧制）"].text == "待核实（抽取失败）" and c["托福（旧制）"].mark == REVIEW
-    assert c["雅思"].text == "未提及"
+    assert c["雅思"].text == "页面未写明"
 
 
 def test_review_reasons_mark_the_cell_and_explain_it():
@@ -168,24 +168,23 @@ def csv_row(r):
     return out
 
 
-def test_workbook_has_four_sheets_skips_holdout_and_carries_no_page_text(tmp_path):
+def test_workbook_has_four_sheets_with_filters_and_carries_no_page_text(tmp_path):
     index = pd.DataFrame([{"page_id": "pg-1", "retrieved_at": "2026-11-15T11:00:00Z", "classification": "unchanged"},
                           {"page_id": "pg-2", "retrieved_at": "2026-11-15T11:00:00Z", "classification": "unchanged"}])
     view = [csv_row(row("gre_policy", "optional")), csv_row(deadline("2027-01-07")),
             csv_row({**row("gre_policy", "required", page="pg-2"), "program_id": "p2"})]
     for r in view:
         r["evidence_text"] = "secret page text"
-    sheets, counts = build(view, Registry(), index, [], "2026-11-20", holdout={"p2"})
+    sheets, counts = build(view, Registry(), index, [], "2026-11-20")
     assert list(sheets) == ["说明", "项目总表", "截止日期", "最近变化"]
-    assert counts["programs"] == 1 and counts["deadlines"] == 1
+    assert counts["programs"] == 2 and counts["deadlines"] == 1
     path = tmp_path / "out.xlsx"
     write(sheets, path)
     book = load_workbook(path)
     text = " ".join(str(c.value) for s in book for r in s.iter_rows() for c in r)
-    assert DISCLAIMER in text and "secret" not in text and "Holdout MS" not in text
+    assert DISCLAIMER in text and "secret" not in text and "Holdout MS" in text and "页面未写明" in text
     assert book["项目总表"]["B2"].value == "Alpha / 阿尔法大学"
-    sheets, counts = build(view, Registry(), index, [], "2026-11-20", holdout={"p2"}, include_holdout=True)
-    assert counts["programs"] == 2
+    assert all(sheet.auto_filter.ref for sheet in book)
 
 
 # 10 §3 (2026-11-20 revision)
@@ -193,8 +192,10 @@ def test_area_school_and_degree_columns():
     c = cells([])
     assert (c["方向"].text, c["学校简称"].text, c["学位"].text) == ("数据科学", "Alpha / 阿尔法大学", "MS")
     assert degree({**PROGRAM, "degree_type": "other", "degree_label": "MQE"}) == "MQE"
-    assert degree({**PROGRAM, "degree_type": "other"}) == "其他"
+    assert degree({**PROGRAM, "degree_type": "other", "program_name": "MQM: Business Analytics"}) == "MQM"
+    assert degree({**PROGRAM, "degree_type": "other", "program_name": "Master of Things"}) == "其他"
     assert school({**PROGRAM, "institution_short": ""}) == "Alpha University"
+    assert school({**PROGRAM, "institution_name_zh": ""}) == "Alpha"
 
 
 def test_deadlines_sort_by_school_then_term_then_date():
@@ -266,3 +267,36 @@ def test_snapshot_hashes_use_the_newest_normalizer():
     index = pd.DataFrame([{"snapshot_id": "s1", "normalizer_version": "2", "norm_sha256": "new"},
                           {"snapshot_id": "s1", "normalizer_version": "1", "norm_sha256": "old"}])
     assert _norm_sha(index) == {"s1": "new"}
+
+
+# 10 §3.1 (2026-11-22)
+def test_track_lengths_merge_into_one_range_without_a_check_mark():
+    rows = [row("length_months_min", "9", reasons=["conflict:level_mismatch"]),
+            row("length_months_min", "12", page="pg-2", reasons=["conflict:level_mismatch"]),
+            row("length_months_max", "16"), row("length_months_max", "12", page="pg-2")]
+    c = cells(rows)
+    assert c["时长"].text == "9–16 个月" and c["时长"].mark == ""
+
+
+def test_other_reasons_still_mark_the_length():
+    c = cells([row("length_months_min", "21", reasons=["term_unknown"]), row("length_months_max", "21")])
+    assert c["时长"].text == "21 个月（待核实）" and "无法确定适用学期" in c["待核实说明"].text
+
+
+def test_estimated_total_and_year_format():
+    c = cells([row("tuition_amount_usd", "1528", group="g1", extras={"includes_fees": False},
+                   ).__or__({"derived": {"tuition_program_total_usd_est": 55008, "method": "per_credit x 36 credits"}}),
+               row("tuition_basis", "per_credit", group="g1"), row("tuition_year", "2026-27", group="g1")])
+    assert c["学费"].text == "$1,528 / 学分（2026-2027）"
+    assert c["学费估算总额"].text == "$55,008（$1,528 × 36 学分）"
+    c = cells([row("tuition_amount_usd", "1288", group="g1", extras={"includes_fees": False})
+               | {"derived": {"tuition_program_total_usd_est": None, "method": ""}}])
+    assert c["学费估算总额"].text == ""
+
+
+def test_an_estimate_equal_to_the_stated_total_is_written_once():
+    c = cells([row("tuition_amount_usd", "1250", group="g1", extras={"includes_fees": False})
+               | {"derived": {"tuition_program_total_usd_est": 46250, "method": "per_credit x 37 credits"}},
+               row("tuition_amount_usd", "46250", group="g2", extras={"includes_fees": False})
+               | {"derived": {"tuition_program_total_usd_est": 46250, "method": "program_total"}}])
+    assert c["学费估算总额"].text == "$46,250"
