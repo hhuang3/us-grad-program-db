@@ -1,21 +1,21 @@
-date,page_id,program_id,application_info,description
-2026-10-25,pg-0023,uconn-ms-businessanalyticsprojectmanagement,yes,补充新制托福 4.5；PTE 要求从 53 提高到 60，多邻国从 100 提高到 110
-2026-10-25,pg-0028,uchicago-ms-applieddatascience,no,课程介绍更新（供应链课程改名）
-2026-10-25,pg-0040,uwmadison-ms-quantitativeeconomics,yes,改写 SEVP 审批说明：现在可接受 J-1 学生，需要 F-1 签证的申请者要等审批通过后才会被考虑
-2026-11-01,pg-0041,uwmadison-ms-quantitativeeconomics,yes,申请页搬到新网址；SEVP 审批说明同步改写（可接受 J-1，F-1 需等审批）
-2026-11-01,pg-0049,ucla-other-quantitativeeconomics,yes,Fast Track 第一档的回复日期从 2026-12-01 改为 2026-12-15；补充部分国家的学历要求
-2026-11-01,pg-0055,duke-other-mqmbusinessanalytics,no,托福分数表的标签改写，分数不变
-2026-11-01,pg-0065,washu-ms-businessanalytics,yes,删除 2026 年 10 月延期入学方案（截止日期 2026-09-15）
-2026-11-07,pg-0003,nyu-ms-datascience,no,课程方向改名
-2026-11-07,pg-0004,nyu-ms-datascience,no,宣讲会改为提供录像
-2026-11-07,pg-0046,jhu-ma-economics,no,研究生院截止日期总表中其他项目开放申请，Economics 的日期不变
-2026-11-07,pg-0069,uiuc-ms-statistics,no,课程要求调整
-2026-11-08,pg-0028,uchicago-ms-applieddatascience,yes,删除已过期的两年制论文方向截止日期（2025-12-04）
-2026-11-08,pg-0030,uchicago-ms-applieddatascience,yes,两年制论文方向的问答改写，删除已过期的申请时间说明
-2026-11-08,pg-0032,uwmadison-ms-statisticsdatascience,yes,取消春季入学，删除春季截止日期（10 月 1 日）；延期入学政策改为特殊情况可申请
-2026-11-08,pg-0068,washu-ms-businessanalytics,yes,学费页删除杂费明细，学费金额不变
-2026-11-15,pg-0007,unt-ms-datascience,yes,过期的 Fall 2026 优先截止日期换成 Spring 2027 截止日期（国际 2026-11-09，美国本土 2026-12-01）
-2026-11-15,pg-0009,unt-ms-datascience,no,课程名称改动
-2026-11-15,pg-0025,bu-ms-businessanalytics,yes,删除 “Apply for Fall 2026” 按钮和滚动录取说明；截止日期表改为逐行排列，日期不变
-2026-11-15,pg-0026,bu-ms-businessanalytics,yes,更正 Round 3 截止日期年份笔误（2026 改为 2027），新增 Round 6（2027-04-20）
-2026-11-15,pg-0055,duke-other-mqmbusinessanalytics,yes,本科专业要求放宽为各专业均可申请
+date,page_id,program_id,application_info,fields,description
+2026-10-25,pg-0023,uconn-ms-businessanalyticsprojectmanagement,yes,scores,补充新制托福 4.5；PTE 要求从 53 提高到 60，多邻国从 100 提高到 110
+2026-10-25,pg-0028,uchicago-ms-applieddatascience,no,,课程介绍更新（供应链课程改名）
+2026-10-25,pg-0040,uwmadison-ms-quantitativeeconomics,yes,,改写 SEVP 审批说明：现在可接受 J-1 学生，需要 F-1 签证的申请者要等审批通过后才会被考虑
+2026-11-01,pg-0041,uwmadison-ms-quantitativeeconomics,yes,,申请页搬到新网址；SEVP 审批说明同步改写（可接受 J-1，F-1 需等审批）
+2026-11-01,pg-0049,ucla-other-quantitativeeconomics,yes,deadline,Fast Track 第一档的回复日期从 2026-12-01 改为 2026-12-15；补充部分国家的学历要求
+2026-11-01,pg-0055,duke-other-mqmbusinessanalytics,no,,托福分数表的标签改写，分数不变
+2026-11-01,pg-0065,washu-ms-businessanalytics,yes,deadline,删除 2026 年 10 月延期入学方案（截止日期 2026-09-15）
+2026-11-07,pg-0003,nyu-ms-datascience,no,,课程方向改名
+2026-11-07,pg-0004,nyu-ms-datascience,no,,宣讲会改为提供录像
+2026-11-07,pg-0046,jhu-ma-economics,no,,研究生院截止日期总表中其他项目开放申请，Economics 的日期不变
+2026-11-07,pg-0069,uiuc-ms-statistics,no,,课程要求调整
+2026-11-08,pg-0028,uchicago-ms-applieddatascience,yes,deadline,删除已过期的两年制论文方向截止日期（2025-12-04）
+2026-11-08,pg-0030,uchicago-ms-applieddatascience,yes,deadline,两年制论文方向的问答改写，删除已过期的申请时间说明
+2026-11-08,pg-0032,uwmadison-ms-statisticsdatascience,yes,deadline;intake,取消春季入学，删除春季截止日期（10 月 1 日）；延期入学政策改为特殊情况可申请
+2026-11-08,pg-0068,washu-ms-businessanalytics,yes,,学费页删除杂费明细，学费金额不变
+2026-11-15,pg-0007,unt-ms-datascience,yes,deadline,过期的 Fall 2026 优先截止日期换成 Spring 2027 截止日期（国际 2026-11-09，美国本土 2026-12-01）
+2026-11-15,pg-0009,unt-ms-datascience,no,,课程名称改动
+2026-11-15,pg-0025,bu-ms-businessanalytics,yes,deadline,删除 “Apply for Fall 2026” 按钮和滚动录取说明；截止日期表改为逐行排列，日期不变
+2026-11-15,pg-0026,bu-ms-businessanalytics,yes,deadline,更正 Round 3 截止日期年份笔误（2026 改为 2027），新增 Round 6（2027-04-20）
+2026-11-15,pg-0055,duke-other-mqmbusinessanalytics,yes,,本科专业要求放宽为各专业均可申请

@@ -278,8 +278,6 @@ def cmd_export(args):
     from gradprog.snapshot.store import SnapshotStore
     from gradprog.registry.tables import load_registry
 
-    if args.audience == "student":
-        raise ValueError("the student version waits for the owner to confirm its design (10 §8)")
     on = args.on or datetime.now(timezone.utc).date().isoformat()
     index = pd.read_csv(SNAPSHOTS / "index.csv", dtype=str, keep_default_na=False)
     snapshots = index.drop_duplicates("snapshot_id", keep="last").set_index("snapshot_id")
@@ -297,7 +295,7 @@ def cmd_export(args):
 
     sheets, counts = build(read_csv(EXTRACTION / "derived" / "current.csv"), load_registry(REGISTRY), index,
                            read_csv(REPO / "data" / "changes" / "change_log.csv"), on,
-                           read_csv(REPO / "data" / "gold" / "gold_set_v1.csv"), link_of)
+                           read_csv(REPO / "data" / "gold" / "gold_set_v1.csv"), link_of, args.audience)
     path = args.out or REPO / "data" / "exports" / f"{args.audience}_{on}.xlsx"
     write(sheets, path)
     print(f"wrote {path}")

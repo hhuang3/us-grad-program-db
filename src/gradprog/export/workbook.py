@@ -11,6 +11,7 @@ from gradprog.export.tables import (
     AREA, CHANGE_COLUMNS, DEADLINE_COLUMNS, PROGRAM_COLUMNS, REVIEW, STALE, Cell, change_rows, deadline_rows,
     parse_view_row, program_row, school_key,
 )
+from gradprog.export.student import student_sheets
 from gradprog.extract.evaluate import normalize_value
 from gradprog.snapshot.store import SUCCESS
 
@@ -106,29 +107,40 @@ class GoldCheck:
         return (date, row["value"].get("deadline_type")) not in {(a["value"], a["deadline_type"]) for a in answers}
 
 
-def build(view_rows, registry, index, changes, on_date, gold_rows=(), link_of=None):
-    """{sheet: (columns, rows)} and counts; rows are lists of Cell."""
+def collect(view_rows, registry, index, on_date, gold_rows=(), link_of=None):
+    """Both versions' data (10 §3–§5): per program its row of the program table and its deadline rows."""
     view = [parse_view_row(r) for r in view_rows]
     gold = GoldCheck(gold_rows, view, _norm_sha(index))
     chosen, pages = _programs(registry)
     by_program = defaultdict(list)
     for row in view:
         by_program[row["program_id"]].append(row)
-    program_table, deadline_table, checked = [], [], []
     area_order = list(AREA)
     chosen.sort(key=lambda x: (area_order.index(x[0]["cip_group"]) if x[0]["cip_group"] in area_order else len(area_order),
                                school_key(x[0]), x[0]["program_name"]))
+    out = []
     for program, page_ids in chosen:
         rows = [r for r in by_program[program["program_id"]] if r["page_id"] in page_ids]
         homes = [p for p in page_ids if pages.loc[p, "page_type"] == "program_home"] or page_ids
+        home = pages.loc[homes[0], "url"]
         last = _last_checked(page_ids, index)
-        checked.append(last)
-        program_table.append(program_row(program, rows, pages.loc[homes[0], "url"], last, gold,
-                                         link_of or (lambda row: None)))
-        deadline_table.extend(deadline_rows(program, rows, on_date, gold))
-    deadline_table = [cells for _, cells in sorted(deadline_table, key=lambda x: x[0])]
-    programs = {p["program_id"]: p for p, _ in chosen}
-    change_table = change_rows(changes, programs, dict(zip(registry.pages["page_id"], registry.pages["url"])))
+        out.append({"program": program, "home": home, "last_checked": last,
+                    "cells": program_row(program, rows, home, last, gold, link_of or (lambda row: None)),
+                    "deadlines": deadline_rows(program, rows, on_date, gold)})
+    page_urls = dict(zip(registry.pages["page_id"], registry.pages["url"]))
+    return out, page_urls, gold
+
+
+def build(view_rows, registry, index, changes, on_date, gold_rows=(), link_of=None, audience="advisor"):
+    """{sheet: (columns, rows)} and counts; rows are lists of Cell."""
+    collected, page_urls, gold = collect(view_rows, registry, index, on_date, gold_rows, link_of)
+    if audience == "student":
+        return student_sheets(collected, changes, on_date, page_urls)
+    program_table = [c["cells"] for c in collected]
+    deadline_table = [cells for _, cells in sorted((d for c in collected for d in c["deadlines"]), key=lambda x: x[0])]
+    programs = {c["program"]["program_id"]: c["program"] for c in collected}
+    change_table = change_rows(changes, programs, page_urls)
+    checked = [c["last_checked"] for c in collected]
     counts = {
         "programs": len(program_table),
         "program_cells_in_review": sum(c.mark == REVIEW for row in program_table for c in row),
