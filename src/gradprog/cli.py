@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from datetime import date
 from pathlib import Path
 
 from gradprog.util.download import DownloadError, Downloader, register_manual
@@ -175,7 +176,8 @@ def cmd_snapshot(args):
 
         from gradprog.snapshot.manual import manual_due, render_manual_due
 
-        due = manual_due(reg, store, today=datetime.now(timezone.utc).date().isoformat(), url_check=_url_check())
+        today = args.on or datetime.now(timezone.utc).date().isoformat()
+        due = manual_due(reg, store, today=today, url_check=_url_check())
         path = SNAPSHOTS / "manual_due.md"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(render_manual_due(due), encoding="utf-8")
@@ -248,7 +250,7 @@ def cmd_extract(args):
     elif args.extract_command == "replay":
         print(f"replayed {replay(registry, snapshots, store, settings, StemReference.load(REF))} call(s)")
     elif args.extract_command == "evaluate":
-        print(run_evaluation(GOLD_SET, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
+        print(run_evaluation(args.gold, rebuild_view(registry, store, settings), snapshots.read_index(), args.label,
                              EXTRACTION_STATS, EXTRACTION / "derived"))
     elif args.extract_command == "summary":
         print(render_summary(rebuild_view(registry, store, settings), pages))
@@ -266,7 +268,41 @@ def cmd_extract(args):
         print(f"cost ${run['usd']:.4f}; total ${result['spent_usd']:.4f} of ${result['cap_usd']:.2f}")
 
 
-def main(argv=None):
+def cmd_export(args):
+    from datetime import datetime, timezone
+
+    import pandas as pd
+
+    from gradprog.export.links import anchors, resolve
+    from gradprog.export.workbook import build, read_csv, write
+    from gradprog.snapshot.store import SnapshotStore
+    from gradprog.registry.tables import load_registry
+
+    on = args.on or datetime.now(timezone.utc).date().isoformat()
+    index = pd.read_csv(SNAPSHOTS / "index.csv", dtype=str, keep_default_na=False)
+    snapshots = index.drop_duplicates("snapshot_id", keep="last").set_index("snapshot_id")
+    cache = {}
+
+    def link_of(row):
+        """10 §3.1: the page a reference names, from the stored raw snapshot of the page that names it."""
+        sid = row["snapshot_id"]
+        if sid not in cache:
+            meta = snapshots.loc[sid]
+            path = SnapshotStore(SNAPSHOTS).raw_path(row["page_id"], sid, meta["content_type"])
+            cache[sid] = anchors(path.read_bytes(), meta["content_type"], meta["final_url"] or meta["requested_url"]) \
+                if path.exists() else []
+        return resolve(row.get("reference_target"), cache[sid])
+
+    sheets, counts = build(read_csv(EXTRACTION / "derived" / "current.csv"), load_registry(REGISTRY), index,
+                           read_csv(REPO / "data" / "changes" / "change_log.csv"), on,
+                           read_csv(REPO / "data" / "gold" / "gold_set_v1.csv"), link_of, args.audience)
+    path = args.out or REPO / "data" / "exports" / f"{args.audience}_{on}.xlsx"
+    write(sheets, path)
+    print(f"wrote {path}")
+    print(counts)
+
+
+def build_parser():
     p = argparse.ArgumentParser(prog="gradprog")
     sub = p.add_subparsers(dest="command", required=True)
 
@@ -313,7 +349,9 @@ def main(argv=None):
     sr = ssub.add_parser("run", help="fetch automatically captured pages")
     sr.add_argument("--page", action="append", help="only this page_id (repeatable)")
     sr.add_argument("--dry-run", action="store_true", help="list the pages that would be requested")
-    ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    md = ssub.add_parser("manual-due", help="write data/snapshots/manual_due.md")
+    md.add_argument("--on", type=lambda s: date.fromisoformat(s).isoformat(),
+                    help="list what is due on this date (YYYY-MM-DD), such as the planned capture day; default today (UTC)")
     sm = ssub.add_parser("register-manual", help="register browser-saved .mhtml/.pdf files")
     sm.add_argument("--page")
     sm.add_argument("--file", type=Path)
@@ -337,10 +375,23 @@ def main(argv=None):
     esub.add_parser("replay", help="rerun the rule code on stored outputs, without calling the API")
     ev = esub.add_parser("evaluate", help="score the current results against the gold set (09 §5)")
     ev.add_argument("--label", required=True, help="name of this evaluation, such as baseline")
+    ev.add_argument("--gold", type=Path, default=GOLD_SET, help="answer file (09 §4, §6); defaults to the gold set")
     es = esub.add_parser("summary", help="statuses and review reasons per page, without values or page text")
     es.add_argument("--pages", help="comma-separated page_ids")
     ext.set_defaults(func=cmd_extract)
 
+    exp = sub.add_parser("export", help="P5 workbook for advisors (10)")
+    exp.add_argument("--out", type=Path, help="output .xlsx; default data/exports/advisor_<date>.xlsx")
+    exp.add_argument("--on", type=lambda s: date.fromisoformat(s).isoformat(),
+                     help="date deadlines are judged expired against (YYYY-MM-DD); default today (UTC)")
+    exp.add_argument("--audience", choices=["advisor", "student"], default="advisor",
+                     help="advisor: full detail with review reasons; student: the short version (10 §8)")
+    exp.set_defaults(func=cmd_export)
+    return p
+
+
+def main(argv=None):
+    p = build_parser()
     args = p.parse_args(argv)
     if getattr(args, "ready", False) and not args.batch:
         p.error("--ready requires --batch")

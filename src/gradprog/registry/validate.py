@@ -10,6 +10,7 @@ import pandas as pd
 
 from gradprog.ref.targets import GROUP_ORDER
 from gradprog.registry import tables as t
+from gradprog.registry.names import degree_abbreviation
 from gradprog.registry.robots import crawl_allowed_for
 from gradprog.registry.urls import UrlError, domain_of, normalize_url
 from gradprog.util.manifest import UTC_TIMESTAMP
@@ -150,6 +151,26 @@ def _check_values(registry, errors):
     for k, v in zip(d["domain"], d["robots_checked_at"]):
         if v and not UTC_TIMESTAMP.match(v):
             errors.append(f"domains: {k}: robots_checked_at={v!r} is not UTC YYYY-MM-DDTHH:MM:SSZ")
+
+
+def _check_display_names(registry, errors, warnings):
+    """06 §3.1 (2026-11-22): school short names, and the degree name for degree_type = other."""
+    by_school = {}
+    for r in registry.programs.itertuples(index=False):
+        pid = r.program_id
+        names = (r.institution_short, r.institution_name_zh)
+        if any(names):
+            first = by_school.setdefault(r.unitid, (pid, names))
+            if first[1] != names:
+                errors.append(f"programs: {pid}: institution_short / institution_name_zh differ from {first[0]} "
+                              "at the same institution")
+        if r.status == "selected" and not r.institution_short.strip():
+            errors.append(f"programs: {pid}: institution_short is required when status=selected")
+        if r.degree_label and r.degree_type != "other":
+            errors.append(f"programs: {pid}: degree_label is only for degree_type=other")
+        if (r.status == "selected" and r.degree_type == "other" and not r.degree_label
+                and not degree_abbreviation(r.program_name)):
+            errors.append(f"programs: {pid}: no degree abbreviation in program_name; fill degree_label, such as MQE")
 
 
 def _check_programs(registry, candidates, errors):
@@ -318,6 +339,7 @@ def validate(registry, candidates, previous=None, ready=False, batch=None, url_c
     _check_keys(registry, result.errors)
     _check_values(registry, result.errors)
     _check_programs(registry, candidates, result.errors)
+    _check_display_names(registry, result.errors, result.warnings)
     _check_pages(registry, result.errors)
     if previous:
         _check_previous(registry, previous, result.errors)
