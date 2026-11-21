@@ -15,6 +15,8 @@ DEADLINE_TYPE = {"application": "申请截止", "deposit": "押金", "decision_r
                  "international_docs": "签证材料", "other": "其他"}
 SCOPE = {"all": "全部", "international": "国际学生", "domestic": "美国本土", "funding_consideration": "奖助评选"}
 SEASON = {"fall": "秋季", "spring": "春季", "summer": "夏季"}
+AREA = {"ds": "数据科学", "analytics": "商业分析", "stats": "统计", "econ": "经济", "mgmt_sci": "管理科学"}
+SEASON_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2}
 NO_VALUE = {"referenced_elsewhere": "见其他页面", "mentioned_without_value": "提到但未给值", "not_mentioned": "未提及",
             "extraction_failed": "待核实（抽取失败）", "page_unavailable": "待核实（页面无法访问）"}
 REASONS = {
@@ -27,11 +29,12 @@ REASONS = {
     "audience_doubtful": "页面可能不是写给申请者的", "coverage_gap": "指向的页面尚未收录",
     "repeated_call_failure": "多次抽取失败", "tuition_basis_missing": "学费没写口径",
     "term_outside_intake": "该学期不在项目入学季内", "multiple_values": "页面上有多个不同的值",
+    "gold_mismatch": "抽取结果与人工标注不一致",
 }
-PROGRAM_COLUMNS = ["学校", "项目", "学位", "STEM", "时长", "托福（旧制）", "托福（新制）", "雅思", "GRE", "GMAT", "申请费",
+PROGRAM_COLUMNS = ["方向", "学校简称", "学校", "项目", "学位", "STEM", "时长", "托福（旧制）", "托福（新制）", "雅思", "GRE", "GMAT", "申请费",
                    "学费", "入学季", "官网链接", "最后检查日期", "待核实说明"]
-DEADLINE_COLUMNS = ["学校", "项目", "学期", "轮次", "类型", "适用对象", "日期", "状态", "待核实说明", "来源链接"]
-CHANGE_COLUMNS = ["日期", "学校", "项目", "变化", "页面链接"]
+DEADLINE_COLUMNS = ["学校简称", "学校", "项目", "学期", "轮次", "类型", "适用对象", "日期", "状态", "待核实说明", "来源链接"]
+CHANGE_COLUMNS = ["日期", "学校简称", "学校", "项目", "变化", "页面链接"]
 REVIEW, STALE = "review", "stale"
 
 
@@ -40,6 +43,38 @@ class Cell:
     text: str
     link: str = ""
     mark: str = ""          # "", REVIEW or STALE
+
+
+def school(program):
+    """"Columbia / 哥伦比亚大学"; the English name until the registry has both (06 §3.1)."""
+    short, zh = program.get("institution_short", ""), program.get("institution_name_zh", "")
+    return f"{short} / {zh}" if short and zh else program["institution_name"]
+
+
+def school_key(program):
+    return (program.get("institution_short") or program["institution_name"]).lower()
+
+
+def degree(program):
+    if program.get("degree_label"):
+        return program["degree_label"]
+    return "其他" if program["degree_type"] == "other" else program["degree_type"].upper()
+
+
+def term_key(term):
+    """Spring, Summer, Fall of a year in order; unknown terms last."""
+    parts = (term or "").split(" ")
+    if len(parts) == 2 and parts[1].isdigit() and parts[0] in SEASON_ORDER:
+        return (0, int(parts[1]), SEASON_ORDER[parts[0]])
+    return (1, 0, 0)
+
+
+def no_check(*args):
+    return False
+
+
+def no_link(row):
+    return None
 
 
 def reason_text(reason):
@@ -107,20 +142,25 @@ def _money(value):
 
 
 class ProgramRow:
-    def __init__(self, intake_terms):
-        self.intake_terms = intake_terms
+    def __init__(self, program, gold_check=no_check, link_of=no_link):
+        self.program, self.intake_terms = program, program["intake_terms"]
+        self.gold_check, self.link_of = gold_check, link_of
         self.notes = []
 
-    def cell(self, label, rows, render, multi_check=True, sep=" / "):
+    def cell(self, label, rows, render, multi_check=True, sep=" / ", field=None):
         status, chosen = choose(rows)
         link = chosen[0]["evidence_url"] if chosen else ""
         reasons = []
         for row in chosen:
             reasons.extend(adjusted_reasons(row, self.intake_terms))
+        if field and self.gold_check(self.program["program_id"], field, status, chosen):
+            reasons.append("gold_mismatch")
         if status != "found":
             text = NO_VALUE[status]
-            if status == "referenced_elsewhere" and chosen[0].get("reference_target"):
-                text = f"见其他页面：{chosen[0]['reference_target']}"
+            if status == "referenced_elsewhere":
+                if chosen[0].get("reference_target"):
+                    text = f"见其他页面：{chosen[0]['reference_target']}"
+                link = self.link_of(chosen[0]) or link
             if status in ("extraction_failed", "page_unavailable"):
                 return self._mark(label, Cell(text, link), reasons, already_marked=True)
             return self._mark(label, Cell(text, link if status == "referenced_elsewhere" else ""), reasons)
@@ -132,7 +172,7 @@ class ProgramRow:
     def _mark(self, label, cell, reasons, already_marked=False):
         reasons = list(dict.fromkeys(reasons))
         if reasons or already_marked:
-            if not already_marked:
+            if not cell.text.startswith("待核实"):
                 cell.text += "（待核实）"
             cell.mark = REVIEW
             if reasons:
@@ -153,14 +193,18 @@ def _tuition_text(amount, basis, year):
     return text
 
 
-def program_row(program, rows, home_url, last_checked):
+def program_row(program, rows, home_url, last_checked, gold_check=no_check, link_of=no_link):
     """One row of the program table (10 §3)."""
     by_field = defaultdict(list)
     for row in rows:
         by_field[row["field"]].append(row)
-    out = ProgramRow(program["intake_terms"])
-    stem = out.cell("STEM", by_field["stem_claim_on_page"],
-                    lambda r: {"yes": "是（页面声称）", "no": "否（页面写明）"}.get(r["value"], r["value"]))
+    out = ProgramRow(program, gold_check, link_of)
+
+    def cell(label, field, render):
+        return out.cell(label, by_field[field], render, field=field)
+
+    stem = cell("STEM", "stem_claim_on_page",
+                lambda r: {"yes": "是（页面声称）", "no": "否（页面写明）"}.get(r["value"], r["value"]))
     cips = [r for r in by_field["cip_code"] if r["value_status"] == "found"]
     if cips:
         flag = "（待核实）" if stem.text.endswith("（待核实）") else ""
@@ -168,15 +212,15 @@ def program_row(program, rows, home_url, last_checked):
     length = _length(out, by_field)
     tuition = _tuition(out, by_field)
     cells = [
-        Cell(program["institution_name"]), Cell(program["program_name"]),
-        Cell("其他" if program["degree_type"] == "other" else program["degree_type"].upper()),
+        Cell(AREA.get(program["cip_group"], program["cip_group"])), Cell(school(program)),
+        Cell(program["institution_name"]), Cell(program["program_name"]), Cell(degree(program)),
         stem, length,
-        out.cell("托福（旧制）", by_field["toefl_min_legacy"], lambda r: _number(r["value"])),
-        out.cell("托福（新制）", by_field["toefl_min_new_scale"], lambda r: _score(r["value"], "toefl_min_new_scale")),
-        out.cell("雅思", by_field["ielts_min_overall"], lambda r: _score(r["value"], "ielts_min_overall")),
-        out.cell("GRE", by_field["gre_policy"], lambda r: POLICY.get(r["value"], r["value"])),
-        out.cell("GMAT", by_field["gmat_policy"], lambda r: POLICY.get(r["value"], r["value"])),
-        out.cell("申请费", by_field["app_fee_usd"], lambda r: "免申请费" if float(r["value"]) == 0 else _money(r["value"])),
+        cell("托福（旧制）", "toefl_min_legacy", lambda r: _number(r["value"])),
+        cell("托福（新制）", "toefl_min_new_scale", lambda r: _score(r["value"], "toefl_min_new_scale")),
+        cell("雅思", "ielts_min_overall", lambda r: _score(r["value"], "ielts_min_overall")),
+        cell("GRE", "gre_policy", lambda r: POLICY.get(r["value"], r["value"])),
+        cell("GMAT", "gmat_policy", lambda r: POLICY.get(r["value"], r["value"])),
+        cell("申请费", "app_fee_usd", lambda r: "免申请费" if float(r["value"]) == 0 else _money(r["value"])),
         tuition,
         Cell("、".join(SEASON[s] for s in ("fall", "spring", "summer") if s in seasons(program["intake_terms"]))),
         Cell(home_url, home_url), Cell(last_checked),
@@ -186,8 +230,8 @@ def program_row(program, rows, home_url, last_checked):
 
 
 def _length(out, by_field):
-    low = out.cell("时长", by_field["length_months_min"], lambda r: _number(r["value"]))
-    high = out.cell("时长", by_field["length_months_max"], lambda r: _number(r["value"]))
+    low = out.cell("时长", by_field["length_months_min"], lambda r: _number(r["value"]), field="length_months_min")
+    high = out.cell("时长", by_field["length_months_max"], lambda r: _number(r["value"]), field="length_months_max")
     if choose(by_field["length_months_min"])[0] != "found" or choose(by_field["length_months_max"])[0] != "found":
         return low
     flag = "（待核实）" if REVIEW in (low.mark, high.mark) else ""
@@ -206,10 +250,11 @@ def _tuition(out, by_field):
         group = groups.get(amount.get("group_id"), {})
         return _tuition_text(amount, group.get("tuition_basis"), group.get("tuition_year"))
 
-    return out.cell("学费", by_field["tuition_amount_usd"], render, multi_check=False, sep="；")
+    return out.cell("学费", by_field["tuition_amount_usd"], render, multi_check=False, sep="；",
+                    field="tuition_amount_usd")
 
 
-def deadline_rows(program, rows, on_date):
+def deadline_rows(program, rows, on_date, gold_check=no_check):
     """Rows of the deadline table for one program (10 §4), as (sort key, cells)."""
     found = [r for r in rows if r["field"] == "deadline" and r["value_status"] == "found"
              and CONTAMINATED not in r["conflict_type"]]
@@ -220,18 +265,21 @@ def deadline_rows(program, rows, on_date):
     out = []
     for (date, kind, scope), row in kept.items():
         term = row["valid_for_term"]
-        reasons = list(dict.fromkeys(adjusted_reasons(row, program["intake_terms"])))
+        reasons = adjusted_reasons(row, program["intake_terms"])
+        if gold_check(program["program_id"], "deadline", "found", [row]):
+            reasons.append("gold_mismatch")
+        reasons = list(dict.fromkeys(reasons))
         expired = date != "rolling" and date < on_date
         status = "已过期" if expired else "待核实" if reasons else ""
         mark = STALE if expired else REVIEW if reasons else ""
-        cells = [Cell(program["institution_name"]), Cell(program["program_name"]),
+        cells = [Cell(school(program)), Cell(program["institution_name"]), Cell(program["program_name"]),
                  Cell("未确定" if term == "term_unknown" else term), Cell(row["value"].get("round_name") or ""),
                  Cell(DEADLINE_TYPE.get(kind, kind or "")), Cell(SCOPE.get(scope, scope or "")),
                  Cell("滚动录取" if date == "rolling" else date), Cell(status),
                  Cell("、".join(reason_text(r) for r in reasons)), Cell(row["evidence_url"], row["evidence_url"])]
         for c in cells:
             c.mark = mark
-        out.append(((expired, program["institution_name"], program["program_name"], date), cells))
+        out.append(((expired, school_key(program), term_key(term), date, program["program_name"]), cells))
     return out
 
 
@@ -243,6 +291,6 @@ def change_rows(changes, programs, page_urls):
         if change["application_info"] != "yes" or program is None:
             continue
         url = page_urls.get(change["page_id"], "")
-        out.append([Cell(change["date"]), Cell(program["institution_name"]), Cell(program["program_name"]),
+        out.append([Cell(change["date"]), Cell(school(program)), Cell(program["institution_name"]), Cell(program["program_name"]),
                     Cell(change["description"]), Cell(url, url)])
     return out

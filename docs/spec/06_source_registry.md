@@ -101,8 +101,11 @@
 | `cip_code` | 对应的候选 CIP | `"NN.NNNN"` |
 | `cip_group` | 组 | 必须等于 candidates.csv 中该行的 `cip_group` |
 | `institution_name` | 校名 | 必须等于 candidates.csv 中该行的 `institution_name` |
+| `institution_short` | 学校简称（2026-11-20 新增） | 如 `UVA`；由负责人确认；同一学校（`unitid`）的各行必须相同；`selected` 时未填给警告。用于导出（10） |
+| `institution_name_zh` | 学校中文名（2026-11-20 新增） | 如“弗吉尼亚大学”；规则同 `institution_short` |
 | `program_name` | 官方项目名 | 原样；占位记录可空（2.1） |
 | `degree_type` | 学位 | `ms / ma / mps / meng / msc / other`；占位记录可空 |
+| `degree_label` | 学位的实际名称（2026-11-20 新增） | 只用于 `degree_type = other`（如 `MQE`、`MQM`），其他学位必须为空；`selected` 且为 `other` 时未填给警告 |
 | `department` | 院系 | 原样；可空 |
 | `delivery_mode` | 授课形式（初步判断） | `on_campus / hybrid / online / unknown` |
 | `status` | 状态 | `selected / excluded / backlog` |

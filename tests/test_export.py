@@ -5,16 +5,21 @@ import json
 import pandas as pd
 from openpyxl import load_workbook
 
-from gradprog.export.tables import REVIEW, STALE, adjusted_reasons, change_rows, choose, deadline_rows, program_row
-from gradprog.export.workbook import DISCLAIMER, build, write
+from gradprog.export.links import anchors, resolve
+from gradprog.export.tables import (
+    PROGRAM_COLUMNS, REVIEW, STALE, adjusted_reasons, change_rows, choose, deadline_rows, degree, program_row, school,
+)
+from gradprog.export.workbook import DISCLAIMER, GoldCheck, build, write
 
-PROGRAM = {"program_id": "p1", "institution_name": "Alpha University", "program_name": "MS in Data Science",
-           "degree_type": "ms", "intake_terms": "fall", "status": "selected"}
+PROGRAM = {"program_id": "p1", "institution_name": "Alpha University", "institution_short": "Alpha",
+           "institution_name_zh": "阿尔法大学", "program_name": "MS in Data Science", "degree_type": "ms",
+           "degree_label": "", "intake_terms": "fall", "status": "selected", "cip_group": "ds"}
 
 
 def row(field, value="", status="found", page="pg-1", level="program", reasons=(), conflicts=(), term="",
         oid=None, suggested="", group="", extras=None, ref=""):
     return {"observation_id": oid or f"{field}-{page}-{value}", "program_id": "p1", "page_id": page,
+            "snapshot_id": f"snap-1-{page}",
             "owner_level": level, "field": field, "value": value, "value_status": status, "reference_target": ref,
             "valid_for_term": term, "conflict_type": list(conflicts), "review_reasons": list(reasons),
             "suggested_observation_id": suggested, "group_id": group, "extras": extras or {},
@@ -28,10 +33,8 @@ def deadline(date, kind="application", term="Fall 2027", page="pg-1", level="pro
                page=page, level=level, reasons=reasons, term=term, conflicts=conflicts, oid=f"d-{date}-{page}-{kind}")
 
 
-def cells(rows, program=PROGRAM):
-    out = program_row(program, rows, "https://a.edu", "2026-11-15")
-    return dict(zip(["学校", "项目", "学位", "STEM", "时长", "托福（旧制）", "托福（新制）", "雅思", "GRE", "GMAT", "申请费",
-                     "学费", "入学季", "官网链接", "最后检查日期", "待核实说明"], out))
+def cells(rows, program=PROGRAM, **kw):
+    return dict(zip(PROGRAM_COLUMNS, program_row(program, rows, "https://a.edu", "2026-11-15", **kw)))
 
 
 # 10 §3.2
@@ -115,22 +118,22 @@ def test_deadlines_dedupe_by_most_specific_page_and_expire_on_the_export_date():
     rows = [deadline("2027-01-07", page="pg-2", level="graduate_school"), deadline("2027-01-07"),
             deadline("2026-10-13"), deadline("2027-10-01", term="Spring 2028")]
     out = [c for _, c in sorted(deadline_rows(PROGRAM, rows, "2026-11-20"), key=lambda x: x[0])]
-    assert [c[6].text for c in out] == ["2027-01-07", "2027-10-01", "2026-10-13"]
-    assert out[0][9].text == "https://a.edu/pg-1"
-    assert (out[1][7].text, out[1][1].mark, out[1][8].text) == ("待核实", REVIEW, "该学期不在项目入学季内")
-    assert (out[2][7].text, out[2][0].mark) == ("已过期", STALE)
+    assert [c[7].text for c in out] == ["2027-01-07", "2027-10-01", "2026-10-13"]
+    assert out[0][10].text == "https://a.edu/pg-1"
+    assert (out[1][8].text, out[1][1].mark, out[1][9].text) == ("待核实", REVIEW, "该学期不在项目入学季内")
+    assert (out[2][8].text, out[2][0].mark) == ("已过期", STALE)
 
 
 def test_a_date_on_two_pages_keeps_the_one_with_a_term():
     rows = [deadline("2027-06-30", term="term_unknown", page="pg-2"), deadline("2027-06-30", page="pg-3")]
     out = deadline_rows(PROGRAM, rows, "2026-11-20")
-    assert len(out) == 1 and out[0][1][2].text == "Fall 2027"
+    assert len(out) == 1 and out[0][1][3].text == "Fall 2027"
 
 
 def test_rolling_and_unknown_terms_are_written_out():
     out = deadline_rows(PROGRAM, [deadline(None, term="term_unknown", rolling=True)], "2026-11-20")
     cells_ = out[0][1]
-    assert cells_[6].text == "滚动录取" and cells_[2].text == "未确定"
+    assert cells_[7].text == "滚动录取" and cells_[3].text == "未确定"
 
 
 def test_contaminated_deadlines_are_left_out():
@@ -144,7 +147,7 @@ def test_changes_keep_application_info_newest_first():
                {"date": "2026-11-15", "page_id": "pg-1", "program_id": "p1", "application_info": "no", "description": "c"},
                {"date": "2026-11-15", "page_id": "pg-1", "program_id": "p9", "application_info": "yes", "description": "d"}]
     out = change_rows(changes, {"p1": PROGRAM}, {"pg-1": "https://a.edu/pg-1"})
-    assert [r[3].text for r in out] == ["b", "a"] and out[0][4].link == "https://a.edu/pg-1"
+    assert [r[4].text for r in out] == ["b", "a"] and out[0][5].link == "https://a.edu/pg-1"
 
 
 # 10 §1, §2
@@ -180,6 +183,86 @@ def test_workbook_has_four_sheets_skips_holdout_and_carries_no_page_text(tmp_pat
     book = load_workbook(path)
     text = " ".join(str(c.value) for s in book for r in s.iter_rows() for c in r)
     assert DISCLAIMER in text and "secret" not in text and "Holdout MS" not in text
-    assert book["项目总表"]["A2"].value == "Alpha University"
+    assert book["项目总表"]["B2"].value == "Alpha / 阿尔法大学"
     sheets, counts = build(view, Registry(), index, [], "2026-11-20", holdout={"p2"}, include_holdout=True)
     assert counts["programs"] == 2
+
+
+# 10 §3 (2026-11-20 revision)
+def test_area_school_and_degree_columns():
+    c = cells([])
+    assert (c["方向"].text, c["学校简称"].text, c["学位"].text) == ("数据科学", "Alpha / 阿尔法大学", "MS")
+    assert degree({**PROGRAM, "degree_type": "other", "degree_label": "MQE"}) == "MQE"
+    assert degree({**PROGRAM, "degree_type": "other"}) == "其他"
+    assert school({**PROGRAM, "institution_short": ""}) == "Alpha University"
+
+
+def test_deadlines_sort_by_school_then_term_then_date():
+    beta = {**PROGRAM, "program_id": "p2", "institution_short": "Beta", "institution_name_zh": "贝塔大学"}
+    rows = (deadline_rows(beta, [deadline("2027-01-01")], "2026-11-20")
+            + deadline_rows(PROGRAM, [deadline("2027-02-01"), deadline("2026-12-01", term="Spring 2027"),
+                                      deadline("2027-01-15")], "2026-11-20"))
+    ordered = [(c[0].text, c[7].text) for _, c in sorted(rows, key=lambda x: x[0])]
+    assert ordered == [("Alpha / 阿尔法大学", "2026-12-01"), ("Alpha / 阿尔法大学", "2027-01-15"),
+                       ("Alpha / 阿尔法大学", "2027-02-01"), ("Beta / 贝塔大学", "2027-01-01")]
+
+
+def test_reference_cells_link_to_the_named_page():
+    c = cells([row("gre_policy", status="referenced_elsewhere", ref="Graduate School page")],
+              link_of=lambda r: "https://grad.a.edu/req")
+    assert c["GRE"].link == "https://grad.a.edu/req"
+    c = cells([row("gre_policy", status="referenced_elsewhere", ref="Graduate School page")])
+    assert c["GRE"].link == "https://a.edu/pg-1"
+
+
+PAGE = b"""<html><body><p>See the <a href="/grad/req">Graduate School requirements page</a>.</p>
+<a href="/a">here</a> <a href="/b">here</a> <a href="https://x.edu/fees">Tuition and Fees</a></body></html>"""
+
+
+def test_resolve_finds_a_unique_link_by_its_text():
+    links = anchors(PAGE, "html", "https://a.edu/p")
+    assert resolve("Graduate School requirements page", links) == "https://a.edu/grad/req"
+    assert resolve("Graduate School Tuition and Fees page", links) == "https://x.edu/fees"
+    assert resolve("here", links) is None
+    assert resolve("https://y.edu/z", links) == "https://y.edu/z"
+    assert resolve("nothing like it", links) is None
+
+
+GOLD = [{"program_id": "p1", "field": "stem_claim_on_page", "value": "yes", "value_status": "found",
+         "evidence_page_id": "pg-1", "deadline_type": "", "snapshot_ids": "snap-0-pg-1;snap-0-pg-2"},
+        {"program_id": "p1", "field": "toefl_min_legacy", "value": "", "value_status": "not_mentioned",
+         "evidence_page_id": "", "deadline_type": "", "snapshot_ids": "snap-0-pg-1;snap-0-pg-2"},
+        {"program_id": "p1", "field": "deadline", "value": "2027-01-07", "value_status": "found",
+         "evidence_page_id": "pg-1", "deadline_type": "application", "snapshot_ids": "snap-0-pg-1;snap-0-pg-2"}]
+SHA = {"snap-0-pg-1": "a", "snap-1-pg-1": "a", "snap-0-pg-2": "b", "snap-1-pg-2": "changed"}
+
+
+def test_values_that_disagree_with_the_gold_set_are_marked():
+    view = [row("stem_claim_on_page", status="not_mentioned"), row("toefl_min_legacy", "90"), deadline("2027-02-01")]
+    check = GoldCheck(GOLD, view, SHA)
+    c = cells(view, gold_check=check)
+    assert c["STEM"].mark == REVIEW and "抽取结果与人工标注不一致" in c["待核实说明"].text
+    assert c["托福（旧制）"].mark == REVIEW
+    out = deadline_rows(PROGRAM, [deadline("2027-02-01"), deadline("2027-01-07")], "2026-11-20", check)
+    assert [(c[7].text, c[8].text) for _, c in out] == [("2027-02-01", "待核实"), ("2027-01-07", "")]
+
+
+def test_pages_changed_since_the_gold_snapshot_are_not_compared():
+    view = [row("toefl_min_legacy", "90", page="pg-2"), deadline("2027-02-01", page="pg-2")]
+    check = GoldCheck(GOLD, view, SHA)
+    assert cells(view, gold_check=check)["托福（旧制）"].mark == ""
+    assert deadline_rows(PROGRAM, [deadline("2027-02-01", page="pg-2")], "2026-11-20", check)[0][1][8].text == ""
+
+
+def test_agreeing_values_stay_unmarked():
+    view = [row("stem_claim_on_page", "yes"), row("toefl_min_legacy", status="not_mentioned")]
+    c = cells(view, gold_check=GoldCheck(GOLD, view, SHA))
+    assert c["STEM"].mark == "" and c["托福（旧制）"].mark == ""
+
+
+def test_snapshot_hashes_use_the_newest_normalizer():
+    from gradprog.export.workbook import _norm_sha
+
+    index = pd.DataFrame([{"snapshot_id": "s1", "normalizer_version": "2", "norm_sha256": "new"},
+                          {"snapshot_id": "s1", "normalizer_version": "1", "norm_sha256": "old"}])
+    assert _norm_sha(index) == {"s1": "new"}

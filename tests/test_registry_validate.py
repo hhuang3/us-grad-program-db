@@ -553,3 +553,24 @@ def test_intake_terms_optional_when_not_selected(registry, registry_candidates, 
 def test_intake_terms_checked_when_not_selected(registry, registry_candidates):
     set_cell(registry.programs, "program_id", "gamma-ms-statistics", "intake_terms", "winter")
     assert_error(run(registry, registry_candidates), "gamma-ms-statistics", "intake_terms")
+
+
+# --- display names (06 §3.1, 2026-11-20) ---------------------------------------
+
+def test_missing_display_names_only_warn(registry, registry_candidates):
+    r = run(registry, registry_candidates)
+    assert not r.errors
+    assert any("alpha-ms-datascience" in w and "institution_short" in w for w in r.warnings)
+
+
+def test_display_names_must_agree_within_an_institution(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "institution_short", "Alpha")
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "institution_name_zh", "阿尔法大学")
+    set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "institution_short", "AU")
+    set_cell(registry.programs, "program_id", "alpha-ms-businessanalytics", "institution_name_zh", "阿尔法大学")
+    assert_error(run(registry, registry_candidates), "alpha-ms-businessanalytics", "same institution")
+
+
+def test_degree_label_is_only_for_other(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "degree_label", "MSDS")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "degree_label")

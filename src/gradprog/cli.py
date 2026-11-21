@@ -273,14 +273,30 @@ def cmd_export(args):
 
     import pandas as pd
 
+    from gradprog.export.links import anchors, resolve
     from gradprog.export.workbook import build, read_csv, write
+    from gradprog.snapshot.store import SnapshotStore
     from gradprog.registry.tables import load_registry
 
     on = args.on or datetime.now(timezone.utc).date().isoformat()
     holdout = {r["program_id"] for r in read_csv(REPO / "data" / "gold" / "holdout_v1.csv")}
     index = pd.read_csv(SNAPSHOTS / "index.csv", dtype=str, keep_default_na=False)
+    snapshots = index.drop_duplicates("snapshot_id", keep="last").set_index("snapshot_id")
+    cache = {}
+
+    def link_of(row):
+        """10 §3.1: the page a reference names, from the stored raw snapshot of the page that names it."""
+        sid = row["snapshot_id"]
+        if sid not in cache:
+            meta = snapshots.loc[sid]
+            path = SnapshotStore(SNAPSHOTS).raw_path(row["page_id"], sid, meta["content_type"])
+            cache[sid] = anchors(path.read_bytes(), meta["content_type"], meta["final_url"] or meta["requested_url"]) \
+                if path.exists() else []
+        return resolve(row.get("reference_target"), cache[sid])
+
     sheets, counts = build(read_csv(EXTRACTION / "derived" / "current.csv"), load_registry(REGISTRY), index,
-                           read_csv(REPO / "data" / "changes" / "change_log.csv"), on, holdout, args.include_holdout)
+                           read_csv(REPO / "data" / "changes" / "change_log.csv"), on, holdout, args.include_holdout,
+                           read_csv(REPO / "data" / "gold" / "gold_set_v1.csv"), link_of)
     path = args.out or REPO / "data" / "exports" / f"advisor_{on}.xlsx"
     write(sheets, path)
     print(f"wrote {path}")

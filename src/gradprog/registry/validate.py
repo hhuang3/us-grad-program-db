@@ -152,6 +152,25 @@ def _check_values(registry, errors):
             errors.append(f"domains: {k}: robots_checked_at={v!r} is not UTC YYYY-MM-DDTHH:MM:SSZ")
 
 
+def _check_display_names(registry, errors, warnings):
+    """06 §3.1 (2026-11-20): short and Chinese school names, and the degree name for degree_type = other."""
+    by_school = {}
+    for r in registry.programs.itertuples(index=False):
+        pid = r.program_id
+        names = (r.institution_short, r.institution_name_zh)
+        if any(names):
+            first = by_school.setdefault(r.unitid, (pid, names))
+            if first[1] != names:
+                errors.append(f"programs: {pid}: institution_short / institution_name_zh differ from {first[0]} "
+                              "at the same institution")
+        if r.status == "selected" and not all(names):
+            warnings.append(f"programs: {pid}: institution_short and institution_name_zh are not set yet")
+        if r.degree_label and r.degree_type != "other":
+            errors.append(f"programs: {pid}: degree_label is only for degree_type=other")
+        if r.status == "selected" and r.degree_type == "other" and not r.degree_label:
+            warnings.append(f"programs: {pid}: degree_type=other needs a degree_label, such as MQE")
+
+
 def _check_programs(registry, candidates, errors):
     cand = candidates.set_index(["unitid", "cip_code"])
     for r in registry.programs.itertuples(index=False):
@@ -318,6 +337,7 @@ def validate(registry, candidates, previous=None, ready=False, batch=None, url_c
     _check_keys(registry, result.errors)
     _check_values(registry, result.errors)
     _check_programs(registry, candidates, result.errors)
+    _check_display_names(registry, result.errors, result.warnings)
     _check_pages(registry, result.errors)
     if previous:
         _check_previous(registry, previous, result.errors)
