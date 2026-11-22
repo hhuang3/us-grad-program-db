@@ -14,73 +14,73 @@
 - 条款页：https://ucsd.edu/about/terms-of-use.html
 - Claude 初步判断：terms limit downloads to personal non-commercial use; nothing about automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 ece.duke.edu
 - 条款页：https://oarc.duke.edu/privacy/duke-university-privacy-statement/
 - Claude 初步判断：no terms page found in footer; only university privacy statement, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 gradschool.duke.edu
 - 条款页：未找到
 - Claude 初步判断：无
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 mfe.haas.berkeley.edu
 - 条款页：https://haas.berkeley.edu/technology-solutions/about/privacy-policy/
 - Claude 初步判断：no terms page found; footer has only a privacy policy, no ban on automated access
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 haas.berkeley.edu
 - 条款页：https://haas.berkeley.edu/technology-solutions/about/privacy-policy/
 - Claude 初步判断：no terms page found; privacy policy only, no ban on automated access
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.isye.gatech.edu
 - 条款页：https://www.gatech.edu/legal/
 - Claude 初步判断：no ban on automated access or non-commercial limit found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 grad.gatech.edu
 - 条款页：https://www.gatech.edu/legal/
 - Claude 初步判断：no ban on automated access or non-commercial limit found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 ischool.uw.edu
 - 条款页：https://www.washington.edu/online/terms/
 - Claude 初步判断：no explicit ban on automated access; forbids unreasonable network load and reproduction without permission
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 ischool.illinois.edu
 - 条款页：https://www.vpaa.uillinois.edu/resources/terms_of_use/
 - Claude 初步判断：system-wide Legal Notice and Terms of Use exists; 403 on fetch, content not checked
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 www.si.umich.edu
 - 条款页：https://si.umich.edu/privacy-statement
 - Claude 初步判断：only privacy statement found, no terms page, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 hsph.harvard.edu
 - 条款页：https://privsec.harvard.edu/harvard-university-umbrella-privacy-statement
 - Claude 初步判断：no terms page in footer; only privacy statement, trademark and copyright notices
 - robots.txt：error（no）
-条款：
+条款：no_restriction
 
 #### 域名 publichealth.jhu.edu
 - 条款页：未找到
 - Claude 初步判断：no terms page found (old jhsph.edu Web Policies may apply); 403 so footer not checked
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 ## 组 ece
 
@@ -100,7 +100,7 @@
   - pg-0078（已登记，沿用） tuition（graduate_school）https://bulletin.columbia.edu/columbia-engineering/graduate-studies/graduate-tuition-fees-payments — robots no，条款 unclear，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：blocked: 403 on WebFetch; URL from search results. Alternative MS Computer Engineering (14.0901). CVN online and MS Bridge track excluded. Spring intake only from search snippets; intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 ucsd-ms-electricalandcomputerengineering — University of California-San Diego — MS in Electrical and Computer Engineering
@@ -113,7 +113,7 @@
   - pg-0095（已登记，沿用） tuition（university）https://students.ucsd.edu/finances/fees/registration/2026-27/graduate.html — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：No standalone MS landing page (overview page returned 403), so the M.S. degree requirements page is used as program home. Admission by discipline (some impacted). Alternative 14.0901 (Computer Engineering discipline). MAS program excluded. Full-time only
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 duke-ms-electricalandcomputerengineering — Duke University — MS in Electrical and Computer Engineering
@@ -126,7 +126,7 @@
   - pg-0259 tuition（graduate_school）https://gradschool.duke.edu/financial-support/tuition-fees-and-phd-stipend-schedule/ — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：MEng ECE is a separate Pratt program; MS applications go through the Graduate School. Coursework, project or thesis options. Alternative 14.0901. Duke Kunshan option excluded
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 fin_eng
@@ -147,7 +147,7 @@
   - pg-0230（已登记，沿用） tuition（university）https://www.cmu.edu/sfs/tuition/graduate/index.html — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Pittsburgh campus chosen; same degree also in New York City. FAQ says full-time, on-campus only. STEM not stated
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 ucberkeley-other-financialengineering — University of California-Berkeley — Master of Financial Engineering (MFE)
@@ -160,7 +160,7 @@
   - pg-0266 tuition（graduate_school）https://haas.berkeley.edu/financial-aid/master-of-financial-engineering/cost/ — robots yes，条款 not_checked，网址检查 error 403
 - 建议：人工保存（按目前检查结果）
 - 提示：Full-time program used; part-time Flex option excluded. Starts in spring. STEM not stated
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 nyu-ms-financialengineering — New York University — MS in Financial Engineering
@@ -173,7 +173,7 @@
   - pg-0156（已登记，沿用） tuition（university）https://www.nyu.edu/students/student-information-and-resources/bills-payments-and-refunds/tuition-and-fee-rates.html — robots yes，条款 unclear，网址检查 redirected 202 → https://www.nyu.edu/students/student-information-and-resources/bills-payments-and-refunds/tuition-and-fee-rates.html?challenge=d06e90d7-4d8f-4b88-9d8c-10b73beb60f1
 - 建议：人工保存（按目前检查结果）
 - 提示：on campus only; no spring intake per Tandon deadlines page
-决定：
+决定：select
 用时（分钟）：
 
 ### 按排序
@@ -190,7 +190,7 @@
   - pg-0188（已登记，沿用） tuition（program）https://mitsloan.mit.edu/mfin/admissions/tuition-and-financial-aid — robots no，条款 no_restriction，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM-designated; two length formats. intake_terms 未核实 (tuition page lists summer as first term)
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 northeastern-ms-quantitativefinance — Northeastern University — MS in Quantitative Finance
@@ -203,7 +203,7 @@
   - pg-0122（已登记，沿用） tuition（university）https://studentfinance.northeastern.edu/billing-payments/tuition-and-fees/ — robots yes，条款 no_restriction，网址检查 error 403
 - 建议：人工保存（按目前检查结果）
 - 提示：Boston, full-time, STEM-designated. Exclude Oakland-campus MSQF and MSQF/MBA dual; alternative D'Amore-McKim MS Finance
-决定：
+决定：backup
 用时（分钟）：
 
 ## 组 ieor
@@ -224,7 +224,7 @@
   - pg-0089（已登记，沿用） tuition（university）https://bursar.gatech.edu/tuition-fees — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Also holds requirements, deadlines and entry term (on-campus fall only). Distance-learning MSIE excluded. Alternative MS Operations Research (14.3701). STEM not stated
-决定：
+决定：select
 用时（分钟）：
 
 ### 按排序
@@ -239,7 +239,7 @@
   - pg-0114（已登记，沿用） tuition（university）https://www.uta.edu/business-affairs/student-accounts/about-tuition — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：自动抓取（按目前检查结果）
 - 提示：Also holds requirements (background, GPA, English and test minimums); most classes also online, hence hybrid. Department page and a catalog snippet disagree on whether GRE is required - owner check
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 info_sys
@@ -261,7 +261,7 @@
   - pg-0278 tuition（program）https://ischool.uw.edu/programs/msim/tuition-financial-aid — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Residential option only; online MSIM is a separate modality, excluded. Tracks: Early-Career, Early-Career Accelerated, Mid-Career. STEM-designated per page. Residential admits autumn only
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 uiuc-ms-informationmanagement — University of Illinois Urbana-Champaign — MS in Information Management
@@ -273,7 +273,7 @@
   - pg-0145（已登记，沿用） tuition（university）https://www.registrar.illinois.edu/g-tuition-rates-2627/ — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Online MSIM suspended; only on-campus applicants accepted. STEM-designated per page. intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 umich-ms-information — University of Michigan-Ann Arbor — Master of Science in Information (MSI)
@@ -285,7 +285,7 @@
   - pg-0283 tuition（program）https://www.si.umich.edu/admissions-aid/tuition-and-funding/master-science-information-tuition-and-funding — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Official name Master of Science in Information. Onsite, North Campus. Online MADS is a different program, excluded
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 biostat
@@ -305,7 +305,7 @@
   - pg-0286 tuition（graduate_school）https://hsph.harvard.edu/tuition-and-financial-aid/tuition-fees-and-annual-cost-of-attendance/ — robots no，条款 not_checked，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：One program with three tracks; the doctorate-holder track is not relevant, the two standard tracks are. SOPHAS application
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 jhu-other-biostatistics — Johns Hopkins University — Master of Science in Biostatistics (ScM)
@@ -319,7 +319,7 @@
   - pg-0291 tuition（graduate_school）https://publichealth.jhu.edu/offices-and-services/office-of-student-affairs/financial-aid/cost-of-attendance — robots yes，条款 not_checked，网址检查 error 403
 - 建议：人工保存（按目前检查结果）
 - 提示：blocked: 403. ScM chosen (onsite full-time, thesis); MHS needs a prior doctorate or concurrent JHU doctoral enrollment. intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 ## 补登页面
@@ -327,7 +327,7 @@
 #### 页面 pg-0292 — asu-other-electricalengineering（ASU Electrical Engineering (MSE)）
   - pg-0292 admissions（graduate_school）https://admission.asu.edu/apply/international/graduate — robots yes，条款 unclear，网址检查 ok 200
 - 提示：admissions page missing after round 2 (validate error); application steps, transcripts, accepted English tests, I-20 and financial documents
-决定：
+决定：confirm
 
 ## 汇总
 
