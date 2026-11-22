@@ -1,6 +1,6 @@
 # 06 来源登记表（Phase 2）
 
-> 状态：v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
+> 状态：v1.2（2026-11-22：扩展批次，§2.3、§2.8、§6、§8）。v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
 > 登记表是 Phase 3 抓取的**唯一输入**。本阶段不抓取项目页面内容；唯一允许访问大学网站的操作是读取 `robots.txt`，以及你明确要求时用搜索引擎查找候选 URL。
 
 ---
@@ -58,6 +58,20 @@
 
 名额是目标值，最终数量以你的确认为准。校验只**报告**各组 selected 数量与名额的差距，不报错。
 
+**扩展批次**（`batch = expansion`，2026-11-22）：
+
+| 组 | 名额 |
+|---|---|
+| cs | 15 |
+| ece | 10 |
+| fin_eng | 10 |
+| ieor | 8 |
+| info_sys | 8 |
+| biostat | 6 |
+| **合计** | **57** |
+
+分两轮做（2026-11-22）：第一轮只做 `cs`，走完候选、提议、审核清单、`apply-review` 全流程，统计每个项目的审核用时和人工保存页面比例，报告负责人；第二轮其余 5 组一起做。
+
 ### 2.4 挑选工作表的排序
 
 - 组内按 `completions_masters_nonresident` **降序**，并列时按 `completions_masters` 降序，再并列时按 `unitid` 升序（按整数比较）、`cip_code` 升序。
@@ -86,6 +100,15 @@
 
 ---
 
+### 2.8 扩展批次的挑选（2026-11-22）
+
+- 每组约一半按 §2.4 的排序（国际学生授予数）挑选；另一半由负责人在审核清单（§8.2）中点名补充。
+- 同一所学校在同一组只选一个项目：在校全日制、主打的硕士项目（如 MSCS、MFE）。§2.2 的排除规则照常：MBA、纯线上、证书项目不收；只对本校学生开放的项目也不收。
+- 名额边缘的候选条件相近时，优先选页面可以自动抓取（robots 允许、条款没有限制）的学校；人工保存的页面控制在扩展批次全部页面的 30% 以内。
+- 学校已经登记过的研究生院页面（例如英语要求页）直接沿用，不重复登记。
+- 第一轮由负责人预先点名的 `cs` 学校（2026-11-22）：CMU、Columbia、Cornell、UPenn、Georgia Tech、UCSD、USC、NYU。Claude 查找这些学校的项目，直接放进审核清单“我要加的学校”一栏下，与按排序挑选的一半分开列出。
+- 扩展批次不建标准答案集，质量靠审核队列和导出中的“待核实”兜底（08 §10、09 §1）。
+
 ## 3. 登记表结构
 
 所有表放在 `data/registry/`，CSV，UTF-8（无 BOM），`\n` 换行，**全部列按字符串读取**（`keep_default_na=False`）。日期为 `YYYY-MM-DD`，时间为 UTC `YYYY-MM-DDTHH:MM:SSZ`。
@@ -111,7 +134,7 @@
 | `status` | 状态 | `selected / excluded / backlog` |
 | `exclusion_reason` | 排除原因 | `mba / online_only / certificate / out_of_scope / duplicate / not_found / not_admitting / other`；`status = excluded` 时必填，否则必须为空 |
 | `selection_note` | 选入或排除的理由 | 自由文本；`status ∈ {selected, excluded}` 时必填 |
-| `batch` | 批次 | `pilot / main` |
+| `batch` | 批次 | `pilot / main / expansion`（`expansion` 为 2026-11 的扩展批次，§2.8） |
 | `fetch_method` | Phase 3 取得页面的方式（2026-10-03 新增） | `auto / manual`；`status = selected` 时必填，其他状态必须为空。`auto`：由抓取器自动抓取；`manual`：页面无法自动抓取（条款、robots.txt 或网站防护），由人工取得，具体流程在 P3 设计 |
 | `intake_terms` | 入学季（2026-10-12 新增） | `fall / spring / summer` 中的一个或多个，分号分隔，按 fall、spring、summer 的顺序，不重复（如 `fall;spring`）；`status = selected` 时必填，其他状态可空。由你填写，不由抓取或抽取写入。用途：P4 由日期推算学期时确定季节（08 §7.2）。根据页面提议、尚未核实的值，在 `selection_note` 中注明“intake_terms 未核实” |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
@@ -326,6 +349,8 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | `gradprog registry check-robots` | §4.1 |
 | `gradprog registry check-urls` | §4.4：检查 proposed 页面的状态码与跳转，写 `url_check.csv`，不改登记表 |
 | `gradprog registry validate [--ready --batch pilot]` | §5 |
+| `gradprog registry add-program --from <提议表>` | §8.1：按提议表一次登记多个项目和页面，检查 robots 与网址状态，写出审核清单 |
+| `gradprog registry apply-review <审核清单>` | §8.3：按你在清单里的决定更新登记表 |
 
 ---
 
@@ -340,3 +365,31 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - 这份工作表**不是校验输入**，`validate` 不读它。
 - 已存在时拒绝覆盖（防止你填写的内容丢失），需要 `--force` 才覆盖。
 - 生成结果是确定的（同样的 candidates.csv → 逐字节相同的文件）。
+
+## 8. 批量登记与审核清单（2026-11-22）
+
+### 8.1 提议表与 `add-program`
+
+- 提议表 `data/registry/proposals_<日期>.csv` 由 Claude 准备：从挑选工作表（§7）取候选，在负责人要求下用搜索引擎和项目官网查找页面（只读页面，不提交任何表单）。每行一个页面，列：`program_id, unitid, cip_code, institution_name, institution_short, program_name, degree_type, degree_label, department, delivery_mode, intake_terms, nominated, url, page_type, owner_level, content_format, scope_note, note`。`note` 写排除提示（疑似 MBA、纯线上、证书、只对本校学生开放）和依据。
+- **已登记项目的补登页面**：`program_id` 是已登记项目时，这一行只补登页面（项目列须与登记表一致）。用于导出中“页面未写明”“见其他页面”的补登清单（例如研究生院英语要求页、学费页）。
+- `nominated`（`yes` 或空）：负责人点名的学校填 `yes`，审核清单据此分开列出。
+- `gradprog registry add-program --from <提议表>`：一次登记表中所有项目（`status = backlog`、`batch = expansion`）和页面（`url_status = proposed`），再执行 `check-robots`（只查新域名）和 `check-urls`（只查新页面），最后写出审核清单。任何一行不合 §3 的规则就整批不登记，并列出全部问题。重复运行时跳过已登记的项目和页面。
+
+### 8.2 审核清单 `data/registry/review_<日期>.md`
+
+- 按组分节。每节开头一行“我要加的学校：”，留给负责人点名补充本组的学校（§2.8）。
+- 每个项目一小节：IPEDS 硕士授予数、国际学生数、是否 STEM、在工作表中的排名；每个页面的网址、类型、层级、robots / 条款 / 网址检查结果；建议自动抓取还是人工保存；排除提示。
+- 每个项目一行“决定：”，填 `select`（选入）、`exclude <原因>`（`exclusion_reason` 的取值）或 `backup`（备选，保持 backlog）。
+- 每个项目一行“用时（分钟）：”，由负责人填写审核这个项目实际花的时间，可空；`apply-review` 汇总平均值和合计（第一轮报告用）。
+- 补登页面单独一节，每个页面一行“决定：”，填 `confirm` 或 `reject`。
+- 清单末尾汇总：每组已选数量与名额、人工保存页面占比（§2.8 的 30%）。
+
+### 8.3 `apply-review`
+
+- 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
+- 补登页面：`confirm` → `url_status = confirmed`；`reject` → 删除这个页面及其关联（页面只是 proposed，尚未抓取）。
+- 只有 `select` 和 `confirm` 的页面变为 confirmed；`exclude` 项目的页面保持 proposed。
+- 没有填写决定的项目或页面不变，并在输出中列出。
+- “我要加的学校”不自动登记：Claude 为这些学校补提议表，再走一遍 §8.1。
+- 更新后执行 `validate --ready --batch expansion`。
+
