@@ -339,3 +339,11 @@ def test_fetch_method_auto_when_every_page_is_crawlable(robots_checked, proposal
     summary = apply_review(registry, parse_review(text), url_check=None, on=DAY)
     assert registry.programs.set_index("program_id").loc["kappa-ms-computerscience", "fetch_method"] == "auto"
     assert summary["manual_pages"] == {"manual": 0, "total": 3}
+
+
+def test_review_summary_projects_manual_share(robots_checked, proposals, candidates):
+    # With terms not yet judged every page counts as manual; the summary also shows the share if they all pass.
+    review = write_review(robots_checked, candidates, proposals, None, DAY)
+    summary = review.split("## 汇总")[1]
+    assert "不能自动抓取的页面 4 个（80%" in summary
+    assert "若待判断的条款都判为 no_restriction：不能自动抓取的页面 0 个（0%）" in summary

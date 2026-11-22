@@ -245,11 +245,15 @@ def write_review(registry, candidates, proposals, url_check, on_date, title=""):
 
     all_pages = {p for pid in review_programs for p in pp.loc[pp["program_id"] == pid, "page_id"]}
     manual = [p for p in all_pages if not (pages.loc[p, "crawl_allowed"] == "true" and p not in blocked)]
+    likely = [p for p in all_pages if not (pages.loc[p, "robots_allowed"] == "yes" and p not in blocked
+                                           and tos.get(pages.loc[p, "domain"]) in ("no_restriction", "not_checked"))]
     out += ["## 汇总", "",
             f"- 本清单项目 {len(review_programs)} 个，页面 {len(all_pages)} 个（含沿用的已登记页面）。",
             f"- 按目前检查结果，不能自动抓取的页面 {len(manual)} 个"
             f"（{(len(manual) / len(all_pages) * 100 if all_pages else 0):.0f}%；条款未判断的域名按不能抓取算）。"
-            "06 §2.8 的上限是扩展批次全部页面的 30%。", ""]
+            "06 §2.8 的上限是扩展批次全部页面的 30%。",
+            f"- 若待判断的条款都判为 no_restriction：不能自动抓取的页面 {len(likely)} 个"
+            f"（{(len(likely) / len(all_pages) * 100 if all_pages else 0):.0f}%）。", ""]
     return "\n".join(out) + "\n"
 
 
