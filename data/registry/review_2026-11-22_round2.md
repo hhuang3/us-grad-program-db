@@ -14,271 +14,300 @@
 - 条款页：https://www.nyu.edu/footer/copyright-and-fair-use.html
 - Claude 初步判断：no terms link in engineering.nyu.edu footer; nyu.edu copyright page rendered empty, not verified
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.nyu.edu
 - 条款页：https://www.nyu.edu/footer/copyright-and-fair-use.html
 - Claude 初步判断：same NYU copyright page; not verified (empty render)
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 www.scu.edu
 - 条款页：https://www.scu.edu/terms-and-conditions-of-use/
 - Claude 初步判断：terms limit use to personal non-commercial; scraping barred where robots.txt disallows
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 www.ece.cmu.edu
 - 条款页：https://www.cmu.edu/legal/
 - Claude 初步判断：terms limit use to personal viewing and non-commercial use; no explicit scraping ban
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 ece.gatech.edu
 - 条款页：https://www.gatech.edu/legal/
 - Claude 初步判断：only disclaimers/copyright notices, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 ece.engin.umich.edu
 - 条款页：https://www.umich.edu/privacy/
 - Claude 初步判断：only privacy notice found, no terms page; not fetched
 - robots.txt：error（no）
-条款：
+条款：no_restriction
 
 #### 域名 ro.umich.edu
 - 条款页：https://www.umich.edu/privacy/
 - Claude 初步判断：only privacy notice found, no terms page; not fetched
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 ecee.engineering.asu.edu
 - 条款页：https://www.asu.edu/about/terms-of-use
 - Claude 初步判断：limits use to ASU-related purposes, bars commercial use; no scraping ban found
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 admission.asu.edu
 - 条款页：https://www.asu.edu/about/terms-of-use
 - Claude 初步判断：same ASU terms
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 msfe.illinois.edu
 - 条款页：https://illinois.edu/copyright/
 - Claude 初步判断：copyright notice linked in footer; fetch failed with certificate error, not checked
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 damore-mckim.northeastern.edu
 - 条款页：https://www.northeastern.edu/privacy-information
 - Claude 初步判断：no terms page in footer; university privacy policy only, not checked for automated-access ban
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 rady.ucsd.edu
 - 条款页：https://ucsd.edu/about/terms-of-use.html
 - Claude 初步判断：terms limit copying to one personal non-commercial download; no explicit bot/scraping clause
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 mitsloan.mit.edu
 - 条款页：https://mitsloan.mit.edu/licensing
 - Claude 初步判断：only licensing and privacy notices, no ban on automated access found
 - robots.txt：error（no）
-条款：
+条款：no_restriction
 
 #### 域名 fin.utdallas.edu
 - 条款页：https://jindal.utdallas.edu/privacy-policy/
 - Claude 初步判断：no terms page in footer; Jindal privacy policy only, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 merage.uci.edu
 - 条款页：https://uci.edu/privacy/index.php
 - Claude 初步判断：privacy and cookie notice only, no terms page found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.reg.uci.edu
 - 条款页：https://uci.edu/privacy/index.php
 - Claude 初步判断：same UCI privacy notice; no reg.uci.edu terms page found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 grad.uci.edu
 - 条款页：未找到
 - Claude 初步判断：not checked: grad.uci.edu returned 403
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 www.ieor.columbia.edu
 - 条款页：https://www.engineering.columbia.edu/terms-use
 - Claude 初步判断：ieor host blocked, its own terms not checked; Columbia Engineering terms (already judged prohibits_automated_access) may apply
 - robots.txt：fetched（yes）
-条款：
+条款：prohibits_automated_access 沿用 Columbia 工学院条款
 
 #### 域名 engineering.tamu.edu
 - 条款页：https://engineering.tamu.edu/policies.html
 - Claude 初步判断：site policies cover privacy/logging and ban unauthorized uploads; no ban on automated access found
 - robots.txt：not_found（yes）
-条款：
+条款：no_restriction
 
 #### 域名 admissions.tamu.edu
 - 条款页：https://www.tamu.edu/statements/index.html
 - Claude 初步判断：statements page lists site, linking, privacy and copyright policies; no ban on automated access seen
 - robots.txt：not_found（yes）
-条款：
+条款：no_restriction
 
 #### 域名 catalog.tamu.edu
 - 条款页：https://www.tamu.edu/statements/index.html
 - Claude 初步判断：catalog terms not checked (connection refused); university statements page has no ban
 - robots.txt：error（no）
-条款：
+条款：unclear
 
 #### 域名 ieor.berkeley.edu
 - 条款页：https://security.berkeley.edu/policy/privacy-statement-uc-berkeley-websites
 - Claude 初步判断：only privacy/nondiscrimination/copyright notices, no terms page or ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 grad.berkeley.edu
 - 条款页：https://security.berkeley.edu/policy/privacy-statement-uc-berkeley-websites
 - Claude 初步判断：only privacy/nondiscrimination/accessibility links, no terms page found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 funginstitute.berkeley.edu
 - 条款页：https://funginstitute.berkeley.edu/privacy-statement/
 - Claude 初步判断：only privacy statement and UC copyright notice, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.duffield.cornell.edu
 - 条款页：https://privacy.cornell.edu/
 - Claude 初步判断：only privacy policy linked, no terms page found
 - robots.txt：error（no）
-条款：
+条款：no_restriction
 
 #### 域名 gradschool.cornell.edu
 - 条款页：未找到
 - Claude 初步判断：no footer or terms links found
 - robots.txt：error（no）
-条款：
+条款：no_restriction
 
 #### 域名 mie.northeastern.edu
 - 条款页：https://www.northeastern.edu/privacy-information/
 - Claude 初步判断：no site-wide terms of use page found; only privacy policies
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 coe.northeastern.edu
 - 条款页：https://www.northeastern.edu/privacy-information/
 - Claude 初步判断：no site-wide terms of use page found; only privacy policies
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.trine.edu
 - 条款页：https://www.trine.edu/about/policies/privacy.aspx
 - Claude 初步判断：no terms page found; privacy policy only, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.ucumberlands.edu
 - 条款页：https://www.ucumberlands.edu/privacy-policy
 - Claude 初步判断：no terms page found; privacy policy only, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.business.uc.edu
 - 条款页：https://www.uc.edu/about/ucit/about/copyright.html
 - Claude 初步判断：copyright/privacy notices only, no terms page, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.uc.edu
 - 条款页：未找到
 - Claude 初步判断：无
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 cob.unt.edu
 - 条款页：https://www.unt.edu/required-links.html
 - Claude 初步判断：disclaimer/privacy/linking notice only, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.heinz.cmu.edu
 - 条款页：https://www.cmu.edu/legal
 - Claude 初步判断：terms limit use to personal non-commercial viewing; no explicit bot/scraping clause
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 www.cmich.edu
 - 条款页：https://www.cmich.edu/copyright
 - Claude 初步判断：copyright notice only, no terms page, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 cmich.smartcatalogiq.com
 - 条款页：未找到
 - Claude 初步判断：no terms page checked for smartcatalogiq host
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 publichealth.nyu.edu
 - 条款页：未找到
 - Claude 初步判断：no terms page in footer; only copyright notice and EO policy, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 www.publichealth.columbia.edu
 - 条款页：https://www.cuimc.columbia.edu/terms-and-conditions-use
 - Claude 初步判断：terms limit use to personal non-commercial purposes; no explicit automated-access clause
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 sph.umich.edu
 - 条款页：未找到
 - Claude 初步判断：no terms page found (site blocked our fetch)
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 rackham.umich.edu
 - 条款页：未找到
 - Claude 初步判断：no terms page found (site blocked our fetch)
 - robots.txt：fetched（yes）
-条款：
+条款：unclear
 
 #### 域名 sph.emory.edu
 - 条款页：https://ethicsandcompliance.emory.edu/privacy/
 - Claude 初步判断：only privacy policy and copyright notice in footer, no ban on automated access found
 - robots.txt：fetched（yes）
-条款：
+条款：no_restriction
 
 #### 域名 sph.unc.edu
 - 条款页：https://unc.edu/about/privacy-statement/
 - Claude 初步判断：privacy statement refers to a binding UNC-Chapel Hill Terms of Use; terms page itself not located
 - robots.txt：error（no）
-条款：
+条款：unclear
 
 #### 域名 gradschool.unc.edu
 - 条款页：未找到
 - Claude 初步判断：无
 - robots.txt：error（no）
-条款：
+条款：unclear
 
 #### 域名 cashier.unc.edu
 - 条款页：未找到
 - Claude 初步判断：无
 - robots.txt：error（no）
-条款：
+条款：unclear
 
 ## 组 ece
 
 名额 10，已选 0；本清单提议 7 个项目（点名 0，按排序 7）。
 
-我要加的学校：
+我要加的学校：Columbia（MS EE 或 MS CE）、UCSD（MS ECE）、Duke（MS ECE）。注：本组 USC、UMich 已选入，按点名计
+
+### 点名
+
+（负责人 2026-11-23 把下列项目从“按排序”改为按点名计。）
+
+#### 项目 usc-ms-electricalandcomputerengineering — University of Southern California — Master of Science in Electrical and Computer Engineering
+- IPEDS：CIP 14.1001（Electrical and Electronics Engineering.），硕士授予 342，国际学生 287，STEM：是，工作表排名 2
+- 学位 / 授课 / 入学季：ms / on_campus / fall;spring；院系：Ming Hsieh Department of Electrical and Computer Engineering
+- 页面：
+  - pg-0157 program_home（graduate_school）https://viterbigradadmission.usc.edu/programs/masters/msprograms/electrical-engineering/ms-electrical-and-computer-engineering/ — robots yes，条款 no_restriction，网址检查 error 403
+  - pg-0098（已登记，沿用） admissions（graduate_school）https://viterbigradadmission.usc.edu/programs/masters/apply/ready-to-apply/ — robots yes，条款 no_restriction，网址检查 error 403
+  - pg-0100（已登记，沿用） grad_school_intl（graduate_school）https://gradadm.usc.edu/lightboxes/international-students-english-proficiency/ — robots no，条款 no_restriction，网址检查 robots_unavailable
+  - pg-0101（已登记，沿用） tuition（graduate_school）https://viterbigradadmission.usc.edu/tuition-funding-masters/ — robots yes，条款 no_restriction，网址检查 error 403
+- 建议：人工保存（按目前检查结果）
+- 提示：formerly MSEE, so CIP 14.1001 assumed; siblings MS Computer Engineering (14.0901) and specialized MS tracks; DEN@Viterbi online excluded; viterbigradadmission.usc.edu returns 403 to our checker
+决定：select
+用时（分钟）：
+
+#### 项目 umich-ms-electricalandcomputerengineering — University of Michigan-Ann Arbor — Master of Science in Electrical and Computer Engineering
+- IPEDS：CIP 14.4701（Electrical and Computer Engineering.），硕士授予 321，国际学生 224，STEM：是，工作表排名 6
+- 学位 / 授课 / 入学季：ms / on_campus / fall；院系：Electrical and Computer Engineering
+- 页面：
+  - pg-0168 program_home（department）https://ece.engin.umich.edu/academics/graduate-programs/prospective-grad-students/about-the-masters-program/ — robots no，条款 not_checked，网址检查 robots_unavailable
+  - pg-0169 admissions（department）https://ece.engin.umich.edu/academics/graduate-programs/prospective-grad-students/apply-for-grad/grad-school-admissions-requirements/ — robots no，条款 not_checked，网址检查 robots_unavailable
+  - pg-0170 tuition（university）https://ro.umich.edu/tuition-residency/tuition-fees/2026-2027/graduate/full-term/college-engineering-graduate-full-term — robots yes，条款 not_checked，网址检查 error 403
+- 建议：人工保存（按目前检查结果）
+- 提示：blocked: 403 to WebFetch; URL from search; MS and MSE same requirements; sibling MEng in ECE (maybe the 14.0901 count); intake_terms 未核实
+决定：select
+用时（分钟）：
 
 ### 按排序
 
@@ -291,20 +320,7 @@
   - pg-0156 tuition（university）https://www.nyu.edu/students/student-information-and-resources/bills-payments-and-refunds/tuition-and-fee-rates.html — robots yes，条款 not_checked，网址检查 redirected 202 → https://www.nyu.edu/students/student-information-and-resources/bills-payments-and-refunds/tuition-and-fee-rates.html?challenge=d06e90d7-4d8f-4b88-9d8c-10b73beb60f1
 - 建议：人工保存（按目前检查结果）
 - 提示：Brooklyn, on campus; deadlines in page FAQ; sibling MS Electrical Engineering (14.1001); STEM not stated
-决定：
-用时（分钟）：
-
-#### 项目 usc-ms-electricalandcomputerengineering — University of Southern California — Master of Science in Electrical and Computer Engineering
-- IPEDS：CIP 14.1001（Electrical and Electronics Engineering.），硕士授予 342，国际学生 287，STEM：是，工作表排名 2
-- 学位 / 授课 / 入学季：ms / on_campus / fall;spring；院系：Ming Hsieh Department of Electrical and Computer Engineering
-- 页面：
-  - pg-0157 program_home（graduate_school）https://viterbigradadmission.usc.edu/programs/masters/msprograms/electrical-engineering/ms-electrical-and-computer-engineering/ — robots yes，条款 no_restriction，网址检查 error 403
-  - pg-0098（已登记，沿用） admissions（graduate_school）https://viterbigradadmission.usc.edu/programs/masters/apply/ready-to-apply/ — robots yes，条款 no_restriction，网址检查 error 403
-  - pg-0100（已登记，沿用） grad_school_intl（graduate_school）https://gradadm.usc.edu/lightboxes/international-students-english-proficiency/ — robots no，条款 no_restriction，网址检查 robots_unavailable
-  - pg-0101（已登记，沿用） tuition（graduate_school）https://viterbigradadmission.usc.edu/tuition-funding-masters/ — robots yes，条款 no_restriction，网址检查 error 403
-- 建议：人工保存（按目前检查结果）
-- 提示：formerly MSEE, so CIP 14.1001 assumed; siblings MS Computer Engineering (14.0901) and specialized MS tracks; DEN@Viterbi online excluded; viterbigradadmission.usc.edu returns 403 to our checker
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 scu-ms-computerscienceandengineering — Santa Clara University — M.S. in Computer Science and Engineering
@@ -316,7 +332,7 @@
   - pg-0160 tuition（university）https://www.scu.edu/bulletin/graduate/school-of-engineering/chapter-4-financial-information.html — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：quarter system, winter intake also offered (not expressible in intake_terms); CIP 14.0901 assumed; sibling MS ECE in ECE dept; delivery not stated
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 cmu-ms-electricalandcomputerengineering — Carnegie Mellon University — MS in Electrical and Computer Engineering
@@ -330,7 +346,7 @@
   - pg-0165 tuition（university）https://www.cmu.edu/sfs/tuition/graduate/cit.html — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Pittsburgh flagship; also Silicon Valley, Africa, Thailand; Standard vs Advanced Study tracks; siblings MS AI Engineering, MS Software Engineering
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 gatech-ms-electricalandcomputerengineering — Georgia Institute of Technology-Main Campus — Master of Science in Electrical and Computer Engineering
@@ -342,19 +358,7 @@
   - pg-0089（已登记，沿用） tuition（university）https://bursar.gatech.edu/tuition-fees — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Atlanta on-campus MSECE, thesis/non-thesis; online MSECE, GT-Europe and BS/MS excluded
-决定：
-用时（分钟）：
-
-#### 项目 umich-ms-electricalandcomputerengineering — University of Michigan-Ann Arbor — Master of Science in Electrical and Computer Engineering
-- IPEDS：CIP 14.4701（Electrical and Computer Engineering.），硕士授予 321，国际学生 224，STEM：是，工作表排名 6
-- 学位 / 授课 / 入学季：ms / on_campus / fall；院系：Electrical and Computer Engineering
-- 页面：
-  - pg-0168 program_home（department）https://ece.engin.umich.edu/academics/graduate-programs/prospective-grad-students/about-the-masters-program/ — robots no，条款 not_checked，网址检查 robots_unavailable
-  - pg-0169 admissions（department）https://ece.engin.umich.edu/academics/graduate-programs/prospective-grad-students/apply-for-grad/grad-school-admissions-requirements/ — robots no，条款 not_checked，网址检查 robots_unavailable
-  - pg-0170 tuition（university）https://ro.umich.edu/tuition-residency/tuition-fees/2026-2027/graduate/full-term/college-engineering-graduate-full-term — robots yes，条款 not_checked，网址检查 error 403
-- 建议：人工保存（按目前检查结果）
-- 提示：blocked: 403 to WebFetch; URL from search; MS and MSE same requirements; sibling MEng in ECE (maybe the 14.0901 count); intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 asu-other-electricalengineering — Arizona State University Campus Immersion — Electrical Engineering (MSE)
@@ -367,14 +371,14 @@
   - pg-0125（已登记，沿用） tuition（university）https://catalog.asu.edu/tuitionandfees/fall26graduate — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：all EE master's applicants enter the MSE; MS EE (thesis) only by transfer after admission; page lists Tempe and Online, use Tempe; sibling MS Computer Engineering (14.0901)
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 fin_eng
 
 名额 10，已选 0；本清单提议 7 个项目（点名 0，按排序 7）。
 
-我要加的学校：
+我要加的学校：Columbia MSFE、CMU MSCF、Cornell MFE、UC Berkeley MFE、NYU Tandon MS Financial Engineering
 
 ### 按排序
 
@@ -387,7 +391,7 @@
   - pg-0175 tuition（program）https://olin.washu.edu/programs/specialized-masters/ms-in-quantitative-finance/cost-aid-scholarships.php — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：自动抓取（按目前检查结果）
 - 提示：STEM-designated per page; full-time day program. CIP not stated; the 230 completers may fit the larger MS in Finance better (check IPEDS). Alternatives: MS in Finance, MSF Corporate Finance, MSF Wealth & Asset Management, Flex MSF (exclude)
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 uiuc-ms-financialengineering — University of Illinois Urbana-Champaign — MS in Financial Engineering
@@ -400,7 +404,7 @@
   - pg-0145（已登记，沿用） tuition（university）https://www.registrar.illinois.edu/g-tuition-rates-2627/ — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM-designated professional master's; a longer option exists. Alternative: Gies MS Finance
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 northeastern-ms-quantitativefinance — Northeastern University — MS in Quantitative Finance
@@ -413,7 +417,7 @@
   - pg-0122（已登记，沿用） tuition（university）https://studentfinance.northeastern.edu/billing-payments/tuition-and-fees/ — robots yes，条款 no_restriction，网址检查 error 403
 - 建议：人工保存（按目前检查结果）
 - 提示：Boston, full-time, STEM-designated. Exclude Oakland-campus MSQF and MSQF/MBA dual; alternative D'Amore-McKim MS Finance
-决定：
+决定：backup
 用时（分钟）：
 
 #### 项目 ucsd-other-quantitativefinance — University of California-San Diego — Master of Quantitative Finance (MQF)
@@ -425,7 +429,7 @@
   - pg-0184 tuition（university）https://students.ucsd.edu/finances/fees/registration/2026-27/rady.html — robots yes，条款 unclear，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：formerly Master of Finance; STEM-designated; two length options. Full-time/on-campus not stated explicitly
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 mit-other-finance — Massachusetts Institute of Technology — Master of Finance (MFin)
@@ -438,7 +442,7 @@
   - pg-0188 tuition（program）https://mitsloan.mit.edu/mfin/admissions/tuition-and-financial-aid — robots no，条款 not_checked，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM-designated; two length formats. intake_terms 未核实 (tuition page lists summer as first term)
-决定：
+决定：backup
 用时（分钟）：
 
 #### 项目 utd-ms-finance — The University of Texas at Dallas — MS in Finance
@@ -451,7 +455,7 @@
   - pg-0147（已登记，沿用） tuition（university）https://bursar.utdallas.edu/tuition/tuition-rates/ — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM-designated. Flex format, cannot be done fully online. Same degree also as one-year Cohort (summer start). Alternative 27.0305 candidate: MS Financial Technology and Analytics. CIP not stated; intake terms from search snippets
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 uci-other-finance — University of California-Irvine — Master of Finance (MFin)
@@ -464,16 +468,18 @@
   - pg-0193 grad_school_intl（graduate_school）https://grad.uci.edu/admissions/applying-to-uci/ — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM-designated; full-time, begins each fall. On-campus not stated explicitly
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 ieor
 
 名额 8，已选 0；本清单提议 6 个项目（点名 0，按排序 6）。
 
-我要加的学校：
+我要加的学校：Georgia Tech（MS Operations Research 或 MS Industrial Engineering）；另请按排序再补 1 所能自动抓取的学校。注：本组 Columbia、Berkeley、Cornell 已选入，按点名计
 
-### 按排序
+### 点名
+
+（负责人 2026-11-23 把下列项目从“按排序”改为按点名计。）
 
 #### 项目 columbia-ms-operationsresearch — Columbia University in the City of New York — MS in Operations Research
 - IPEDS：CIP 14.3701（Operations Research.），硕士授予 326，国际学生 289，STEM：是，工作表排名 1
@@ -485,20 +491,7 @@
   - pg-0078（已登记，沿用） tuition（graduate_school）https://bulletin.columbia.edu/columbia-engineering/graduate-studies/graduate-tuition-fees-payments — robots no，条款 unclear，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：blocked: 403 on WebFetch; URL from search results; older path ieor.columbia.edu/operations-research-msor also indexed. Siblings: MS IEOR, MS IE, MS Business Analytics, MS Financial Engineering, MS MS&E; online MSOR (CVN) excluded. Per search: full- or part-time, STEM, fall and spring entry
-决定：
-用时（分钟）：
-
-#### 项目 tamu-ms-industrialengineering — Texas A&M University-College Station — MS in Industrial Engineering
-- IPEDS：CIP 14.3501（Industrial Engineering.），硕士授予 265，国际学生 225，STEM：是，工作表排名 2
-- 学位 / 授课 / 入学季：ms / on_campus / fall;spring；院系：Industrial and Systems Engineering
-- 页面：
-  - pg-0195 program_home（department）https://engineering.tamu.edu/industrial/academics/degrees/graduate/ms-ie.html — robots yes，条款 not_checked，网址检查 ok 200
-  - pg-0196 requirements（department）https://engineering.tamu.edu/industrial/admission-and-aid/graduate-admissions/index.html — robots yes，条款 not_checked，网址检查 ok 200
-  - pg-0197 grad_school_intl（university）https://admissions.tamu.edu/apply/international/international-graduate.html — robots yes，条款 not_checked，网址检查 broken 404
-  - pg-0198 tuition（university）https://catalog.tamu.edu/graduate/tuition-fees-financial-information/tuition-required-fees — robots no，条款 not_checked，网址检查 robots_unavailable
-- 建议：人工保存（按目前检查结果）
-- 提示：Thesis and non-thesis; not offered online. Sibling MEng IE (on campus plus online), MS Engineering Management, MEng Systems Engineering. Which of MS IE / MEng IE has more international students not verified
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 ucberkeley-meng-ieor — University of California-Berkeley — Master of Engineering in Industrial Engineering and Operations Research
@@ -511,19 +504,7 @@
   - pg-0202 tuition（graduate_school）https://funginstitute.berkeley.edu/programs-centers/full-time-program/learn-more/tuition-financial-aid/ — robots yes，条款 not_checked，网址检查 error 403
 - 建议：人工保存（按目前检查结果）
 - 提示：Full-time professional MEng with Fung Institute core. Sibling MS IEOR (also full-time terminal) ieor.berkeley.edu/academics/master-of-science/ - owner may prefer it. intake_terms 未核实
-决定：
-用时（分钟）：
-
-#### 项目 ub-ms-industrialengineering — University at Buffalo — MS in Industrial Engineering
-- IPEDS：CIP 14.3501（Industrial Engineering.），硕士授予 139，国际学生 130，STEM：是，工作表排名 4
-- 学位 / 授课 / 入学季：ms / on_campus / fall;spring；院系：Industrial and Systems Engineering
-- 页面：
-  - pg-0203 program_home（department）https://engineering.buffalo.edu/industrial-systems/masters-programs/ms-industrial-engineering.html — robots yes，条款 no_restriction，网址检查 ok 200
-  - pg-0204 requirements（department）https://engineering.buffalo.edu/industrial-systems/masters-programs/admissions.html — robots yes，条款 no_restriction，网址检查 ok 200
-  - pg-0134（已登记，沿用） tuition（university）https://www.buffalo.edu/studentaccounts/tuition-and-fees/fall.non-resident-full-time.html — robots yes，条款 no_restriction，网址检查 ok 200
-- 建议：自动抓取（按目前检查结果）
-- 提示：Concentrations incl. Operations Research, Data Analytics Engineering; thesis/exam/capstone tracks. Online sibling ME Engineering Management excluded. Page does not state full-time/on-campus
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 cornell-meng-orie — Cornell University — Master of Engineering in Operations Research and Information Engineering
@@ -536,7 +517,34 @@
   - pg-0081（已登记，沿用） tuition（university）https://bursar.cornell.edu/students-parents/tuition-rates-and-fees — robots no，条款 no_restriction，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：Ithaca, full-time; several concentrations (Financial Engineering has a semester in Manhattan). Spring entry only for Cornell undergrads. Cornell Tech ORIE MEng excluded
-决定：
+决定：select
+用时（分钟）：
+
+### 按排序
+
+#### 项目 tamu-ms-industrialengineering — Texas A&M University-College Station — MS in Industrial Engineering
+- IPEDS：CIP 14.3501（Industrial Engineering.），硕士授予 265，国际学生 225，STEM：是，工作表排名 2
+- 学位 / 授课 / 入学季：ms / on_campus / fall;spring；院系：Industrial and Systems Engineering
+- 页面：
+  - pg-0195 program_home（department）https://engineering.tamu.edu/industrial/academics/degrees/graduate/ms-ie.html — robots yes，条款 not_checked，网址检查 ok 200
+  - pg-0196 requirements（department）https://engineering.tamu.edu/industrial/admission-and-aid/graduate-admissions/index.html — robots yes，条款 not_checked，网址检查 ok 200
+  - pg-0197 grad_school_intl（university）https://admissions.tamu.edu/apply/international/international-graduate.html — robots yes，条款 not_checked，网址检查 broken 404
+  - pg-0198 tuition（university）https://catalog.tamu.edu/graduate/tuition-fees-financial-information/tuition-required-fees — robots no，条款 not_checked，网址检查 robots_unavailable
+- 建议：人工保存（按目前检查结果）
+- 提示：Thesis and non-thesis; not offered online. Sibling MEng IE (on campus plus online), MS Engineering Management, MEng Systems Engineering. Which of MS IE / MEng IE has more international students not verified
+决定：select
+用时（分钟）：
+
+#### 项目 ub-ms-industrialengineering — University at Buffalo — MS in Industrial Engineering
+- IPEDS：CIP 14.3501（Industrial Engineering.），硕士授予 139，国际学生 130，STEM：是，工作表排名 4
+- 学位 / 授课 / 入学季：ms / on_campus / fall;spring；院系：Industrial and Systems Engineering
+- 页面：
+  - pg-0203 program_home（department）https://engineering.buffalo.edu/industrial-systems/masters-programs/ms-industrial-engineering.html — robots yes，条款 no_restriction，网址检查 ok 200
+  - pg-0204 requirements（department）https://engineering.buffalo.edu/industrial-systems/masters-programs/admissions.html — robots yes，条款 no_restriction，网址检查 ok 200
+  - pg-0134（已登记，沿用） tuition（university）https://www.buffalo.edu/studentaccounts/tuition-and-fees/fall.non-resident-full-time.html — robots yes，条款 no_restriction，网址检查 ok 200
+- 建议：自动抓取（按目前检查结果）
+- 提示：Concentrations incl. Operations Research, Data Analytics Engineering; thesis/exam/capstone tracks. Online sibling ME Engineering Management excluded. Page does not state full-time/on-campus
+决定：select
 用时（分钟）：
 
 #### 项目 northeastern-ms-industrialengineering — Northeastern University — MS in Industrial Engineering
@@ -549,14 +557,31 @@
   - pg-0122（已登记，沿用） tuition（university）https://studentfinance.northeastern.edu/billing-payments/tuition-and-fees/ — robots yes，条款 no_restriction，网址检查 error 403
 - 建议：人工保存（按目前检查结果）
 - 提示：blocked: certificate rejected on WebFetch; URL from search results. Boston; full- or part-time; co-op. Sibling MS Operations Research (14.3701), PlusOne excluded
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 info_sys
 
 名额 8，已选 0；本清单提议 7 个项目（点名 0，按排序 7）。
 
-我要加的学校：
+我要加的学校：UW iSchool（MSIM）、UIUC iSchool（MS Information Management）、UMich School of Information（MSI）。注：本组 CMU MISM 已选入，按点名计
+
+### 点名
+
+（负责人 2026-11-23 把下列项目从“按排序”改为按点名计。）
+
+#### 项目 cmu-other-informationsystemsmanagement — Carnegie Mellon University — Master of Information Systems Management (MISM)
+- IPEDS：CIP 11.0103（Information Technology.），硕士授予 632，国际学生 441，STEM：是，工作表排名 6
+- 学位 / 授课 / 入学季：other MISM / on_campus / fall；院系：Heinz College
+- 页面：
+  - pg-0227 program_home（program）https://www.heinz.cmu.edu/programs/information-systems-management-master — robots yes，条款 not_checked，网址检查 ok 200
+  - pg-0228 admissions（program）https://www.heinz.cmu.edu/programs/information-systems-management-master/admissions-how-to-apply — robots yes，条款 not_checked，网址检查 ok 200
+  - pg-0229 grad_school_intl（graduate_school）https://www.heinz.cmu.edu/admissions/checklist/exam-results — robots yes，条款 not_checked，网址检查 ok 200
+  - pg-0230 tuition（university）https://www.cmu.edu/sfs/tuition/graduate/index.html — robots yes，条款 unclear，网址检查 ok 200
+- 建议：人工保存（按目前检查结果）
+- 提示：Chosen over MSISPM (too small for the IPEDS count); CIP 11.0103 not confirmed for either - owner check. Full-time in person, Pittsburgh; tracks Traditional and BIDA; STEM-designated; internship required. Siblings: MSISPM, MSIT (mostly part-time), Adelaide MISM
+决定：select
+用时（分钟）：
 
 ### 按排序
 
@@ -570,7 +595,7 @@
   - pg-0214 faq（graduate_school）https://www.trine.edu/international/hybrid/after-admission/faq.aspx — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：EXCLUSION CHECK: international students take it only as hybrid at education centers in Detroit, Phoenix or Reston (not main campus); seated classes on assigned dates; also fully online via TrineOnline; CPT can start from the first day of classes. STEM not stated. Accelerated terms; intake_terms 未核实
-决定：
+决定：exclude other 国际学生只能在外地教学点混合授课、第一学期即 CPT，签证型项目，非典型申请目标
 用时（分钟）：
 
 #### 项目 cumberlands-ms-informationtechnology — University of the Cumberlands — Executive Master of Science in Information Technology
@@ -582,7 +607,7 @@
   - pg-0217 tuition（university）https://www.ucumberlands.edu/tuition-aid/tuition — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：EXCLUSION CHECK: executive format for F-1 students, coursework mostly online plus a mandatory residency weekend per course each term at sites in several cities; every term includes an applied learning practicum (CPT from the first term). Cannot be done fully in person; a fully online MSIT also exists. Page shows outdated term dates
-决定：
+决定：exclude other 同上，签证型项目（Executive 在职学位）
 用时（分钟）：
 
 #### 项目 utd-ms-informationtechnologyandmanagement — The University of Texas at Dallas — MS in Information Technology and Management
@@ -596,7 +621,7 @@
   - pg-0147（已登记，沿用） tuition（university）https://bursar.utdallas.edu/tuition/tuition-rates/ — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：自动抓取（按目前检查结果）
 - 提示：STEM-designated. Evening classes, large part-time share; separate MS ITM Online and cohort versions exist (do not use). Siblings: MS Business Analytics and AI, MS Management Science
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 cincinnati-ms-informationsystems — University of Cincinnati-Main Campus — MS in Information Systems
@@ -610,7 +635,7 @@
   - pg-0224 other（university）https://www.uc.edu/about/bursar/tuition-fees/non-resident-surcharges.html — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM-designated; full-time or part-time. Separate online MSIS at online.uc.edu (do not use). Applicants abroad: fall full-time only
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 unt-ms-informationsystemsandtechnologies — University of North Texas — M.S. in Information Systems & Technologies
@@ -623,20 +648,7 @@
   - pg-0149（已登记，沿用） tuition（university）https://studentaccounting.unt.edu/tuition-and-fees — robots yes，条款 no_restriction，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：STEM. On campus, online and hybrid. CIP 11.0103 vs 11.0401 not confirmed; sibling MS Information Science (College of Information) may be the 11.0401 one or the larger. Also MS Business Analytics
-决定：
-用时（分钟）：
-
-#### 项目 cmu-other-informationsystemsmanagement — Carnegie Mellon University — Master of Information Systems Management (MISM)
-- IPEDS：CIP 11.0103（Information Technology.），硕士授予 632，国际学生 441，STEM：是，工作表排名 6
-- 学位 / 授课 / 入学季：other MISM / on_campus / fall；院系：Heinz College
-- 页面：
-  - pg-0227 program_home（program）https://www.heinz.cmu.edu/programs/information-systems-management-master — robots yes，条款 not_checked，网址检查 ok 200
-  - pg-0228 admissions（program）https://www.heinz.cmu.edu/programs/information-systems-management-master/admissions-how-to-apply — robots yes，条款 not_checked，网址检查 ok 200
-  - pg-0229 grad_school_intl（graduate_school）https://www.heinz.cmu.edu/admissions/checklist/exam-results — robots yes，条款 not_checked，网址检查 ok 200
-  - pg-0230 tuition（university）https://www.cmu.edu/sfs/tuition/graduate/index.html — robots yes，条款 unclear，网址检查 ok 200
-- 建议：人工保存（按目前检查结果）
-- 提示：Chosen over MSISPM (too small for the IPEDS count); CIP 11.0103 not confirmed for either - owner check. Full-time in person, Pittsburgh; tracks Traditional and BIDA; STEM-designated; internship required. Siblings: MSISPM, MSIT (mostly part-time), Adelaide MISM
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 cmich-ms-informationsystems — Central Michigan University — Master of Science in Information Systems (MSIS)
@@ -650,14 +662,31 @@
   - pg-0235 tuition（university）https://www.cmich.edu/offices-departments/finance-administrative-services/financial-services-reporting/student-account-services-university-billing/tuition-and-fee-rates — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：On campus (Mount Pleasant) and online via CMU Online (do not use online). Tracks: SAP enterprise systems, cybersecurity, project management, business data analytics. STEM not stated
-决定：
+决定：select
 用时（分钟）：
 
 ## 组 biostat
 
 名额 6，已选 0；本清单提议 5 个项目（点名 0，按排序 5）。
 
-我要加的学校：
+我要加的学校：Harvard（SM Biostatistics）、JHU（Biostatistics 硕士，ScM 或 MHS）。注：本组 UMich 已选入，按点名计
+
+### 点名
+
+（负责人 2026-11-23 把下列项目从“按排序”改为按点名计。）
+
+#### 项目 umich-ms-biostatistics — University of Michigan-Ann Arbor — MS in Biostatistics
+- IPEDS：CIP 26.1102（Biostatistics.），硕士授予 80，国际学生 58，STEM：是，工作表排名 3
+- 学位 / 授课 / 入学季：ms / on_campus / fall；院系：Department of Biostatistics (School of Public Health)
+- 页面：
+  - pg-0242 program_home（program）https://sph.umich.edu/biostat/programs/masters-biostat.html — robots yes，条款 not_checked，网址检查 error 403
+  - pg-0243 admissions（department）https://sph.umich.edu/biostat/apply-ms-biostatistics.html — robots yes，条款 not_checked，网址检查 error 403
+  - pg-0244 tuition（graduate_school）https://sph.umich.edu/admissions/tuition-fees.html — robots yes，条款 not_checked，网址检查 error 403
+  - pg-0245 grad_school_intl（graduate_school）https://rackham.umich.edu/admissions/tests — robots yes，条款 not_checked，网址检查 error 403
+- 建议：人工保存（按目前检查结果）
+- 提示：blocked: HTTP 403 on WebFetch; URL from search results. Siblings: MS Health Data Science (separate MS), Accelerated MS (UMich undergrads only). intake_terms 未核实
+决定：select
+用时（分钟）：
 
 ### 按排序
 
@@ -669,7 +698,7 @@
   - pg-0237 admissions（graduate_school）https://publichealth.nyu.edu/admissions/apply/ms-biostatistics — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：In person, full-time or part-time, STEM-designated. Sibling: MPH Biostatistics concentration. No tuition page found (GPH points to Bursar lookup tool). intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 columbia-ms-biostatistics — Columbia University in the City of New York — MS in Biostatistics (Theory and Methods track)
@@ -682,20 +711,7 @@
   - pg-0241 tuition（graduate_school）https://www.publichealth.columbia.edu/become-student/how-apply/financial-aid/tuition-fees — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：Tracks: Theory and Methods (chosen), Public Health Data Science, Pharmaceutical Statistics, Statistical Genetics, Clinical Research Methods; check whether tracks are separate application options (06 §2.1). Also MPH Biostatistics. STEM not stated
-决定：
-用时（分钟）：
-
-#### 项目 umich-ms-biostatistics — University of Michigan-Ann Arbor — MS in Biostatistics
-- IPEDS：CIP 26.1102（Biostatistics.），硕士授予 80，国际学生 58，STEM：是，工作表排名 3
-- 学位 / 授课 / 入学季：ms / on_campus / fall；院系：Department of Biostatistics (School of Public Health)
-- 页面：
-  - pg-0242 program_home（program）https://sph.umich.edu/biostat/programs/masters-biostat.html — robots yes，条款 not_checked，网址检查 error 403
-  - pg-0243 admissions（department）https://sph.umich.edu/biostat/apply-ms-biostatistics.html — robots yes，条款 not_checked，网址检查 error 403
-  - pg-0244 tuition（graduate_school）https://sph.umich.edu/admissions/tuition-fees.html — robots yes，条款 not_checked，网址检查 error 403
-  - pg-0245 grad_school_intl（graduate_school）https://rackham.umich.edu/admissions/tests — robots yes，条款 not_checked，网址检查 error 403
-- 建议：人工保存（按目前检查结果）
-- 提示：blocked: HTTP 403 on WebFetch; URL from search results. Siblings: MS Health Data Science (separate MS), Accelerated MS (UMich undergrads only). intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 emory-other-biostatistics — Emory University — Master of Science in Public Health in Biostatistics (MSPH)
@@ -708,7 +724,7 @@
   - pg-0249 grad_school_intl（graduate_school）https://sph.emory.edu/admissions/how-to-apply/international-applicants — robots yes，条款 not_checked，网址检查 ok 200
 - 建议：人工保存（按目前检查结果）
 - 提示：FLAG: no MS exists; MSPH is the research-track flagship. Full-time, in person. Siblings: MPH Biostatistics, BA/BS-MSPH (Emory undergrads only). STEM not stated. intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 #### 项目 unc-ms-biostatistics — University of North Carolina at Chapel Hill — MS in Biostatistics
@@ -720,10 +736,13 @@
   - pg-0252 tuition（university）https://cashier.unc.edu/tuition-fees/graduate-programs — robots no，条款 not_checked，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：blocked: HTTP 403 on sph.unc.edu; URL from search results. Residential, STEM-designated per search. Sibling: BSPH/MS dual (UNC undergrads only). intake_terms 未核实
-决定：
+决定：backup
 用时（分钟）：
 
 ## 补登页面
+
+#### 页面 pg-0197 — tamu-ms-industrialengineering（TAMU 英语要求页，网址检查 broken 404）
+决定：reject
 
 （没有补登页面）
 
