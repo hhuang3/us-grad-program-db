@@ -343,7 +343,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | 命令 | 作用 |
 |---|---|
 | `gradprog registry init` | 建立 4 张空表（只有表头）；已存在则报错，不覆盖 |
-| `gradprog registry worksheet` | 从 candidates.csv 生成 `data/registry/selection_worksheet.csv`（§7） |
+| `gradprog registry worksheet [--groups g1,g2 --out <路径>]` | 从 candidates.csv 生成 `data/registry/selection_worksheet.csv`（§7） |
 | `gradprog registry add-page` | 登记一个页面：规范化 URL、分配 `page_id`、导出 `domain`、需要时补 domains 行、写入 program_pages 关联 |
 | `gradprog registry derive` | 重算导出列（§4.2） |
 | `gradprog registry check-robots` | §4.1 |
@@ -365,14 +365,18 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - 这份工作表**不是校验输入**，`validate` 不读它。
 - 已存在时拒绝覆盖（防止你填写的内容丢失），需要 `--force` 才覆盖。
 - 生成结果是确定的（同样的 candidates.csv → 逐字节相同的文件）。
+- 扩展批次（2026-11-22）：`gradprog registry worksheet --groups cs --out data/registry/selection_worksheet_expansion.csv` 只写指定组，规则同上；原有工作表不动。
 
 ## 8. 批量登记与审核清单（2026-11-22）
 
 ### 8.1 提议表与 `add-program`
 
-- 提议表 `data/registry/proposals_<日期>.csv` 由 Claude 准备：从挑选工作表（§7）取候选，在负责人要求下用搜索引擎和项目官网查找页面（只读页面，不提交任何表单）。每行一个页面，列：`program_id, unitid, cip_code, institution_name, institution_short, program_name, degree_type, degree_label, department, delivery_mode, intake_terms, nominated, url, page_type, owner_level, content_format, scope_note, note`。`note` 写排除提示（疑似 MBA、纯线上、证书、只对本校学生开放）和依据。
+- 提议表 `data/registry/proposals_<日期>.csv` 由 Claude 准备：从挑选工作表（§7）取候选，在负责人要求下用搜索引擎和项目官网查找页面（只读页面，不提交任何表单）。每行一个页面，列：`program_id, unitid, cip_code, institution_name, institution_short, program_name, degree_type, degree_label, department, delivery_mode, intake_terms, nominated, url, page_type, owner_level, content_format, scope_note, tos_url, tos_hint, note`。`note` 写排除提示（疑似 MBA、纯线上、证书、只对本校学生开放）和依据。
 - **已登记项目的补登页面**：`program_id` 是已登记项目时，这一行只补登页面（项目列须与登记表一致）。用于导出中“页面未写明”“见其他页面”的补登清单（例如研究生院英语要求页、学费页）。
 - `nominated`（`yes` 或空）：负责人点名的学校填 `yes`，审核清单据此分开列出。
+- `tos_url`、`tos_hint`：新域名的条款页和 Claude 的初步判断，写在该域名第一次出现的行。`add-program` 把 `tos_url` 写入 domains.csv，`tos_status` 仍为 `not_checked`，由负责人在审核清单中判断。
+- 新项目的 `selection_note` 写“Proposed <日期> (expansion round 1)”加上 `note`；`fetch_method` 留空（backlog 不填）。
+- 网址已登记过的页面不新建，只给项目加关联（沿用研究生院页等共用页面）。
 - `gradprog registry add-program --from <提议表>`：一次登记表中所有项目（`status = backlog`、`batch = expansion`）和页面（`url_status = proposed`），再执行 `check-robots`（只查新域名）和 `check-urls`（只查新页面），最后写出审核清单。任何一行不合 §3 的规则就整批不登记，并列出全部问题。重复运行时跳过已登记的项目和页面。
 
 ### 8.2 审核清单 `data/registry/review_<日期>.md`
@@ -382,11 +386,13 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - 每个项目一行“决定：”，填 `select`（选入）、`exclude <原因>`（`exclusion_reason` 的取值）或 `backup`（备选，保持 backlog）。
 - 每个项目一行“用时（分钟）：”，由负责人填写审核这个项目实际花的时间，可空；`apply-review` 汇总平均值和合计（第一轮报告用）。
 - 补登页面单独一节，每个页面一行“决定：”，填 `confirm` 或 `reject`。
+- 新域名单独一节：每个域名列出条款页和 Claude 的初步判断，一行“条款：”，填 `no_restriction`、`prohibits_automated_access` 或 `unclear`，后面可加说明。条款未判断的域名，页面按不可自动抓取计算。
 - 清单末尾汇总：每组已选数量与名额、人工保存页面占比（§2.8 的 30%）。
 
 ### 8.3 `apply-review`
 
-- 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
+- 先写入域名的条款判断：`tos_status`，`tos_note` 写“负责人: <说明>；Claude: <tos_hint>”，然后重新计算 `crawl_allowed`。
+- 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写（项目的全部页面都可自动抓取、且网址检查不是 403 时为 `auto`，否则 `manual`）、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
 - 补登页面：`confirm` → `url_status = confirmed`；`reject` → 删除这个页面及其关联（页面只是 proposed，尚未抓取）。
 - 只有 `select` 和 `confirm` 的页面变为 confirmed；`exclude` 项目的页面保持 proposed。
 - 没有填写决定的项目或页面不变，并在输出中列出。

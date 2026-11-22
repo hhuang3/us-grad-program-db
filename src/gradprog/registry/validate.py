@@ -15,7 +15,8 @@ from gradprog.registry.robots import crawl_allowed_for
 from gradprog.registry.urls import UrlError, domain_of, normalize_url
 from gradprog.util.manifest import UTC_TIMESTAMP
 
-QUOTAS = {"ds": 25, "analytics": 25, "stats": 20, "mgmt_sci": 20, "econ": 10}
+QUOTAS = {"ds": 25, "analytics": 25, "stats": 20, "mgmt_sci": 20, "econ": 10,
+          "cs": 15, "ece": 10, "fin_eng": 10, "ieor": 8, "info_sys": 8, "biostat": 6}   # 06 §2.3
 PROGRAM_ID = re.compile(r"^[a-z0-9]+(-[a-z0-9]+){2,}$")
 MBA = re.compile(r"\bMBA\b|\bM\.B\.A\b\.?|master of business administration", re.IGNORECASE)
 PLACEHOLDER_SEGMENT = "none"
@@ -310,7 +311,8 @@ def _report(registry, crawl):
     sel = progs[progs["status"] == "selected"]
     quota = {g: {"target": QUOTAS[g], "selected": int((sel["cip_group"] == g).sum()),
                  "pilot": int(((sel["cip_group"] == g) & (sel["batch"] == "pilot")).sum()),
-                 "main": int(((sel["cip_group"] == g) & (sel["batch"] == "main")).sum())} for g in GROUP_ORDER}
+                 **{b: int(((sel["cip_group"] == g) & (sel["batch"] == b)).sum()) for b in ("main", "expansion")}}
+             for g in GROUP_ORDER}
     status_counts = {g: {s: int(((progs["cip_group"] == g) & (progs["status"] == s)).sum()) for s in t.STATUSES}
                      for g in GROUP_ORDER}
     reasons = dict(Counter(progs.loc[progs["status"] == "excluded", "exclusion_reason"]))

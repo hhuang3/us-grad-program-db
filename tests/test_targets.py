@@ -12,6 +12,11 @@ REAL_EXPANSION = {
     "27.0501": "stats", "27.0599": "stats", "27.0601": "stats",
     "52.1301": "mgmt_sci", "52.1302": "mgmt_sci", "52.1304": "mgmt_sci", "52.1399": "mgmt_sci",
     "45.0603": "econ",
+    "11.0101": "cs", "11.0102": "cs", "11.0701": "cs",
+    "14.0901": "ece", "14.1001": "ece", "14.4701": "ece",
+    "27.0305": "fin_eng", "14.3501": "ieor", "14.3701": "ieor",
+    "11.0103": "info_sys", "11.0104": "info_sys", "11.0401": "info_sys",
+    "26.1102": "biostat",
 }
 
 
@@ -24,7 +29,14 @@ def write_config(tmp_path, rows):
 def test_real_config_schema():
     config = load_target_config(REPO / "config" / "target_cip.csv")
     assert list(config.columns) == ["pattern", "kind", "cip_group", "label"]
-    assert set(config["cip_group"]) == {"ds", "analytics", "stats", "mgmt_sci", "econ"}
+    assert set(config["cip_group"]) == {"ds", "analytics", "stats", "mgmt_sci", "econ",
+                                        "cs", "ece", "fin_eng", "ieor", "info_sys", "biostat"}
+
+
+def test_expansion_groups_exclude_owner_rejected_codes():
+    # 04 §1 (2026-11-22): off-list business codes and the two declined codes stay out.
+    config = load_target_config(REPO / "config" / "target_cip.csv")
+    assert not {"52.0801", "52.1201", "52.1206", "14.2701", "26.1103"} & set(config["pattern"])
 
 
 def test_real_config_expands_on_fixture_cip(targets):

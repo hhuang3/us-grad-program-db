@@ -20,7 +20,7 @@ cip2020:
   valid_two_digit: 50
 
 targets:
-  total: 17
+  total: 30                             # 2026-11-22: +13 expansion codes (04 §1 v1.2), not a data change
   not_on_stem_list: ["30.7099"]
 
 # 按数据版本分条记录（01 §8）；新版本新增一条，旧条目保留。当前版本由测试从已提交数据推出。
@@ -28,15 +28,20 @@ ipeds:
   C2024:
     data_year: "2023-24"
     release: final                       # c2024_a_rv.csv
-    masters_target_rows: 1061
-    masters_target_institutions: 492
-    excluded_states: {PR: 2}
-    candidates_rows: 1059
-    candidates_institutions: 490
-    candidates_by_group: {ds: 96, analytics: 144, stats: 184, mgmt_sci: 463, econ: 172}
+    # 2026-11-22: counts below grew with the 6 expansion groups (04 §1 v1.2); the IPEDS release is unchanged.
+    masters_target_rows: 2487
+    masters_target_institutions: 709
+    excluded_states: {PR: 12}
+    candidates_rows: 2475
+    candidates_institutions: 703
+    candidates_by_group: {ds: 96, analytics: 144, stats: 184, mgmt_sci: 463, econ: 172,
+                          cs: 488, ece: 343, fin_eng: 100, ieor: 112, info_sys: 298, biostat: 75}
 
 scorecard_fos:
   "2026-06-10":
-    masters_target_rows: 1034
-    rows_by_cip4: {"27.05": 180, "27.06": 21, "30.70": 90, "30.71": 123, "45.06": 251, "52.13": 369}
-    earnings_reported: {earn_mdn_1yr: 170, earn_mdn_4yr: 132, earn_mdn_5yr: 62}
+    # 2026-11-22: grew with the expansion groups' parent series (04 §1 v1.2); same release.
+    masters_target_rows: 2839
+    rows_by_cip4: {"11.01": 382, "11.04": 185, "11.07": 304, "14.09": 178, "14.10": 256, "14.35": 95, "14.37": 33,
+                   "14.47": 26, "26.11": 142, "27.03": 204, "27.05": 180, "27.06": 21, "30.70": 90, "30.71": 123,
+                   "45.06": 251, "52.13": 369}
+    earnings_reported: {earn_mdn_1yr: 517, earn_mdn_4yr: 465, earn_mdn_5yr: 283}

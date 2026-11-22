@@ -90,7 +90,7 @@ def test_ipeds_table_rows(ipeds_table):
 
 def test_only_masters_and_targets_kept(ipeds_table):
     rows = keyed(ipeds_table)
-    assert ("100002", "11.0701") not in rows          # not a target CIP
+    assert ("100002", "14.0101") not in rows          # not a target CIP
     assert rows[("100001", "30.7001")].completions_masters == 50  # bachelor's row (AWLEVEL 5) ignored
     assert "99" not in set(ipeds_table["cip_code"])   # institution total row dropped
 
@@ -214,7 +214,8 @@ def test_by_institution(candidates):
     assert list(by.columns) == [
         "unitid", "institution_name", "state", "institution_target_cip_count", "cip_codes",
         "completions_ds", "completions_analytics", "completions_stats", "completions_mgmt_sci",
-        "completions_econ",
+        "completions_econ", "completions_cs", "completions_ece", "completions_fin_eng", "completions_ieor",
+        "completions_info_sys", "completions_biostat",
     ]
     assert list(by["unitid"]) == ["100001", "100002", "100004", "100005", "100006"]
     r = {row.unitid: row for row in by.itertuples(index=False)}

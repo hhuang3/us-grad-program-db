@@ -5,7 +5,8 @@ import re
 import pandas as pd
 
 CONFIG_COLUMNS = ["pattern", "kind", "cip_group", "label"]
-GROUP_ORDER = ("ds", "analytics", "stats", "mgmt_sci", "econ")
+GROUP_ORDER = ("ds", "analytics", "stats", "mgmt_sci", "econ", "cs", "ece", "fin_eng", "ieor", "info_sys", "biostat")
+EXPANSION_GROUPS = ("cs", "ece", "fin_eng", "ieor", "info_sys", "biostat")   # 06 §2.8
 MUST_EXIST = ("30.7102", "30.7103", "30.7104", "45.0603", "27.0601")
 PATTERNS = {"prefix": re.compile(r"^\d{2}\.\d{2}$"), "exact": re.compile(r"^\d{2}\.\d{4}$")}
 

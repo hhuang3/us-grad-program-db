@@ -58,3 +58,10 @@ def test_write_is_deterministic_and_refuses_overwrite(ws, tmp_path):
     write_worksheet(ws, path, force=True)
     assert path.read_bytes() == first
     assert first.startswith(",".join(COLUMNS).encode() + b"\n")
+
+
+def test_groups_limit_rows_without_changing_ranks(registry_candidates, ws):
+    # 06 §7 (2026-11-22): the expansion worksheet lists only the requested groups.
+    only = build_worksheet(registry_candidates, groups=["stats"])
+    assert set(only["cip_group"]) == {"stats"}
+    assert only.reset_index(drop=True).equals(ws[ws["cip_group"] == "stats"].reset_index(drop=True))

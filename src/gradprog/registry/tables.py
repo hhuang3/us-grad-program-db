@@ -25,7 +25,7 @@ DELIVERY_MODES = ("on_campus", "hybrid", "online", "unknown")
 STATUSES = ("selected", "excluded", "backlog")
 EXCLUSION_REASONS = ("mba", "online_only", "certificate", "out_of_scope", "duplicate", "not_found", "not_admitting",
                      "other")
-BATCHES = ("pilot", "main")
+BATCHES = ("pilot", "main", "expansion")
 FETCH_METHODS = ("auto", "manual")
 INTAKE_TERMS = ("fall", "spring", "summer")   # programs.intake_terms: ";"-joined, in this order (06 §3.1)
 PAGE_TYPES = ("program_home", "admissions", "deadlines", "requirements", "tuition", "funding", "faq",

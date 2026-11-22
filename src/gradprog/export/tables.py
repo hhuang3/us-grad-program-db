@@ -19,7 +19,9 @@ DEADLINE_TYPE = {"application": "申请截止", "deposit": "押金", "decision_r
                  "international_docs": "签证材料", "other": "其他"}
 SCOPE = {"all": "全部", "international": "国际学生", "domestic": "美国本土", "funding_consideration": "奖助评选"}
 SEASON = {"fall": "秋季", "spring": "春季", "summer": "夏季"}
-AREA = {"ds": "数据科学", "analytics": "商业分析", "stats": "统计", "econ": "经济", "mgmt_sci": "管理科学"}
+AREA = {"ds": "数据科学", "analytics": "商业分析", "stats": "统计", "econ": "经济", "mgmt_sci": "管理科学",
+        "cs": "计算机科学", "ece": "电子与计算机工程", "fin_eng": "金融工程", "ieor": "工业工程与运筹",
+        "info_sys": "信息系统", "biostat": "生物统计"}
 SEASON_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2}
 NO_VALUE = {"referenced_elsewhere": "见其他页面", "mentioned_without_value": "提到但未给值", "not_mentioned": "页面未写明",
             "extraction_failed": "待核实（抽取失败）", "page_unavailable": "待核实（页面无法访问）"}

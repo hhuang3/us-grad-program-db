@@ -372,9 +372,12 @@ def test_ready_only_checks_requested_batch(registry, registry_candidates):
 
 def test_quota_report(registry, registry_candidates):
     q = run(registry, registry_candidates).report["quota"]
-    assert q["ds"] == {"target": 25, "selected": 1, "pilot": 1, "main": 0}
+    assert q["ds"] == {"target": 25, "selected": 1, "pilot": 1, "main": 0, "expansion": 0}
     assert q["analytics"]["selected"] == 1
     assert q["stats"]["selected"] == 0 and q["mgmt_sci"]["target"] == 20 and q["econ"]["target"] == 10
+    # 06 §2.3 expansion quotas (2026-11-22), 57 in all.
+    targets = {g: q[g]["target"] for g in ("cs", "ece", "fin_eng", "ieor", "info_sys", "biostat")}
+    assert targets == {"cs": 15, "ece": 10, "fin_eng": 10, "ieor": 8, "info_sys": 8, "biostat": 6}
 
 
 def test_status_and_reason_counts(registry, registry_candidates):

@@ -5,15 +5,40 @@ cip_code,level,title,definition,action
 03,2,NATURAL RESOURCES AND CONSERVATION.,Sample definition for NATURAL RESOURCES AND CONSERVATION.,No substantive changes
 03.02,4,Natural Resources Management and Policy.,Sample definition for Natural Resources Management and Policy.,No substantive changes
 03.0204,6,Environmental/Natural Resource Economics.,Sample definition for Environmental/Natural Resource Economics.,No substantive changes
+11,2,COMPUTER AND INFORMATION SCIENCES AND SUPPORT SERVICES.,Sample definition for COMPUTER AND INFORMATION SCIENCES AND SUPPORT SERVICES.,No substantive changes
+11.01,4,"Computer and Information Sciences, General.","Sample definition for Computer and Information Sciences, General.",No substantive changes
+11.0101,6,"Computer and Information Sciences, General.","Sample definition for Computer and Information Sciences, General.",No substantive changes
+11.0102,6,Artificial Intelligence.,Sample definition for Artificial Intelligence.,No substantive changes
+11.0103,6,Information Technology.,Sample definition for Information Technology.,No substantive changes
+11.0104,6,Informatics.,Sample definition for Informatics.,No substantive changes
+11.04,4,Information Science/Studies.,Sample definition for Information Science/Studies.,No substantive changes
+11.0401,6,Information Science/Studies.,Sample definition for Information Science/Studies.,No substantive changes
+11.07,4,Computer Science.,Sample definition for Computer Science.,No substantive changes
+11.0701,6,Computer Science.,Sample definition for Computer Science.,No substantive changes
 14,2,ENGINEERING.,Sample definition for ENGINEERING.,No substantive changes
 14.01,4,"Engineering, General.","Sample definition for Engineering, General.",No substantive changes
 14.0101,6,"Engineering, General.","Sample definition for Engineering, General.",No substantive changes
 14.02,4,"Aerospace, Aeronautical, and Astronautical/Space Engineering.","Sample definition for Aerospace, Aeronautical, and Astronautical/Space Engineering.",No substantive changes
 14.0201,6,"Aerospace, Aeronautical, and Astronautical/Space Engineering, General.","Sample definition for Aerospace, Aeronautical, and Astronautical/Space Engineering, General.",No substantive changes
+14.09,4,Computer Engineering.,Sample definition for Computer Engineering.,No substantive changes
+14.0901,6,"Computer Engineering, General.","Sample definition for Computer Engineering, General.",No substantive changes
+14.10,4,"Electrical, Electronics, and Communications Engineering.","Sample definition for Electrical, Electronics, and Communications Engineering.",No substantive changes
+14.1001,6,Electrical and Electronics Engineering.,Sample definition for Electrical and Electronics Engineering.,No substantive changes
+14.35,4,Industrial Engineering.,Sample definition for Industrial Engineering.,No substantive changes
+14.3501,6,Industrial Engineering.,Sample definition for Industrial Engineering.,No substantive changes
+14.37,4,Operations Research.,Sample definition for Operations Research.,No substantive changes
+14.3701,6,Operations Research.,Sample definition for Operations Research.,No substantive changes
+14.47,4,Electrical and Computer Engineering.,Sample definition for Electrical and Computer Engineering.,New
+14.4701,6,Electrical and Computer Engineering.,Sample definition for Electrical and Computer Engineering.,New
 15,2,ENGINEERING/ENGINEERING-RELATED TECHNOLOGIES/TECHNICIANS.,Sample definition for ENGINEERING/ENGINEERING-RELATED TECHNOLOGIES/TECHNICIANS.,No substantive changes
 15.00,4,"Engineering Technologies/Technicians, General.","Sample definition for Engineering Technologies/Technicians, General.",No substantive changes
 15.0000,6,"Engineering Technologies/Technicians, General.","Sample definition for Engineering Technologies/Technicians, General.",No substantive changes
+26,2,BIOLOGICAL AND BIOMEDICAL SCIENCES.,Sample definition for BIOLOGICAL AND BIOMEDICAL SCIENCES.,No substantive changes
+26.11,4,"Biomathematics, Bioinformatics, and Computational Biology.","Sample definition for Biomathematics, Bioinformatics, and Computational Biology.",No substantive changes
+26.1102,6,Biostatistics.,Sample definition for Biostatistics.,No substantive changes
 27,2,MATHEMATICS AND STATISTICS.,Sample definition for MATHEMATICS AND STATISTICS.,No substantive changes
+27.03,4,Applied Mathematics.,Sample definition for Applied Mathematics.,No substantive changes
+27.0305,6,Financial Mathematics.,Sample definition for Financial Mathematics.,No substantive changes
 27.05,4,Statistics.,Sample definition for Statistics.,No substantive changes
 27.0501,6,"Statistics, General.","Sample definition for Statistics, General.",No substantive changes
 27.0599,6,"Statistics, Other.","Sample definition for Statistics, Other.",No substantive changes
