@@ -106,6 +106,7 @@
 - 同一所学校在同一组只选一个项目：在校全日制、主打的硕士项目（如 MSCS、MFE）。§2.2 的排除规则照常：MBA、纯线上、证书项目不收；只对本校学生开放的项目也不收。
 - 名额边缘的候选条件相近时，优先选页面可以自动抓取（robots 允许、条款没有限制）的学校；按排序选的那一半，人工保存的页面控制在这些项目全部页面的 30% 以内。点名的学校按需求选入，不受这个比例限制，也不为比例替换（2026-11-22 确认）。
 - 学校已经登记过的研究生院页面（例如英语要求页）直接沿用，不重复登记。
+- 每组按排序提议的项目比名额的一半多 1–2 个，负责人从中选，其余填 `backup`。
 - 第一轮由负责人预先点名的 `cs` 学校（2026-11-22）：CMU、Columbia、Cornell、UPenn、Georgia Tech、UCSD、USC、NYU。Claude 查找这些学校的项目，直接放进审核清单“我要加的学校”一栏下，与按排序挑选的一半分开列出。
 - 扩展批次不建标准答案集，质量靠审核队列和导出中的“待核实”兜底（08 §10、09 §1）。
 
@@ -366,7 +367,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - 这份工作表**不是校验输入**，`validate` 不读它。
 - 已存在时拒绝覆盖（防止你填写的内容丢失），需要 `--force` 才覆盖。
 - 生成结果是确定的（同样的 candidates.csv → 逐字节相同的文件）。
-- 扩展批次（2026-11-22）：`gradprog registry worksheet --groups cs --out data/registry/selection_worksheet_expansion.csv` 只写指定组，规则同上；原有工作表不动。
+- 扩展批次（2026-11-22）：`gradprog registry worksheet --groups cs,ece,fin_eng,ieor,info_sys,biostat --out data/registry/selection_worksheet_expansion.csv --force` 只写指定组，规则同上；原有工作表不动。第一轮只写了 cs，第二轮重写为全部 6 个扩展组（cs 的行不变）。
 
 ## 8. 批量登记与审核清单（2026-11-22）
 
