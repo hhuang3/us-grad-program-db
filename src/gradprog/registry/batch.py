@@ -388,6 +388,19 @@ def apply_review(registry, review, url_check, on, source="review"):
         d.loc[mask, "tos_note"] = f"负责人: {note or status}" + (f"；Claude: {hint}" if hint else "")
     registry.pages["crawl_allowed"] = list(crawl_allowed_for(registry.pages, registry.domains))
 
+    # Page decisions first, so a rejected page never counts towards a selected program (06 §8.3).
+    for page, decision in review.pages.items():
+        if page not in set(registry.pages["page_id"]):
+            raise t.RegistryError(f"unknown page in review: {page}")
+        if decision == "confirm":
+            registry.pages.loc[registry.pages["page_id"] == page, "url_status"] = "confirmed"
+        else:
+            if registry.pages.loc[registry.pages["page_id"] == page, "url_status"].iloc[0] != "proposed":
+                raise t.RegistryError(f"{page}: only proposed pages can be rejected")
+            registry.pages = registry.pages[registry.pages["page_id"] != page].reset_index(drop=True)
+            registry.program_pages = registry.program_pages[registry.program_pages["page_id"] != page] \
+                .reset_index(drop=True)
+
     blocked = _blocked(url_check)
     pages = registry.pages.set_index("page_id")
     progs = registry.programs
@@ -412,18 +425,6 @@ def apply_review(registry, review, url_check, on, source="review"):
             progs.loc[mask, "exclusion_reason"] = reason
             progs.loc[mask, "selection_note"] = progs.loc[mask, "selection_note"] + \
                 f" Excluded by owner {on} ({source})" + (f": {why.strip()}" if why.strip() else ".")
-    for page, decision in review.pages.items():
-        if page not in set(registry.pages["page_id"]):
-            raise t.RegistryError(f"unknown page in review: {page}")
-        if decision == "confirm":
-            registry.pages.loc[registry.pages["page_id"] == page, "url_status"] = "confirmed"
-        else:
-            if registry.pages.loc[registry.pages["page_id"] == page, "url_status"].iloc[0] != "proposed":
-                raise t.RegistryError(f"{page}: only proposed pages can be rejected")
-            registry.pages = registry.pages[registry.pages["page_id"] != page].reset_index(drop=True)
-            registry.program_pages = registry.program_pages[registry.program_pages["page_id"] != page] \
-                .reset_index(drop=True)
-
     pages = registry.pages.set_index("page_id")
     links = registry.program_pages
 

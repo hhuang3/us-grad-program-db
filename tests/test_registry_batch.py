@@ -337,6 +337,22 @@ def test_reject_removes_a_proposed_page(registry, review):
     assert page not in set(registry.program_pages["page_id"])
 
 
+def test_reject_a_page_of_a_program_selected_in_the_same_review(robots_checked, proposals, candidates):
+    # 06 §8.3 (2026-11-23): a proposed page of a new program can be rejected; rejections run before selections,
+    # so the program's fetch_method is decided without the rejected page.
+    registry = robots_checked
+    text = decide(write_review(registry, candidates, proposals, None, DAY), tuition_page(registry))
+    bad = registry.pages.loc[registry.pages["url"] == "https://grad.kappa.edu/tuition", "page_id"].iloc[0]
+    text = text.replace("## 补登页面", f"## 补登页面\n\n#### 页面 {bad}\n决定：reject\n", 1)
+    head = text.index("#### 域名 grad.kappa.edu")
+    line = text.index("条款：no_restriction", head)
+    text = text[:line] + "条款：prohibits_automated_access" + text[line + len("条款：no_restriction"):]
+    summary = apply_review(registry, parse_review(text), url_check=None, on=DAY)
+    assert bad not in set(registry.pages["page_id"])
+    assert registry.programs.set_index("program_id").loc["kappa-ms-computerscience", "fetch_method"] == "auto"
+    assert summary["manual_pages"]["ranked"] == {"manual": 0, "total": 2}
+
+
 def test_undecided_items_are_listed(registry, review):
     summary = apply_review(registry, parse_review(review), url_check=None, on=DAY)
     assert set(summary["undecided"]) >= {"kappa-ms-computerscience", "alpha-ms-computerscience"}

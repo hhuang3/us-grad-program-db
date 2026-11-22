@@ -178,12 +178,12 @@ def _print_validation(result):
               f"graduate_school pages: {rep['graduate_school_pages']}")
         print("domains with tos_status != no_restriction:", rep["tos_not_ok_domains"] or "none")
         blocked = rep.get("ready_crawl_blocked", rep["crawl_blocked_pages"])
-        label = "pilot pages not crawlable" if "ready_crawl_blocked" in rep else "pages not crawlable"
+        label = "ready-batch pages not crawlable" if "ready_crawl_blocked" in rep else "pages not crawlable"
         print(f"{label}: {len(blocked)}")
         for b in blocked:
             print(f"  {b['page_id']} {b['domain']} ({b['reason']})")
         if "ready_manual_programs" in rep:
-            print(f"pilot programs with fetch_method=manual: {len(rep['ready_manual_programs'])}")
+            print(f"ready-batch programs with fetch_method=manual: {len(rep['ready_manual_programs'])}")
             for pid in rep["ready_manual_programs"]:
                 print(f"  {pid}")
     print(f"\n{len(result.errors)} error(s), {len(result.warnings)} warning(s)")

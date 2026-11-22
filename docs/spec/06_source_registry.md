@@ -396,6 +396,8 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - 先写入域名的条款判断：`tos_status`，`tos_note` 写“负责人: <说明>；Claude: <tos_hint>”，然后重新计算 `crawl_allowed`。
 - 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写（项目的全部页面都“可抓取”（§5.2）时为 `auto`，否则 `manual`）、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
 - 补登页面：`confirm` → `url_status = confirmed`；`reject` → 删除这个页面及其关联（页面只是 proposed，尚未抓取）。
+- 新项目的某个页面不要时（例如网址 404），在“补登页面”一节为它加一小节 `#### 页面 <page_id>`、`决定：reject`（2026-11-23）。页面的决定先于项目的决定处理，所以被拒的页面不影响项目的 `fetch_method`。
+- 负责人把“按排序”一节里的项目改为按点名选入时，把它的小节移到同组的 `### 点名` 下（没有就新建）；人工保存比例按移动后的分组统计（2026-11-23）。
 - 只有 `select` 和 `confirm` 的页面变为 confirmed；`exclude` 项目的页面保持 proposed。
 - 没有填写决定的项目或页面不变，并在输出中列出。
 - “我要加的学校”不自动登记：Claude 为这些学校补提议表，再走一遍 §8.1。
