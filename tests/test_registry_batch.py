@@ -107,6 +107,14 @@ def test_pages_are_proposed_and_shared_pages_reused(registry, proposals, candida
     assert result.page_additions == [("alpha-ms-datascience", tuition)]
 
 
+def test_robots_domains_cover_new_pages_on_registered_domains(registry, proposals, candidates):
+    # 06 §8.1: robots.txt is checked for every domain holding a new page, not only for new domains.
+    result = added(registry, proposals, candidates)
+    assert "grad.alpha.edu" not in result.new_domains
+    assert "grad.alpha.edu" in result.robots_domains
+    assert set(result.new_domains) <= set(result.robots_domains)
+
+
 def test_new_domains_get_tos_url_and_hint(registry, proposals, candidates):
     result = added(registry, proposals, candidates)
     d = registry.domains.set_index("domain")
@@ -293,7 +301,7 @@ def test_fetch_method_manual_when_any_page_is_not_crawlable(robots_checked, prop
     text = text[:line] + "条款：prohibits_automated_access" + text[line + len("条款：no_restriction"):]
     summary = apply_review(registry, parse_review(text), url_check=None, on=DAY)
     assert registry.programs.set_index("program_id").loc["kappa-ms-computerscience", "fetch_method"] == "manual"
-    assert summary["manual_pages"] == {"manual": 1, "total": 3}
+    assert summary["manual_pages"] == {"nominated": {"manual": 0, "total": 0}, "ranked": {"manual": 1, "total": 3}}
 
 
 def test_fetch_method_manual_when_site_returns_403(robots_checked, proposals, candidates):
@@ -304,6 +312,18 @@ def test_fetch_method_manual_when_site_returns_403(robots_checked, proposals, ca
     text = decide(write_review(registry, candidates, proposals, url_check, DAY), tuition_page(registry))
     apply_review(registry, parse_review(text), url_check=url_check, on=DAY)
     assert registry.programs.set_index("program_id").loc["kappa-ms-computerscience", "fetch_method"] == "manual"
+
+
+def test_fetch_method_manual_when_site_serves_a_javascript_challenge(robots_checked, proposals, candidates):
+    registry = robots_checked
+    home = registry.pages.loc[registry.pages["url"] == "https://cs.kappa.edu/ms", "page_id"].iloc[0]
+    url_check = pd.DataFrame([[home, "https://cs.kappa.edu/ms", "redirected", "202",
+                               "https://cs.kappa.edu/ms?challenge=abc", DAY]],
+                             columns=["page_id", "url", "result", "http_status", "final_url", "checked_at"])
+    text = decide(write_review(registry, candidates, proposals, url_check, DAY), tuition_page(registry))
+    summary = apply_review(registry, parse_review(text), url_check=url_check, on=DAY)
+    assert registry.programs.set_index("program_id").loc["kappa-ms-computerscience", "fetch_method"] == "manual"
+    assert summary["manual_pages"]["ranked"] == {"manual": 1, "total": 3}
 
 
 def test_reject_removes_a_proposed_page(registry, review):
@@ -338,12 +358,16 @@ def test_fetch_method_auto_when_every_page_is_crawlable(robots_checked, proposal
     text = decide(write_review(registry, candidates, proposals, None, DAY), tuition_page(registry))
     summary = apply_review(registry, parse_review(text), url_check=None, on=DAY)
     assert registry.programs.set_index("program_id").loc["kappa-ms-computerscience", "fetch_method"] == "auto"
-    assert summary["manual_pages"] == {"manual": 0, "total": 3}
+    assert summary["manual_pages"]["ranked"] == {"manual": 0, "total": 3}
 
 
 def test_review_summary_projects_manual_share(robots_checked, proposals, candidates):
     # With terms not yet judged every page counts as manual; the summary also shows the share if they all pass.
     review = write_review(robots_checked, candidates, proposals, None, DAY)
     summary = review.split("## 汇总")[1]
-    assert "不能自动抓取的页面 4 个（80%" in summary
-    assert "若待判断的条款都判为 no_restriction：不能自动抓取的页面 0 个（0%）" in summary
+    # 06 §2.8: the 30% cap applies to the half chosen by ranking; nominated programs are counted apart.
+    ranked = summary.split("按排序：")[1].split("\n")[0]
+    assert "页面 3 个" in ranked and "不能自动抓取 3 个（100%" in ranked and "上限 30%" in ranked
+    assert "若条款都判为 no_restriction：0 个（0%）" in ranked
+    nominated = summary.split("点名：")[1].split("\n")[0]
+    assert "页面 2 个" in nominated and "不受比例限制" in nominated

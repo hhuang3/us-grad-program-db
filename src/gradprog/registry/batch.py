@@ -38,6 +38,7 @@ class AddResult:
     new_domains: list = field(default_factory=list)
     reused: list = field(default_factory=list)           # (program_id, page_id) of already registered pages
     page_additions: list = field(default_factory=list)   # (program_id, page_id) for registered programs
+    robots_domains: list = field(default_factory=list)   # domains of new pages: check-robots runs on these
 
 
 def _row_problems(i, r):
@@ -126,6 +127,7 @@ def add_programs(registry, proposals, candidates, added_at, label="expansion"):
             result.page_additions.append((pid, page))
 
     result.new_domains = sorted(set(work.domains["domain"]) - before_domains)
+    result.robots_domains = sorted(set(work.pages.loc[work.pages["page_id"].isin(result.new_pages), "domain"]))
     hints = {}
     for _, r in proposals.iterrows():
         d = domain_of(normalize_url(r["url"]))
@@ -154,7 +156,9 @@ def _checks(url_check):
 
 
 def _blocked(url_check):
-    return {pid for pid, r in _checks(url_check).items() if r.result == "error" and r.http_status == "403"}
+    """HTTP 403 or a JavaScript challenge in the latest check (06 §5.2)."""
+    from gradprog.registry.validate import site_blocked_pages
+    return site_blocked_pages(url_check)
 
 
 def _page_line(page, tos, checks, reused=False):
@@ -243,18 +247,26 @@ def write_review(registry, candidates, proposals, url_check, on_date, title=""):
             out.append(f"- 提示：{notes[(pid, p)]}")
         out += ["决定：", ""]
 
-    all_pages = {p for pid in review_programs for p in pp.loc[pp["program_id"] == pid, "page_id"]}
-    manual = [p for p in all_pages if not (pages.loc[p, "crawl_allowed"] == "true" and p not in blocked)]
-    likely = [p for p in all_pages if not (pages.loc[p, "robots_allowed"] == "yes" and p not in blocked
-                                           and tos.get(pages.loc[p, "domain"]) in ("no_restriction", "not_checked"))]
+    def pages_of(ids):
+        return {p for pid in ids for p in pp.loc[pp["program_id"] == pid, "page_id"]}
+
+    def share(n, total):
+        return f"{n} 个（{(n / total * 100 if total else 0):.0f}%）"
+
+    all_pages = pages_of(review_programs)
     out += ["## 汇总", "",
-            f"- 本清单项目 {len(review_programs)} 个，页面 {len(all_pages)} 个（含沿用的已登记页面）。",
-            f"- 按目前检查结果，不能自动抓取的页面 {len(manual)} 个"
-            f"（{(len(manual) / len(all_pages) * 100 if all_pages else 0):.0f}%；条款未判断的域名按不能抓取算）。"
-            "06 §2.8 的上限是扩展批次全部页面的 30%。",
-            f"- 若待判断的条款都判为 no_restriction：不能自动抓取的页面 {len(likely)} 个"
-            f"（{(len(likely) / len(all_pages) * 100 if all_pages else 0):.0f}%）。", ""]
-    return "\n".join(out) + "\n"
+            f"- 本清单项目 {len(review_programs)} 个，页面 {len(all_pages)} 个（含沿用的已登记页面）。"
+            "条款未判断的域名按不能抓取算。"]
+    for label, ids in (("按排序", [p for p in review_programs if p not in nominated]),
+                       ("点名", [p for p in review_programs if p in nominated])):
+        mine = pages_of(ids)
+        manual = [p for p in mine if not (pages.loc[p, "crawl_allowed"] == "true" and p not in blocked)]
+        likely = [p for p in mine if not (pages.loc[p, "robots_allowed"] == "yes" and p not in blocked
+                                          and tos.get(pages.loc[p, "domain"]) in ("no_restriction", "not_checked"))]
+        rule = "06 §2.8 上限 30%" if label == "按排序" else "按需求选入，不受比例限制"
+        out.append(f"- {label}：项目 {len(ids)} 个，页面 {len(mine)} 个，不能自动抓取 {share(len(manual), len(mine))}；"
+                   f"若条款都判为 no_restriction：{share(len(likely), len(mine))}。{rule}。")
+    return "\n".join(out) + "\n\n"
 
 
 def _program_block(pid, prog, pp, pages, tos, ws, checks, blocked, prop_pages):
@@ -291,6 +303,7 @@ class Review:
     pages: dict = field(default_factory=dict)      # page_id -> confirm / reject
     tos: dict = field(default_factory=dict)        # domain -> (tos_status, note)
     nominated: dict = field(default_factory=dict)  # group -> text
+    sections: dict = field(default_factory=dict)   # program_id -> 点名 / 按排序
 
 
 HEAD = re.compile(r"^#### (项目|页面|域名) (\S+)")
@@ -298,18 +311,23 @@ GROUP = re.compile(r"^## 组 (\S+)")
 
 
 def parse_review(text):
-    review, current, group = Review(), None, None
+    review, current, group, section = Review(), None, None, None
     minutes = {}
     for raw in text.splitlines():
         line = raw.strip()
         if line.startswith("## "):
-            current = None
+            current, section = None, None
             m = GROUP.match(line)
             group = m.group(1) if m else None
+            continue
+        if line in ("### 点名", "### 按排序"):
+            section = line[4:]
             continue
         m = HEAD.match(line)
         if m:
             current = (m.group(1), m.group(2))
+            if m.group(1) == "项目" and section:
+                review.sections[m.group(2)] = section
             continue
         if line.startswith("我要加的学校：") and group:
             review.nominated[group] = line[len("我要加的学校："):].strip()
@@ -406,10 +424,14 @@ def apply_review(registry, review, url_check, on, source="review"):
             registry.program_pages = registry.program_pages[registry.program_pages["page_id"] != page] \
                 .reset_index(drop=True)
 
-    exp = progs[(progs["batch"] == "expansion") & (progs["status"] == "selected")]["program_id"]
-    exp_pages = set(registry.program_pages.loc[registry.program_pages["program_id"].isin(exp), "page_id"])
     pages = registry.pages.set_index("page_id")
-    manual = sum(not (pages.loc[p, "crawl_allowed"] == "true" and p not in blocked) for p in exp_pages)
+    links = registry.program_pages
+
+    def manual_share(section):
+        ids = [p for p in selected if review.sections.get(p, "按排序") == section]
+        mine = set(links.loc[links["program_id"].isin(ids), "page_id"])
+        manual = sum(not (pages.loc[p, "crawl_allowed"] == "true" and p not in blocked) for p in mine)
+        return {"manual": manual, "total": len(mine)}
     timed = [v for v in review.minutes.values()]
     decided = set(review.programs) | set(review.pages)
     pending_programs = [pid for pid in progs.loc[(progs["batch"] == "expansion") & (progs["status"] == "backlog"),
@@ -426,7 +448,7 @@ def apply_review(registry, review, url_check, on, source="review"):
         "tos": {k: v[0] for k, v in review.tos.items()},
         "minutes": {"programs": len(timed), "total": sum(timed),
                     "mean": (sum(timed) / len(timed)) if timed else 0.0},
-        "manual_pages": {"manual": manual, "total": len(exp_pages)},
+        "manual_pages": {"nominated": manual_share("点名"), "ranked": manual_share("按排序")},
         "nominated": {g: v for g, v in review.nominated.items()},
         "undecided": pending_programs + pending_pages,
     }

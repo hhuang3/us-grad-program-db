@@ -66,40 +66,55 @@ def load_head_tables(repo_root, registry_rel="data/registry"):
     return out
 
 
-def site_blocked_pages(url_check):
-    """Page ids whose latest check-urls result was HTTP 403 (06 §5.2)."""
+def site_challenge_pages(url_check):
+    """Page ids whose latest check-urls result was a JavaScript challenge: HTTP 202 with a final URL whose query
+    has a challenge parameter (06 §5.2, 2026-11-22)."""
     if url_check is None or url_check.empty:
         return set()
     latest = url_check.drop_duplicates("page_id", keep="last")
-    return set(latest.loc[(latest["result"] == "error") & (latest["http_status"] == "403"), "page_id"])
+    challenge = latest["final_url"].str.contains(r"[?&]challenge=", regex=True)
+    return set(latest.loc[(latest["http_status"] == "202") & challenge, "page_id"])
 
 
-def _crawl_reason(robots_allowed, robots_status, tos_status, blocked_403):
+def site_blocked_pages(url_check):
+    """Page ids whose latest check-urls result shows the site blocking us: HTTP 403 or a JavaScript challenge
+    (06 §5.2)."""
+    if url_check is None or url_check.empty:
+        return set()
+    latest = url_check.drop_duplicates("page_id", keep="last")
+    forbidden = set(latest.loc[(latest["result"] == "error") & (latest["http_status"] == "403"), "page_id"])
+    return forbidden | site_challenge_pages(url_check)
+
+
+def _crawl_reason(robots_allowed, robots_status, tos_status, blocked_403, challenge=False):
     if robots_allowed == "not_checked":
         return "not_checked"
     if robots_allowed == "no":
         return "robots_unavailable" if robots_status == "error" else "robots_disallowed"
     if tos_status != "no_restriction":
         return "tos"
+    if challenge:
+        return "site_challenge"
     if blocked_403:
         return "site_blocked_403"
     return "stale"
 
 
 class _Crawl:
-    """Effective crawlability: crawl_allowed and not blocked with HTTP 403 by check-urls."""
+    """Effective crawlability: crawl_allowed and not blocked (HTTP 403 or a JavaScript challenge) by check-urls."""
 
     def __init__(self, registry, url_check):
         self.tos = dict(zip(registry.domains["domain"], registry.domains["tos_status"]))
         self.robots = dict(zip(registry.domains["domain"], registry.domains["robots_status"]))
         self.blocked = site_blocked_pages(url_check)
+        self.challenge = site_challenge_pages(url_check)
 
     def ok(self, page_id, page):
         return page["crawl_allowed"] == "true" and page_id not in self.blocked
 
     def reason(self, page_id, page):
         return _crawl_reason(page["robots_allowed"], self.robots.get(page["domain"]), self.tos.get(page["domain"]),
-                             page_id in self.blocked)
+                             page_id in self.blocked, page_id in self.challenge)
 
 
 def _check_columns(registry, errors):

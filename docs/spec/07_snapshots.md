@@ -28,7 +28,7 @@
 
 **按页面决定取得方式**，结果是自动 39 页、人工 24 页；同一项目可以同时有两种页面：
 
-- **自动抓取**：页面“可抓取”，即 `crawl_allowed = true`，**且**不在 `url_check.csv` 最近一次为 HTTP 403 的名单中（06 §5.2 的定义），**且**至少关联一个 `status = selected` 的项目。项目的 `fetch_method` 不影响页面能否自动抓取。
+- **自动抓取**：页面“可抓取”，即 `crawl_allowed = true`，**且**不在 `url_check.csv` 最近一次为网站防护拦截（HTTP 403 或 JavaScript 验证页）的名单中（06 §5.2 的定义），**且**至少关联一个 `status = selected` 的项目。项目的 `fetch_method` 不影响页面能否自动抓取。
 - **人工取得**：关联 `fetch_method = manual` 的项目、且**不可抓取**的页面。
 - 关联 `fetch_method = auto` 项目、但**不可抓取**的页面（例如 robots 未检查或条款不明的非首页页面）：两边都不纳入，在每次运行报告中列为“未纳入取得”，建议运行 `registry check-robots` 或把项目改为 manual（2026-10-04 补充）。
 - **停用页面**（06 §3.2 `url_status = retired`）：既不自动抓取，也不人工取得（因此不进 manual-due），也不列为“未纳入取得”。已有的快照和 index.csv 行保留（2026-10-06 新增）。

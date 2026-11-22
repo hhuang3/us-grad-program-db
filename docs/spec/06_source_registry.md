@@ -1,6 +1,6 @@
 # 06 来源登记表（Phase 2）
 
-> 状态：v1.2（2026-11-22：扩展批次，§2.3、§2.8、§6、§8）。v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
+> 状态：v1.3（2026-11-22：§2.8 比例上限只用于按排序选的一半；§5.2 JavaScript 验证页算拦截）。v1.2（2026-11-22：扩展批次，§2.3、§2.8、§6、§8）。v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
 > 登记表是 Phase 3 抓取的**唯一输入**。本阶段不抓取项目页面内容；唯一允许访问大学网站的操作是读取 `robots.txt`，以及你明确要求时用搜索引擎查找候选 URL。
 
 ---
@@ -104,7 +104,7 @@
 
 - 每组约一半按 §2.4 的排序（国际学生授予数）挑选；另一半由负责人在审核清单（§8.2）中点名补充。
 - 同一所学校在同一组只选一个项目：在校全日制、主打的硕士项目（如 MSCS、MFE）。§2.2 的排除规则照常：MBA、纯线上、证书项目不收；只对本校学生开放的项目也不收。
-- 名额边缘的候选条件相近时，优先选页面可以自动抓取（robots 允许、条款没有限制）的学校；人工保存的页面控制在扩展批次全部页面的 30% 以内。
+- 名额边缘的候选条件相近时，优先选页面可以自动抓取（robots 允许、条款没有限制）的学校；按排序选的那一半，人工保存的页面控制在这些项目全部页面的 30% 以内。点名的学校按需求选入，不受这个比例限制，也不为比例替换（2026-11-22 确认）。
 - 学校已经登记过的研究生院页面（例如英语要求页）直接沿用，不重复登记。
 - 第一轮由负责人预先点名的 `cs` 学校（2026-11-22）：CMU、Columbia、Cornell、UPenn、Georgia Tech、UCSD、USC、NYU。Claude 查找这些学校的项目，直接放进审核清单“我要加的学校”一栏下，与按排序挑选的一半分开列出。
 - 扩展批次不建标准答案集，质量靠审核队列和导出中的“待核实”兜底（08 §10、09 §1）。
@@ -320,7 +320,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 `--ready --batch pilot` 是 Phase 3 的准入检查：只检查 `batch = pilot` 的 selected 项目。2d 过程中允许出现 proposed 页面（只给 warning），否则提议阶段就无法通过校验。
 
-**“可抓取”**（准入检查与报告使用，2026-10-03 修订）：`crawl_allowed = true`，**且**该页在 `data/registry/url_check.csv` 中最近一次的检查结果不是 HTTP 403（`result = error` 且 `http_status = 403`，即网站防护拦截）。`url_check.csv` 不存在时无法判断网站防护，给出一条 warning，只按 `crawl_allowed` 判断。
+**“可抓取”**（准入检查与报告使用，2026-10-03 修订，2026-11-22 补充）：`crawl_allowed = true`，**且**该页在 `data/registry/url_check.csv` 中最近一次的检查结果不是网站防护拦截。拦截包括两种：HTTP 403（`result = error` 且 `http_status = 403`），以及 JavaScript 验证页（`http_status = 202` 且 `final_url` 的查询参数里有 `challenge`）。验证页不执行、不绕过（00 §6）。每周抓取遇到验证页时（index.csv 中 `http_status = 202` 且最终网址带 `challenge`），Claude 把那次结果（状态码、最终网址、时间）照录为 url_check 的一行，不另外请求；该页从此按人工取得处理（项目需为 `fetch_method = manual`），并在 program_pages 的 `scope_note` 里写明。`url_check.csv` 不存在时无法判断网站防护，给出一条 warning，只按 `crawl_allowed` 判断。
 
 “不可抓取”的原因按以下顺序取第一个成立的：
 1. `robots_allowed = not_checked` → `not_checked`（未检查）
@@ -328,6 +328,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 3. `robots_allowed = no` → `robots_disallowed`（robots.txt 明确禁止）
 4. `tos_status ≠ no_restriction` → `tos`（条款）
 5. url_check 中最近一次为 HTTP 403 → `site_blocked_403`（网站防护 403）
+6. url_check 中最近一次为 JavaScript 验证页 → `site_challenge`（网站验证页）
 
 ### 5.3 报告（不报错）
 
@@ -377,7 +378,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - `tos_url`、`tos_hint`：新域名的条款页和 Claude 的初步判断，写在该域名第一次出现的行。`add-program` 把 `tos_url` 写入 domains.csv，`tos_status` 仍为 `not_checked`，由负责人在审核清单中判断。
 - 新项目的 `selection_note` 写“Proposed <日期> (expansion round 1)”加上 `note`；`fetch_method` 留空（backlog 不填）。
 - 网址已登记过的页面不新建，只给项目加关联（沿用研究生院页等共用页面）。
-- `gradprog registry add-program --from <提议表>`：一次登记表中所有项目（`status = backlog`、`batch = expansion`）和页面（`url_status = proposed`），再执行 `check-robots`（只查新域名）和 `check-urls`（只查新页面），最后写出审核清单。任何一行不合 §3 的规则就整批不登记，并列出全部问题。重复运行时跳过已登记的项目和页面。
+- `gradprog registry add-program --from <提议表>`：一次登记表中所有项目（`status = backlog`、`batch = expansion`）和页面（`url_status = proposed`），再执行 `check-robots`（只查新页面所在的域名，包括已登记的域名；2026-11-22 修正，原先只查新域名，已有域名上的新页面会停在 `not_checked`）和 `check-urls`（只查新页面），最后写出审核清单。任何一行不合 §3 的规则就整批不登记，并列出全部问题。重复运行时跳过已登记的项目和页面。
 
 ### 8.2 审核清单 `data/registry/review_<日期>.md`
 
@@ -392,7 +393,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 ### 8.3 `apply-review`
 
 - 先写入域名的条款判断：`tos_status`，`tos_note` 写“负责人: <说明>；Claude: <tos_hint>”，然后重新计算 `crawl_allowed`。
-- 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写（项目的全部页面都可自动抓取、且网址检查不是 403 时为 `auto`，否则 `manual`）、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
+- 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写（项目的全部页面都“可抓取”（§5.2）时为 `auto`，否则 `manual`）、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
 - 补登页面：`confirm` → `url_status = confirmed`；`reject` → 删除这个页面及其关联（页面只是 proposed，尚未抓取）。
 - 只有 `select` 和 `confirm` 的页面变为 confirmed；`exclude` 项目的页面保持 proposed。
 - 没有填写决定的项目或页面不变，并在输出中列出。

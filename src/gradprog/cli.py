@@ -132,10 +132,10 @@ def _registry_batch(args):
         print(f"registered {len(result.new_programs)} programs, {len(result.new_pages)} pages, "
               f"{len(result.new_domains)} new domains; reused {len(result.reused)} links, "
               f"page additions {len(result.page_additions)}")
-        if result.new_domains:
-            check_robots(reg, domains=result.new_domains)
+        if result.robots_domains:
+            check_robots(reg, domains=result.robots_domains)
             tables.save_registry(reg, REGISTRY)
-            print(f"robots.txt checked for {len(result.new_domains)} new domains")
+            print(f"robots.txt checked for {len(result.robots_domains)} domains of new pages")
         if result.new_pages:
             checked = check_urls(reg, page_ids=result.new_pages)
             from gradprog.registry.url_check import write_url_check
@@ -407,7 +407,7 @@ def build_parser():
     cu.add_argument("--page", action="append", help="only check this page_id (repeatable)")
     v = rsub.add_parser("validate", help="validate the registry")
     v.add_argument("--ready", action="store_true", help="Phase 3 readiness checks")
-    v.add_argument("--batch", choices=["pilot", "main"], help="batch for --ready")
+    v.add_argument("--batch", choices=["pilot", "main", "expansion"], help="batch for --ready")
     reg.set_defaults(func=cmd_registry)
 
     snap = sub.add_parser("snapshot", help="Phase 3 snapshots and change detection (07)")

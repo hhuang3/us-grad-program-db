@@ -327,6 +327,17 @@ def test_site_blocked_403_makes_page_not_crawlable(registry, registry_candidates
     assert_error(r, "alpha-ms-datascience", "pg-0001", "site_blocked_403")
 
 
+def test_javascript_challenge_makes_page_not_crawlable(registry, registry_candidates):
+    # 06 §5.2 (2026-11-22): a 202 whose final URL carries a challenge parameter counts as blocked, like a 403.
+    checks = url_check(("pg-0001", "redirected", "202"), ("pg-0002", "redirected", "202"))
+    checks.loc[0, "final_url"] = "https://datascience.alpha.edu/ms?challenge=d06e90d7"
+    checks.loc[1, "final_url"] = "https://datascience.alpha.edu/ms/new"
+    r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=checks)
+    reasons = {b["page_id"]: b["reason"] for b in r.report["ready_crawl_blocked"]}
+    assert reasons["pg-0001"] == "site_challenge"
+    assert "pg-0002" not in reasons
+
+
 def test_other_check_errors_are_not_site_blocking(registry, registry_candidates):
     checks = url_check(("pg-0001", "error", "500"), ("pg-0002", "broken", "404"))
     r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=checks)
