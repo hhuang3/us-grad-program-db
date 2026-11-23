@@ -300,3 +300,9 @@ def test_an_estimate_equal_to_the_stated_total_is_written_once():
                row("tuition_amount_usd", "46250", group="g2", extras={"includes_fees": False})
                | {"derived": {"tuition_program_total_usd_est": 46250, "method": "program_total"}}])
     assert c["学费估算总额"].text == "$46,250"
+
+
+def test_area_uses_the_display_group():
+    # 06 §2.8 (2026-11-23): a nominated program registered under another CIP shows its display group.
+    c = cells([], program={**PROGRAM, "cip_group": "ieor", "display_group": "fin_eng"})
+    assert c["方向"].text == "金融工程"

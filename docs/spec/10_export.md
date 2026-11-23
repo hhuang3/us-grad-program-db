@@ -29,7 +29,7 @@
 
 | 列 | 写法 |
 |---|---|
-| 方向 | 登记表 `cip_group`：ds 数据科学、analytics 商业分析、stats 统计、econ 经济、mgmt_sci 管理科学；扩展批次（2026-11-22）：cs 计算机科学、ece 电子与计算机工程、fin_eng 金融工程、ieor 工业工程与运筹、info_sys 信息系统、biostat 生物统计 |
+| 方向 | 登记表的显示方向：`display_group` 不为空时用它，否则用 `cip_group`（06 §2.8，2026-11-23）：ds 数据科学、analytics 商业分析、stats 统计、econ 经济、mgmt_sci 管理科学；扩展批次（2026-11-22）：cs 计算机科学、ece 电子与计算机工程、fin_eng 金融工程、ieor 工业工程与运筹、info_sys 信息系统、biostat 生物统计 |
 | 学校简称 | 登记表 `institution_short`；有 `institution_name_zh` 时写“简称 / 中文名”（06 §3.1） |
 | 学位 | 登记表 `degree_label`；没有时，`degree_type = other` 从项目名取缩写（MQE、MQM），其他写 `degree_type` 大写（MS、MA） |
 | STEM | `stem_claim_on_page`：yes →“是（页面声称）”，no →“否（页面写明）”；页面写了 CIP 时加“，CIP 30.7001” |

@@ -12,6 +12,7 @@ from gradprog.export.tables import (
     parse_view_row, program_row, school_key,
 )
 from gradprog.export.student import student_sheets
+from gradprog.registry.tables import display_group
 from gradprog.extract.evaluate import normalize_value
 from gradprog.snapshot.store import SUCCESS
 
@@ -116,7 +117,8 @@ def collect(view_rows, registry, index, on_date, gold_rows=(), link_of=None):
     for row in view:
         by_program[row["program_id"]].append(row)
     area_order = list(AREA)
-    chosen.sort(key=lambda x: (area_order.index(x[0]["cip_group"]) if x[0]["cip_group"] in area_order else len(area_order),
+    chosen.sort(key=lambda x: (area_order.index(display_group(x[0])) if display_group(x[0]) in area_order
+                               else len(area_order),
                                school_key(x[0]), x[0]["program_name"]))
     out = []
     for program, page_ids in chosen:

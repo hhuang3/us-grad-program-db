@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from gradprog.extract.evaluate import normalize_value
 from gradprog.registry.names import degree_name
+from gradprog.registry.tables import display_group
 
 LEVEL_RANK = {"program": 0, "department": 1, "graduate_school": 2, "university": 3}
 STATUS_RANK = ["found", "referenced_elsewhere", "mentioned_without_value", "not_mentioned", "extraction_failed",
@@ -218,7 +219,7 @@ def program_row(program, rows, home_url, last_checked, gold_check=no_check, link
     length = _length(out, by_field)
     tuition = _tuition(out, by_field)
     cells = [
-        Cell(AREA.get(program["cip_group"], program["cip_group"])), Cell(school(program)),
+        Cell(AREA.get(display_group(program), display_group(program))), Cell(school(program)),
         Cell(program["institution_name"]), Cell(program["program_name"]), Cell(degree(program)),
         stem, length,
         cell("托福（旧制）", "toefl_min_legacy", lambda r: _number(r["value"])),

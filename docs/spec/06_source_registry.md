@@ -1,6 +1,6 @@
 # 06 来源登记表（Phase 2）
 
-> 状态：v1.4（2026-11-23：§2.8 点名项目可按实际 CIP 登记，显示方向单独指定）。v1.3（2026-11-22：§2.8 比例上限只用于按排序选的一半；§5.2 JavaScript 验证页算拦截）。v1.2（2026-11-22：扩展批次，§2.3、§2.8、§6、§8）。v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
+> 状态：v1.5（2026-11-23：§3.1 新增 `display_group`、`cip_source`，§3.2 新增 `manual_cadence`，§5.1、§8.1 相应修改）。v1.4（2026-11-23：§2.8 点名项目可按实际 CIP 登记，显示方向单独指定）。v1.3（2026-11-22：§2.8 比例上限只用于按排序选的一半；§5.2 JavaScript 验证页算拦截）。v1.2（2026-11-22：扩展批次，§2.3、§2.8、§6、§8）。v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
 > 登记表是 Phase 3 抓取的**唯一输入**。本阶段不抓取项目页面内容；唯一允许访问大学网站的操作是读取 `robots.txt`，以及你明确要求时用搜索引擎查找候选 URL。
 
 ---
@@ -108,9 +108,9 @@
 - 学校已经登记过的研究生院页面（例如英语要求页）直接沿用，不重复登记。
 - 每组按排序提议的项目比名额的一半多 1–2 个，负责人从中选，其余填 `backup`。
 - 第一轮由负责人预先点名的 `cs` 学校（2026-11-22）：CMU、Columbia、Cornell、UPenn、Georgia Tech、UCSD、USC、NYU。Claude 查找这些学校的项目，直接放进审核清单“我要加的学校”一栏下，与按排序挑选的一半分开列出。
-- **点名项目按实际 CIP 登记（例外，2026-11-23）**：点名的项目在 IPEDS 里没有本组 CIP 的候选行（例如金融工程项目报在 14.3701 Operations Research 下）时，可以按学校实际报的 CIP 登记，前提是这个 CIP 属于 04 §1 的目标 CIP，在 candidates.csv 中有这一行。`cip_group` 照常等于该行的组（§5.1 不变），另用 `display_group` 指定导出时显示的方向（如 `fin_eng` 显示为“金融工程”）。实际 CIP 不在目标 CIP 中时不登记，先报告代码和它是否在 STEM 清单上，由负责人决定。学校官方资料里查不到项目 CIP 时也不登记，由负责人决定。
+- **点名项目按实际 CIP 登记（例外，2026-11-23）**：点名的项目在 IPEDS 里没有本组 CIP 的候选行（例如金融工程项目报在 14.3701 Operations Research 下）时，可以按学校实际报的 CIP 登记，前提是这个 CIP 属于 04 §1 的目标 CIP，在 candidates.csv 中有这一行。`cip_group` 照常等于该行的组（§5.1 不变），另用 `display_group` 指定导出时显示的方向（如 `fin_eng` 显示为“金融工程”），用 `cip_source` 记录 CIP 的来源（§3.1）。先查学校公布的 STEM OPT 项目清单等官方资料：写明了就按它登记，记为 `school_stated`；查不到时由负责人决定，按负责人指定的代码登记的记为 `inferred`。实际 CIP 不在目标 CIP 中时不登记，先报告代码和它是否在 STEM 清单上，由负责人决定。
   - 同一个学位只登记一次：点名的“项目”其实是已登记项目的一个方向（concentration）时，不另外登记。
-  - `display_group` 一列在第一个用到它的项目登记时加入 `programs.csv`（取值同 `cip_group`，可空，空时导出用 `cip_group`），同时修改导出（10）。名额（§2.3）按 `display_group` 计。
+  - 名额（§2.3）、审核清单的分组（§8.2）和导出的“方向”（10）都按显示方向计：`display_group` 不为空时用它，否则用 `cip_group`。
 - 扩展批次不建标准答案集，质量靠审核队列和导出中的“待核实”兜底（08 §10、09 §1）。
 
 ## 3. 登记表结构
@@ -142,6 +142,8 @@
 | `fetch_method` | Phase 3 取得页面的方式（2026-10-03 新增） | `auto / manual`；`status = selected` 时必填，其他状态必须为空。`auto`：由抓取器自动抓取；`manual`：页面无法自动抓取（条款、robots.txt 或网站防护），由人工取得，具体流程在 P3 设计 |
 | `intake_terms` | 入学季（2026-10-12 新增） | `fall / spring / summer` 中的一个或多个，分号分隔，按 fall、spring、summer 的顺序，不重复（如 `fall;spring`）；`status = selected` 时必填，其他状态可空。由你填写，不由抓取或抽取写入。用途：P4 由日期推算学期时确定季节（08 §7.2）。根据页面提议、尚未核实的值，在 `selection_note` 中注明“intake_terms 未核实” |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
+| `display_group` | 显示方向（2026-11-23 新增，§2.8） | 通常为空。点名项目按实际 CIP 登记、方向与 `cip_group` 不同时填，取值同 `cip_group`，不能等于本行的 `cip_group`。名额、审核清单分组和导出用它代替 `cip_group` |
+| `cip_source` | CIP 的来源（2026-11-23 新增，§2.8） | `display_group` 不为空时必填，否则必须为空：`school_stated`（学校官方资料写明）/ `inferred`（查不到，由负责人指定） |
 
 **`program_id` 格式**：`{学校简称}-{学位}-{方向}`，如 `uwmadison-ms-statistics`。
 - 正则：`^[a-z0-9]+(-[a-z0-9]+){2,}$`（全小写 ASCII 字母和数字，用 `-` 分隔，至少 3 段）。
@@ -161,6 +163,7 @@
 | `robots_allowed` | robots.txt 是否允许抓取本页 | `yes / no / not_checked`；由 `check-robots` 写入，新页面为 `not_checked` |
 | `crawl_allowed` | 是否允许 Phase 3 抓取本页 | **导出列**，`true / false`，规则见 §4.3 |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
+| `manual_cadence` | 人工保存频率的例外（2026-11-23 新增，07 §5.2） | 通常为空，按 07 §5.2 由页面类型决定。填 `biweekly` 时强制每两周保存（例如项目首页上也写了截止日期） |
 
 **停用（`retired`，2026-10-06 新增）**：页面已不能作为来源（例如变为需要登录、已被删除），由你手动把 `url_status` 改为 `retired`。
 - 行和 `page_id` 保留（§5.1 “不删除”），已有快照历史不受影响；`add-page` 不能直接登记 `retired` 页面。
@@ -297,6 +300,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - `url_status = retired` 的页面：它的每一条 program_pages 记录，`scope_note` 都必须以 `retired <YYYY-MM-DD>:` 开头（日期合法）（2026-10-06 新增）。
 - 枚举值合法；日期、时间格式合法。
 - `status` 与 `exclusion_reason`、`selection_note` 的组合合法（§3.1）。
+- `display_group` 为空或是合法的组，且不等于本行的 `cip_group`；`cip_source` 与 `display_group` 同时为空或同时填写（§3.1，2026-11-23）。
 - `program_id` 格式合法（§3.1）；占位记录规则（§2.1）。
 - `url` 为 https 且等于 `normalize_url(url)`；`domain = domain_of(url)`；`page_id` 格式合法。
 - 枚举：`robots_allowed ∈ {yes, no, not_checked}`，`crawl_allowed ∈ {true, false}`。
@@ -376,7 +380,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 ### 8.1 提议表与 `add-program`
 
-- 提议表 `data/registry/proposals_<日期>.csv` 由 Claude 准备：从挑选工作表（§7）取候选，在负责人要求下用搜索引擎和项目官网查找页面（只读页面，不提交任何表单）。每行一个页面，列：`program_id, unitid, cip_code, institution_name, institution_short, program_name, degree_type, degree_label, department, delivery_mode, intake_terms, nominated, url, page_type, owner_level, content_format, scope_note, tos_url, tos_hint, note`。`note` 写排除提示（疑似 MBA、纯线上、证书、只对本校学生开放）和依据。
+- 提议表 `data/registry/proposals_<日期>.csv` 由 Claude 准备：从挑选工作表（§7）取候选，在负责人要求下用搜索引擎和项目官网查找页面（只读页面，不提交任何表单）。每行一个页面，列：`program_id, unitid, cip_code, institution_name, institution_short, program_name, degree_type, degree_label, department, delivery_mode, intake_terms, nominated, url, page_type, owner_level, content_format, scope_note, tos_url, tos_hint, note`，可以在末尾再加 `display_group, cip_source` 两列（2026-11-23；没有这两列的旧提议表照常读取）。`note` 写排除提示（疑似 MBA、纯线上、证书、只对本校学生开放）和依据。
 - **已登记项目的补登页面**：`program_id` 是已登记项目时，这一行只补登页面（项目列须与登记表一致）。用于导出中“页面未写明”“见其他页面”的补登清单（例如研究生院英语要求页、学费页）。
 - `nominated`（`yes` 或空）：负责人点名的学校填 `yes`，审核清单据此分开列出。
 - `tos_url`、`tos_hint`：新域名的条款页和 Claude 的初步判断，写在该域名第一次出现的行。`add-program` 把 `tos_url` 写入 domains.csv，`tos_status` 仍为 `not_checked`，由负责人在审核清单中判断。

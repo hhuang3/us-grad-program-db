@@ -30,7 +30,9 @@ ENUMS = {
 }
 # Enumerations where an empty value is allowed (checked elsewhere or "not yet checked").
 OPTIONAL_ENUMS = {
-    "programs": {"degree_type": t.DEGREE_TYPES, "exclusion_reason": t.EXCLUSION_REASONS},
+    "programs": {"degree_type": t.DEGREE_TYPES, "exclusion_reason": t.EXCLUSION_REASONS,
+                 "display_group": tuple(GROUP_ORDER), "cip_source": t.CIP_SOURCES},
+    "pages": {"manual_cadence": t.MANUAL_CADENCES},
     "domains": {"robots_status": t.ROBOTS_STATUSES, "robots_allows_registered_paths": t.ROBOTS_SUMMARIES},
 }
 KEYS = {"programs": "program_id", "pages": "page_id", "domains": "domain"}
@@ -202,6 +204,11 @@ def _check_programs(registry, candidates, errors):
                 if getattr(r, col) != row[col]:
                     errors.append(f"programs: {pid}: {col}={getattr(r, col)!r} differs from candidates.csv "
                                   f"({row[col]!r})")
+        if r.display_group and r.display_group == r.cip_group:
+            errors.append(f"programs: {pid}: display_group={r.display_group!r} equals cip_group; leave it empty")
+        if bool(r.display_group) != bool(r.cip_source):
+            errors.append(f"programs: {pid}: cip_source is required with a display_group and must be empty "
+                          "without one (06 §3.1)")
         if r.status == "excluded":
             if not r.exclusion_reason:
                 errors.append(f"programs: {pid}: excluded rows need an exclusion_reason")
@@ -324,11 +331,13 @@ def _check_selected(registry, ready, batch, errors, warnings, blocked, crawl, ma
 def _report(registry, crawl):
     progs = registry.programs
     sel = progs[progs["status"] == "selected"]
-    quota = {g: {"target": QUOTAS[g], "selected": int((sel["cip_group"] == g).sum()),
-                 "pilot": int(((sel["cip_group"] == g) & (sel["batch"] == "pilot")).sum()),
-                 **{b: int(((sel["cip_group"] == g) & (sel["batch"] == b)).sum()) for b in ("main", "expansion")}}
+    shown = progs["display_group"].where(progs["display_group"] != "", progs["cip_group"])   # 06 §2.8
+    sel_shown = shown[sel.index]
+    quota = {g: {"target": QUOTAS[g], "selected": int((sel_shown == g).sum()),
+                 "pilot": int(((sel_shown == g) & (sel["batch"] == "pilot")).sum()),
+                 **{b: int(((sel_shown == g) & (sel["batch"] == b)).sum()) for b in ("main", "expansion")}}
              for g in GROUP_ORDER}
-    status_counts = {g: {s: int(((progs["cip_group"] == g) & (progs["status"] == s)).sum()) for s in t.STATUSES}
+    status_counts = {g: {s: int(((shown == g) & (progs["status"] == s)).sum()) for s in t.STATUSES}
                      for g in GROUP_ORDER}
     reasons = dict(Counter(progs.loc[progs["status"] == "excluded", "exclusion_reason"]))
     tos = crawl.tos

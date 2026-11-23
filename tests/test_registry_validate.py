@@ -595,3 +595,38 @@ def test_display_names_must_agree_within_an_institution(registry, registry_candi
 def test_degree_label_is_only_for_other(registry, registry_candidates):
     set_cell(registry.programs, "program_id", "alpha-ms-datascience", "degree_label", "MSDS")
     assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "degree_label")
+
+
+# --- display group and CIP source (06 §2.8, §3.1, 2026-11-23) -------------------
+
+def test_display_group_needs_a_cip_source(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "display_group", "fin_eng")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "cip_source")
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", "inferred")
+    assert run(registry, registry_candidates).errors == []
+
+
+def test_cip_source_without_display_group_is_an_error(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", "school_stated")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "cip_source")
+
+
+@pytest.mark.parametrize("group, source", [("finance", "inferred"), ("ds", "inferred"), ("fin_eng", "guessed")])
+def test_display_group_and_cip_source_values(registry, registry_candidates, group, source):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "display_group", group)
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", source)
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience")
+
+
+def test_quota_counts_the_display_group(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "display_group", "fin_eng")
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", "inferred")
+    q = run(registry, registry_candidates).report["quota"]
+    assert q["ds"]["selected"] == 0 and q["fin_eng"]["selected"] == 1
+
+
+def test_manual_cadence_values(registry, registry_candidates):
+    set_cell(registry.pages, "page_id", "pg-0001", "manual_cadence", "biweekly")
+    assert run(registry, registry_candidates).errors == []
+    set_cell(registry.pages, "page_id", "pg-0001", "manual_cadence", "weekly")
+    assert_error(run(registry, registry_candidates), "pg-0001", "manual_cadence")

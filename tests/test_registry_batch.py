@@ -387,3 +387,26 @@ def test_review_summary_projects_manual_share(robots_checked, proposals, candida
     assert "若条款都判为 no_restriction：0 个（0%）" in ranked
     nominated = summary.split("点名：")[1].split("\n")[0]
     assert "页面 2 个" in nominated and "不受比例限制" in nominated
+
+
+# --- display group (06 §2.8, §8.1, 2026-11-23) -----------------------------------
+
+def test_read_proposals_accepts_files_without_the_display_columns(tmp_path, proposals):
+    path = tmp_path / "proposals.csv"
+    proposals.drop(columns=["display_group", "cip_source"]).to_csv(path, index=False)
+    df = read_proposals(path)
+    assert list(df.columns) == PROPOSAL_COLUMNS and set(df["display_group"]) == {""}
+
+
+def test_display_group_is_registered_and_groups_the_review(registry, proposals, candidates):
+    proposals.loc[proposals["program_id"] == "kappa-ms-computerscience", ["display_group", "cip_source"]] = \
+        ["ece", "inferred"]
+    added(registry, proposals, candidates)
+    p = registry.programs.set_index("program_id")
+    assert p.loc["kappa-ms-computerscience", "cip_group"] == "cs"
+    assert (p.loc["kappa-ms-computerscience", "display_group"], p.loc["kappa-ms-computerscience", "cip_source"]) \
+        == ("ece", "inferred")
+    assert validate(registry, candidates).errors == []
+    review = write_review(registry, candidates, proposals, None, DAY, title="t")
+    assert review.index("## 组 ece") < review.index("#### 项目 kappa-ms-computerscience")
+    assert "名额 10" in review.split("## 组 ece")[1]

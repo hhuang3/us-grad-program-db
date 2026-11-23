@@ -15,10 +15,12 @@ from gradprog.registry.worksheet import build_worksheet
 PROPOSAL_COLUMNS = [
     "program_id", "unitid", "cip_code", "institution_name", "institution_short", "program_name", "degree_type",
     "degree_label", "department", "delivery_mode", "intake_terms", "nominated", "url", "page_type", "owner_level",
-    "content_format", "scope_note", "tos_url", "tos_hint", "note",
+    "content_format", "scope_note", "tos_url", "tos_hint", "note", "display_group", "cip_source",
 ]
+LEGACY_PROPOSAL_COLUMNS = PROPOSAL_COLUMNS[:-2]   # files written before 2026-11-23 (06 §8.1)
 PROGRAM_FIELDS = ["unitid", "cip_code", "institution_name", "institution_short", "program_name", "degree_type",
-                  "degree_label", "department", "delivery_mode", "intake_terms", "nominated"]
+                  "degree_label", "department", "delivery_mode", "intake_terms", "nominated", "display_group",
+                  "cip_source"]
 TOS_DECISIONS = ("no_restriction", "prohibits_automated_access", "unclear")
 PROGRAM_DECISIONS = ("select", "exclude", "backup")
 PAGE_DECISIONS = ("confirm", "reject")
@@ -26,6 +28,8 @@ PAGE_DECISIONS = ("confirm", "reject")
 
 def read_proposals(path):
     df = pd.read_csv(path, dtype=str, keep_default_na=False)
+    if list(df.columns) == LEGACY_PROPOSAL_COLUMNS:
+        df = df.assign(display_group="", cip_source="")
     if list(df.columns) != PROPOSAL_COLUMNS:
         raise t.RegistryError(f"{path}: columns must be {PROPOSAL_COLUMNS}, got {list(df.columns)}")
     return df
@@ -94,7 +98,8 @@ def add_programs(registry, proposals, candidates, added_at, label="expansion"):
             "degree_label": first["degree_label"], "department": first["department"],
             "delivery_mode": first["delivery_mode"], "status": "backlog", "exclusion_reason": "",
             "selection_note": note, "batch": "expansion", "fetch_method": "", "intake_terms": first["intake_terms"],
-            "added_at": added_at}])], ignore_index=True)
+            "added_at": added_at, "display_group": first["display_group"],
+            "cip_source": first["cip_source"]}])], ignore_index=True)
         result.new_programs.append(pid)
         known.add(pid)
     if problems:
@@ -219,10 +224,11 @@ def write_review(registry, candidates, proposals, url_check, on_date, title=""):
     from gradprog.registry.validate import QUOTAS
 
     for g in GROUP_ORDER:
-        mine = [pid for pid in review_programs if programs.loc[pid, "cip_group"] == g]
+        mine = [pid for pid in review_programs if t.display_group(programs.loc[pid]) == g]
         if not mine:
             continue
-        selected = int(((registry.programs["cip_group"] == g) & (registry.programs["status"] == "selected")).sum())
+        selected = sum(1 for _, p in registry.programs.iterrows()
+                       if p["status"] == "selected" and t.display_group(p) == g)
         nom = [p for p in mine if p in nominated]
         ranked = [p for p in mine if p not in nominated]
         out += [f"## 组 {g}", "",
@@ -286,6 +292,9 @@ def _program_block(pid, prog, pp, pages, tos, ws, checks, blocked, prop_pages):
              f"- 学位 / 授课 / 入学季：{prog['degree_type']}{' ' + prog['degree_label'] if prog['degree_label'] else ''}"
              f" / {prog['delivery_mode']} / {prog['intake_terms'] or '未填'}；院系：{prog['department'] or '-'}",
              "- 页面："]
+    if prog.get("display_group", ""):
+        source = {"school_stated": "学校声明", "inferred": "推测"}.get(prog["cip_source"], prog["cip_source"])
+        lines.insert(2, f"- 显示方向：{prog['display_group']}（按实际 CIP 登记，06 §2.8；CIP 来源：{source}）")
     for p in linked:
         lines.append(_page_line(pages.loc[p].to_dict() | {"page_id": p}, tos, checks, reused=p not in new))
     lines.append(f"- 建议：{_expected_fetch(linked, pages, blocked)}（按目前检查结果）")
