@@ -1,6 +1,6 @@
 """The student version of the export (10 §8): the same data, plainer wording, no internal marks."""
 
-from gradprog.export.tables import PROGRAM_COLUMNS, REVIEW, Cell, school
+from gradprog.export.tables import PENDING, PROGRAM_COLUMNS, REVIEW, Cell, school
 
 DISCLAIMER = "数据整理自各校官网，申请前请以官网最新信息为准。"
 UNSURE = "（请以官网为准）"
@@ -19,6 +19,7 @@ GLOSSARY = [
     ["学费估算总额", "按官网写的学费和学分估算的整个项目学费，不含杂费和生活费；官网只给总额时就是该数额。"],
     ["请以官网为准", "这个值在官网上有不一致或还没有人工核对，申请前请到官网确认。"],
     ["官网未写明，请查看官网", "我们收录的官网页面没有写这一项，不代表没有这项要求；点击链接查看官网。"],
+    ["待取得", "这个项目的部分官网页面还没有收录，暂时不能判断；点击链接查看官网，收录后会补上。"],
     ["说明", DISCLAIMER],
 ]
 
@@ -33,6 +34,8 @@ def _no_value(cell):
 
 def _plain(cell, home):
     """An advisor cell in student wording (10 §8.1)."""
+    if cell.text == PENDING:
+        return Cell(PENDING, home)
     if _no_value(cell):
         link = cell.link if cell.text.startswith("见其他页面") and cell.link else home
         return Cell(NOT_ON_SITE, link)
@@ -40,6 +43,8 @@ def _plain(cell, home):
 
 
 def _stem(cell, home):
+    if cell.text == PENDING:
+        return Cell(PENDING, home)
     if _no_value(cell):
         return Cell(NOT_ON_SITE, home)
     text = "是" if cell.text.startswith("是") else "否" if cell.text.startswith("否") else _value(cell)
@@ -47,9 +52,9 @@ def _stem(cell, home):
 
 
 def _toefl(legacy, new, home):
-    have_old, have_new = not _no_value(legacy), not _no_value(new)
+    have_old, have_new = not _no_value(legacy) and legacy.text != PENDING, not _no_value(new) and new.text != PENDING
     if not (have_old or have_new):
-        return _plain(legacy, home)
+        return Cell(PENDING, home) if PENDING in (legacy.text, new.text) else _plain(legacy, home)
     if have_old and have_new:
         text = f"{_value(legacy)}（新制 {_value(new)}）"
     else:
@@ -62,7 +67,7 @@ def _tuition(tuition, estimate, home):
     if estimate.text:
         amounts = "；".join(part.split("（")[0] for part in _value(estimate).split("；"))
         return Cell(amounts + (UNSURE if estimate.mark == REVIEW else ""), estimate.link)
-    if _no_value(tuition):
+    if _no_value(tuition) or tuition.text == PENDING:
         return _plain(tuition, home)
     text = f"{_value(tuition)}，总额请查看官网"
     return Cell(text + (UNSURE if tuition.mark == REVIEW else ""), tuition.link)
@@ -79,7 +84,7 @@ def _application_rows(deadlines):
     return out
 
 
-def _next_deadline(rows, home):
+def _next_deadline(rows, home, pending=False):
     usable = [(cells, kind) for cells, kind in rows if kind == "申请截止"]
     dated = sorted((c for c, _ in usable if c[7].text != "滚动录取"), key=lambda c: c[7].text)
     if dated:
@@ -89,7 +94,7 @@ def _next_deadline(rows, home):
     if any(c[7].text == "滚动录取" for c, _ in usable):
         rolling = next(c for c, _ in usable if c[7].text == "滚动录取")
         return Cell("滚动录取" + (UNSURE if rolling[8].text == "待核实" else ""), rolling[10].link)
-    return Cell(NOT_ON_SITE, home)
+    return Cell(PENDING if pending else NOT_ON_SITE, home)
 
 
 def student_sheets(collected, changes, on_date, page_urls):
@@ -103,7 +108,7 @@ def student_sheets(collected, changes, on_date, page_urls):
             get("方向"), Cell(school(program)), Cell(program["program_name"], home), _stem(get("STEM"), home),
             _plain(get("时长"), home), _toefl(get("托福（旧制）"), get("托福（新制）"), home),
             _plain(get("雅思"), home), _plain(get("GRE"), home), _tuition(get("学费"), get("学费估算总额"), home),
-            _next_deadline(rows, home),
+            _next_deadline(rows, home, item.get("pending", False)),
         ])
         for cells_, kind in rows:
             date = cells_[7].text

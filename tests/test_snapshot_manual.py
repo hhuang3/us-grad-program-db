@@ -323,3 +323,16 @@ def test_manual_cadence_forces_biweekly(all_manual, store):
 def test_render_shows_the_frequency(all_manual, store):
     md = render_manual_due(manual_due(all_manual, store, today="2026-10-06"))
     assert "| 频率 |" in md and "每学期" in md and "每两周" in md
+
+
+# --- grouped by school (07 §5.2, 2026-11-23) --------------------------------------
+
+def test_manual_due_is_grouped_by_school_with_page_counts(reg, store):
+    p = reg.programs
+    p.loc[p.program_id == "alpha-ms-datascience", "fetch_method"] = "manual"   # pg-0005 becomes manual too
+    due = manual_due(reg, store, today="2026-10-06")
+    assert set(due["school"]) == {"Alpha"}
+    md = render_manual_due(due)
+    assert "## Alpha（3 页）" in md and "## alpha-ms-businessanalytics" not in md
+    assert md.count("| pg-0003 |") == 1
+    assert "alpha-ms-datascience" in md and "alpha-ms-businessanalytics" in md

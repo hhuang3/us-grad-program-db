@@ -306,3 +306,24 @@ def test_area_uses_the_display_group():
     # 06 §2.8 (2026-11-23): a nominated program registered under another CIP shows its display group.
     c = cells([], program={**PROGRAM, "cip_group": "ieor", "display_group": "fin_eng"})
     assert c["方向"].text == "金融工程"
+
+
+# 10 §3.1 (2026-11-23): programs with pages never captured show "待取得" instead of "页面未写明"
+def test_pending_program_shows_pending_for_missing_values():
+    c = cells([row("gre_policy", "optional"), row("ielts_min_overall", status="not_mentioned"),
+               row("toefl_min_legacy", status="extraction_failed")], pending=True)
+    assert c["GRE"].text == "可选"
+    assert c["雅思"].text == "待取得" and c["雅思"].mark != REVIEW
+    assert c["GMAT"].text == "待取得"                        # no rows at all
+    assert c["托福（旧制）"].text.startswith("待核实")        # other statuses are unchanged
+    assert "雅思" not in c["待核实说明"].text
+
+
+def test_program_with_an_uncaptured_page_is_pending():
+    index = pd.DataFrame([{"page_id": "pg-1", "retrieved_at": "2026-11-15T11:00:00Z", "classification": "unchanged"}])
+    sheets, counts = build([csv_row(row("gre_policy", "optional"))], Registry(), index, [], "2026-11-20")
+    by_program = {r[3].text: r for r in sheets["项目总表"][1]}
+    gmat = PROGRAM_COLUMNS.index("GMAT")
+    assert by_program["MS in Data Science"][gmat].text == "页面未写明"
+    assert by_program["Holdout MS"][gmat].text == "待取得"      # pg-2 was never captured
+    assert counts["pending_programs"] == 1

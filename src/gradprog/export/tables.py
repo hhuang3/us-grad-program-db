@@ -148,14 +148,20 @@ def _money(value):
     return f"${number:,.0f}" if number.is_integer() else f"${number:,.2f}"
 
 
+PENDING = "待取得"   # 10 §3.1 (2026-11-23): the program has pages never captured
+
+
 class ProgramRow:
-    def __init__(self, program, gold_check=no_check, link_of=no_link):
+    def __init__(self, program, gold_check=no_check, link_of=no_link, pending=False):
         self.program, self.intake_terms = program, program["intake_terms"]
+        self.pending = pending
         self.gold_check, self.link_of = gold_check, link_of
         self.notes = []
 
     def cell(self, label, rows, render, multi_check=True, sep=" / ", field=None):
         status, chosen = choose(rows)
+        if self.pending and status == "not_mentioned":
+            return Cell(PENDING)
         link = chosen[0]["evidence_url"] if chosen else ""
         reasons = []
         for row in chosen:
@@ -200,12 +206,12 @@ def _tuition_text(amount, basis, year):
     return text
 
 
-def program_row(program, rows, home_url, last_checked, gold_check=no_check, link_of=no_link):
+def program_row(program, rows, home_url, last_checked, gold_check=no_check, link_of=no_link, pending=False):
     """One row of the program table (10 §3)."""
     by_field = defaultdict(list)
     for row in rows:
         by_field[row["field"]].append(row)
-    out = ProgramRow(program, gold_check, link_of)
+    out = ProgramRow(program, gold_check, link_of, pending)
 
     def cell(label, field, render):
         return out.cell(label, by_field[field], render, field=field)

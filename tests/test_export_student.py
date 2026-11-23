@@ -91,3 +91,13 @@ def test_student_workbook_keeps_only_usable_deadlines_and_no_internal_marks(tmp_
     assert not any(c.fill.fgColor.rgb not in ("00000000", None) for s in book for r in s.iter_rows() for c in r
                    if c.fill and c.fill.fill_type)
     assert all(s.auto_filter.ref for s in book)
+
+
+# 10 §8.1 (2026-11-23)
+def test_pending_cells_stay_pending_and_link_home():
+    cell = _plain(Cell("待取得"), HOME)
+    assert (cell.text, cell.link) == ("待取得", HOME)
+    assert _toefl(Cell("待取得"), Cell("待取得"), HOME).text == "待取得"
+    assert _tuition(Cell("待取得"), Cell(""), HOME).text == "待取得"
+    assert _stem(Cell("待取得"), HOME).text == "待取得"
+    assert _next_deadline([], HOME, pending=True).text == "待取得"
