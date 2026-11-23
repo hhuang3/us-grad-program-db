@@ -101,8 +101,11 @@
 | `cip_code` | 对应的候选 CIP | `"NN.NNNN"` |
 | `cip_group` | 组 | 必须等于 candidates.csv 中该行的 `cip_group` |
 | `institution_name` | 校名 | 必须等于 candidates.csv 中该行的 `institution_name` |
+| `institution_short` | 学校英文简称（2026-11-20 新增，2026-11-22 改为必填） | 如 `UVA`；由负责人确定；同一学校（`unitid`）的各行必须相同；`status = selected` 时必填。用于导出（10） |
+| `institution_name_zh` | 学校中文名（2026-11-20 新增） | 可空；填了时同一学校的各行必须相同，导出写成“简称 / 中文名” |
 | `program_name` | 官方项目名 | 原样；占位记录可空（2.1） |
 | `degree_type` | 学位 | `ms / ma / mps / meng / msc / other`；占位记录可空 |
+| `degree_label` | 学位的实际名称（2026-11-20 新增） | 只用于 `degree_type = other`，其他学位必须为空。通常留空：代码从 `program_name` 取缩写（开头的 “MQM:”，或括号里的 “(MQE)”）；取不到时 `selected` 的项目报错，由负责人填写 |
 | `department` | 院系 | 原样；可空 |
 | `delivery_mode` | 授课形式（初步判断） | `on_campus / hybrid / online / unknown` |
 | `status` | 状态 | `selected / excluded / backlog` |

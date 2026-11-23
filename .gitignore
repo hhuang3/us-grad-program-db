@@ -34,3 +34,6 @@ data/snapshots/logs/
 # Phase 4 extraction: observations and gold-set copies contain page text (docs/spec/08 §4, 09 §4)
 data/extraction/
 data/gold/local/
+
+# P5 exports are generated (docs/spec/10_export.md §1)
+data/exports/

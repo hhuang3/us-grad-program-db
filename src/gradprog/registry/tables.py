@@ -9,8 +9,8 @@ import pandas as pd
 from gradprog.registry.urls import domain_of, normalize_url
 
 COLUMNS = {
-    "programs": ["program_id", "unitid", "cip_code", "cip_group", "institution_name", "program_name", "degree_type",
-                 "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "fetch_method",
+    "programs": ["program_id", "unitid", "cip_code", "cip_group", "institution_name", "institution_short",
+                 "institution_name_zh", "program_name", "degree_type", "degree_label", "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "fetch_method",
                  "intake_terms", "added_at"],
     "pages": ["page_id", "url", "domain", "page_type", "owner_level", "url_status", "content_format",
               "robots_allowed", "crawl_allowed", "added_at"],
