@@ -19,3 +19,7 @@ date,page_id,program_id,application_info,fields,description
 2026-11-15,pg-0025,bu-ms-businessanalytics,yes,deadline,删除 “Apply for Fall 2026” 按钮和滚动录取说明；截止日期表改为逐行排列，日期不变
 2026-11-15,pg-0026,bu-ms-businessanalytics,yes,deadline,更正 Round 3 截止日期年份笔误（2026 改为 2027），新增 Round 6（2027-04-20）
 2026-11-15,pg-0055,duke-other-mqmbusinessanalytics,yes,,本科专业要求放宽为各专业均可申请
+2026-11-23,pg-0044,usc-ms-appliedeconomicseconometrics,yes,deadline,Spring 2027 申请已截止，下一个入学季改为 Fall 2027：截止日期从 2026-11-15 改为 2027-04-30，Fall 2027 申请 2026-12-15 开放
+2026-11-23,pg-0046,jhu-ma-economics,no,,另一个项目的截止日期（1 月 15 日改为 1 月 1 日）和写作样本要求更新；Economics 条目没有变化
+2026-11-23,pg-0053,columbia-ma-statistics,no,,伊朗申请者说明的措辞调整
+2026-11-23,pg-0039,uiuc-ms-statistics,no,,“Financial Support”标题改名；上次人工保存混入的网页翻译插件文字这次没有
