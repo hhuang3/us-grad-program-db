@@ -223,6 +223,7 @@ def program_row(program, rows, home_url, last_checked, gold_check=no_check, link
         flag = "（待核实）" if stem.text.endswith("（待核实）") else ""
         stem.text = stem.text.removesuffix(flag) + f"，CIP {cips[0]['value']}" + flag
     length = _length(out, by_field)
+    by_field["tuition_amount_usd"] = fall_tuition(by_field)
     tuition = _tuition(out, by_field)
     cells = [
         Cell(AREA.get(display_group(program), display_group(program))), Cell(school(program)),
@@ -261,6 +262,21 @@ def _length(out, by_field):
         reasons.append("gold_mismatch")
     a, b = _number(low), _number(high)
     return out._mark("时长", Cell(f"{a} 个月" if a == b else f"{a}–{b} 个月", lows[0]["evidence_url"]), reasons)
+
+
+TERM_YEAR = re.compile(r"^(fall|autumn|spring|summer|winter)\s+\d{4}$", re.IGNORECASE)
+
+
+def fall_tuition(by_field):
+    """10 §3.2 (2026-11-23): when tuition is listed term by term, keep only the fall terms."""
+    years = {r.get("group_id"): r["value"] for r in by_field["tuition_year"]
+             if r["value_status"] == "found" and r.get("group_id")}
+    amounts = by_field["tuition_amount_usd"]
+    term = {i: years.get(r.get("group_id"), "") for i, r in enumerate(amounts)}
+    falls = {i for i, y in term.items() if TERM_YEAR.match(y) and y.lower().startswith(("fall", "autumn"))}
+    if not falls:
+        return amounts
+    return [r for i, r in enumerate(amounts) if i in falls or not TERM_YEAR.match(term[i])]
 
 
 def _tuition(out, by_field):

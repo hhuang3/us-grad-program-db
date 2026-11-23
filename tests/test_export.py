@@ -327,3 +327,29 @@ def test_program_with_an_uncaptured_page_is_pending():
     assert by_program["MS in Data Science"][gmat].text == "页面未写明"
     assert by_program["Holdout MS"][gmat].text == "待取得"      # pg-2 was never captured
     assert counts["pending_programs"] == 1
+
+
+# 10 §3.2 (2026-11-23): term-by-term tuition keeps only the fall terms
+def tuition_group(amount, year, gid):
+    return [{**row("tuition_amount_usd", amount, oid=f"a-{gid}"), "group_id": gid},
+            {**row("tuition_basis", "per_term", oid=f"b-{gid}"), "group_id": gid},
+            {**row("tuition_year", year, oid=f"y-{gid}"), "group_id": gid}]
+
+
+def test_term_by_term_tuition_keeps_the_fall_term():
+    rows = tuition_group("16073", "Summer 2027", "t0") + tuition_group("16073", "Spring 2027", "t1") \
+        + tuition_group("16073", "Fall 2026", "t2")
+    assert cells(rows)["学费"].text == "$16,073 / 学期（fall 2026）"
+
+
+def test_academic_year_tuition_is_kept_with_a_fall_term():
+    rows = tuition_group("30000", "2026-2027", "t0") + tuition_group("16000", "Fall 2026", "t1") \
+        + tuition_group("9000", "Summer 2027", "t2")
+    text = cells(rows)["学费"].text
+    assert "2026-2027" in text and "fall 2026" in text and "summer" not in text
+
+
+def test_tuition_without_a_fall_term_is_unchanged():
+    rows = tuition_group("9000", "Summer 2027", "t0") + tuition_group("16000", "Spring 2027", "t1")
+    text = cells(rows)["学费"].text
+    assert "summer 2027" in text and "spring 2027" in text
