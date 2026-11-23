@@ -266,3 +266,14 @@ def test_manual_run_reports_rule_losses(reg, store, tmp_path):
 def test_manual_run_without_losses_writes_no_report(reg, store, tmp_path):
     row = reg_one(reg, store, write(tmp_path, "a.mhtml", make_mhtml(URL3, BODY)))
     assert not store.report_path(row["run_id"]).exists()
+
+
+def test_manual_due_takes_a_planned_date():
+    import pytest
+
+    from gradprog.cli import build_parser
+
+    assert build_parser().parse_args(["snapshot", "manual-due"]).on is None
+    assert build_parser().parse_args(["snapshot", "manual-due", "--on", "2026-11-21"]).on == "2026-11-21"
+    with pytest.raises(SystemExit):
+        build_parser().parse_args(["snapshot", "manual-due", "--on", "11/21"])
