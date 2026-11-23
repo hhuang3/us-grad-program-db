@@ -124,3 +124,5 @@ ischool.illinois.edu,https://ischool.illinois.edu/robots.txt,2026-11-22T15:34:03
 www.si.umich.edu,https://www.si.umich.edu/robots.txt,2026-11-22T15:38:10Z,fetched,yes,https://si.umich.edu/privacy-statement,no_restriction,"负责人: no_restriction；Claude: 负责人: no_restriction；Claude: only privacy statement found, no terms page, no ban on automated access found"
 hsph.harvard.edu,https://hsph.harvard.edu/robots.txt,2026-11-22T15:34:09Z,error,no,https://privsec.harvard.edu/harvard-university-umbrella-privacy-statement,no_restriction,"负责人: no_restriction；Claude: 负责人: no_restriction；Claude: no terms page in footer; only privacy statement, trademark and copyright notices"
 publichealth.jhu.edu,https://publichealth.jhu.edu/robots.txt,2026-11-22T15:34:13Z,fetched,yes,,unclear,负责人: unclear；Claude: 负责人: unclear；Claude: no terms page found (old jhsph.edu Web Policies may apply); 403 so footer not checked
+ieor.columbia.edu,https://ieor.columbia.edu/robots.txt,2026-11-23T15:57:23Z,fetched,yes,,not_checked,
+www.ee.columbia.edu,https://www.ee.columbia.edu/robots.txt,2026-11-23T15:57:27Z,fetched,yes,,not_checked,
