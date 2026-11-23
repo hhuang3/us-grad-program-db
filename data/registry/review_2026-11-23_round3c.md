@@ -31,7 +31,7 @@
   - pg-0078（已登记，沿用） tuition（graduate_school）https://bulletin.columbia.edu/columbia-engineering/graduate-studies/graduate-tuition-fees-payments — robots no，条款 unclear，网址检查 robots_unavailable
 - 建议：人工保存（按目前检查结果）
 - 提示：CIP not published (ISSO, Provost CIP page and CVN codes page 403; bulletin refused connection); 14.3701 set by owner, IEOR reports 14.3501 and 14.3701 in IPEDS, no 27.0305. STEM-certified per program page (search snippet). blocked: 403 on WebFetch; URL from search results, www host as for the registered MSOR page. intake_terms 未核实
-决定：
+决定：select
 用时（分钟）：
 
 ## 补登页面
