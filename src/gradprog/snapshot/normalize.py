@@ -15,9 +15,10 @@ from bs4 import BeautifulSoup, Comment, Declaration, Doctype, NavigableString, P
 from gradprog.registry.urls import UrlError, normalize_url
 
 # Bump whenever output can change (code, rules file, dependency behaviour) and add the new rules-file hash.
-NORMALIZER_VERSION = 2
+NORMALIZER_VERSION = 3
 RULES_SHA256 = {1: "e526cbb980de8a67f4aa890aff8b10f11e1b8078d6a41303a04631db042e763a",
-                2: "c371b1902d4a34bd9aefd30990c5229eee6120fc72866db2aaa5356bcf15f4b6"}
+                2: "c371b1902d4a34bd9aefd30990c5229eee6120fc72866db2aaa5356bcf15f4b6",
+                3: "c371b1902d4a34bd9aefd30990c5229eee6120fc72866db2aaa5356bcf15f4b6"}   # v3: code only (07 §6.6)
 RULES_FILE = Path(__file__).resolve().parents[3] / "config" / "normalize_rules.yaml"
 
 REMOVE_TAGS = ["script", "style", "noscript", "template", "svg", "iframe", "header", "nav", "footer", "form"]
@@ -102,10 +103,19 @@ def _is_cookie(tag):
     return bool(ident.strip()) and bool(COOKIE.search(ident))
 
 
+def _unwrap_page_forms(root):
+    """07 §6.2 step 3 (v3): a form holding at least half of the body text wraps the page (ASP.NET); keep its content."""
+    total = len(root.get_text(" ", strip=True))
+    for form in root.find_all("form"):
+        if total and 2 * len(form.get_text(" ", strip=True)) >= total:
+            form.unwrap()
+
+
 def strip_structure(root, domain, rules):
     """07 §6.2 step 3: remove comments, structural elements, navigation roles, cookie notices, domain selectors."""
     for c in root.find_all(string=lambda s: isinstance(s, Comment)):
         c.extract()
+    _unwrap_page_forms(root)
     for tag in root.find_all(REMOVE_TAGS):
         tag.decompose()
     for tag in root.find_all(lambda t: isinstance(t, Tag) and (
