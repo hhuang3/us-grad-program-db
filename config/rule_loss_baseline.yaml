@@ -4,7 +4,7 @@
 #   JHU Carey pg-0062–0064: menu link text ("Tuition", "Deadlines", "GRE" ...). None is data.
 # Value per page: the largest number of flagged lines in one snapshot of that page.
 # A report lists a page only if it is not here, or if it exceeds its value by more than 2 lines.
-normalizer_version: 2
+normalizer_version: 3
 pages:
   pg-0010: 4
   pg-0011: 4

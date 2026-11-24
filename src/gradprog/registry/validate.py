@@ -15,7 +15,8 @@ from gradprog.registry.robots import crawl_allowed_for
 from gradprog.registry.urls import UrlError, domain_of, normalize_url
 from gradprog.util.manifest import UTC_TIMESTAMP
 
-QUOTAS = {"ds": 25, "analytics": 25, "stats": 20, "mgmt_sci": 20, "econ": 10}
+QUOTAS = {"ds": 25, "analytics": 25, "stats": 20, "mgmt_sci": 20, "econ": 10,
+          "cs": 15, "ece": 10, "fin_eng": 10, "ieor": 8, "info_sys": 8, "biostat": 6}   # 06 §2.3
 PROGRAM_ID = re.compile(r"^[a-z0-9]+(-[a-z0-9]+){2,}$")
 MBA = re.compile(r"\bMBA\b|\bM\.B\.A\b\.?|master of business administration", re.IGNORECASE)
 PLACEHOLDER_SEGMENT = "none"
@@ -29,7 +30,9 @@ ENUMS = {
 }
 # Enumerations where an empty value is allowed (checked elsewhere or "not yet checked").
 OPTIONAL_ENUMS = {
-    "programs": {"degree_type": t.DEGREE_TYPES, "exclusion_reason": t.EXCLUSION_REASONS},
+    "programs": {"degree_type": t.DEGREE_TYPES, "exclusion_reason": t.EXCLUSION_REASONS,
+                 "display_group": tuple(GROUP_ORDER), "cip_source": t.CIP_SOURCES},
+    "pages": {"manual_cadence": t.MANUAL_CADENCES},
     "domains": {"robots_status": t.ROBOTS_STATUSES, "robots_allows_registered_paths": t.ROBOTS_SUMMARIES},
 }
 KEYS = {"programs": "program_id", "pages": "page_id", "domains": "domain"}
@@ -65,40 +68,55 @@ def load_head_tables(repo_root, registry_rel="data/registry"):
     return out
 
 
-def site_blocked_pages(url_check):
-    """Page ids whose latest check-urls result was HTTP 403 (06 §5.2)."""
+def site_challenge_pages(url_check):
+    """Page ids whose latest check-urls result was a JavaScript challenge: HTTP 202 with a final URL whose query
+    has a challenge parameter (06 §5.2, 2026-11-22)."""
     if url_check is None or url_check.empty:
         return set()
     latest = url_check.drop_duplicates("page_id", keep="last")
-    return set(latest.loc[(latest["result"] == "error") & (latest["http_status"] == "403"), "page_id"])
+    challenge = latest["final_url"].str.contains(r"[?&]challenge=", regex=True)
+    return set(latest.loc[(latest["http_status"] == "202") & challenge, "page_id"])
 
 
-def _crawl_reason(robots_allowed, robots_status, tos_status, blocked_403):
+def site_blocked_pages(url_check):
+    """Page ids whose latest check-urls result shows the site blocking us: HTTP 403 or a JavaScript challenge
+    (06 §5.2)."""
+    if url_check is None or url_check.empty:
+        return set()
+    latest = url_check.drop_duplicates("page_id", keep="last")
+    forbidden = set(latest.loc[(latest["result"] == "error") & (latest["http_status"] == "403"), "page_id"])
+    return forbidden | site_challenge_pages(url_check)
+
+
+def _crawl_reason(robots_allowed, robots_status, tos_status, blocked_403, challenge=False):
     if robots_allowed == "not_checked":
         return "not_checked"
     if robots_allowed == "no":
         return "robots_unavailable" if robots_status == "error" else "robots_disallowed"
     if tos_status != "no_restriction":
         return "tos"
+    if challenge:
+        return "site_challenge"
     if blocked_403:
         return "site_blocked_403"
     return "stale"
 
 
 class _Crawl:
-    """Effective crawlability: crawl_allowed and not blocked with HTTP 403 by check-urls."""
+    """Effective crawlability: crawl_allowed and not blocked (HTTP 403 or a JavaScript challenge) by check-urls."""
 
     def __init__(self, registry, url_check):
         self.tos = dict(zip(registry.domains["domain"], registry.domains["tos_status"]))
         self.robots = dict(zip(registry.domains["domain"], registry.domains["robots_status"]))
         self.blocked = site_blocked_pages(url_check)
+        self.challenge = site_challenge_pages(url_check)
 
     def ok(self, page_id, page):
         return page["crawl_allowed"] == "true" and page_id not in self.blocked
 
     def reason(self, page_id, page):
         return _crawl_reason(page["robots_allowed"], self.robots.get(page["domain"]), self.tos.get(page["domain"]),
-                             page_id in self.blocked)
+                             page_id in self.blocked, page_id in self.challenge)
 
 
 def _check_columns(registry, errors):
@@ -186,6 +204,11 @@ def _check_programs(registry, candidates, errors):
                 if getattr(r, col) != row[col]:
                     errors.append(f"programs: {pid}: {col}={getattr(r, col)!r} differs from candidates.csv "
                                   f"({row[col]!r})")
+        if r.display_group and r.display_group == r.cip_group:
+            errors.append(f"programs: {pid}: display_group={r.display_group!r} equals cip_group; leave it empty")
+        if bool(r.display_group) != bool(r.cip_source):
+            errors.append(f"programs: {pid}: cip_source is required with a display_group and must be empty "
+                          "without one (06 §3.1)")
         if r.status == "excluded":
             if not r.exclusion_reason:
                 errors.append(f"programs: {pid}: excluded rows need an exclusion_reason")
@@ -308,10 +331,13 @@ def _check_selected(registry, ready, batch, errors, warnings, blocked, crawl, ma
 def _report(registry, crawl):
     progs = registry.programs
     sel = progs[progs["status"] == "selected"]
-    quota = {g: {"target": QUOTAS[g], "selected": int((sel["cip_group"] == g).sum()),
-                 "pilot": int(((sel["cip_group"] == g) & (sel["batch"] == "pilot")).sum()),
-                 "main": int(((sel["cip_group"] == g) & (sel["batch"] == "main")).sum())} for g in GROUP_ORDER}
-    status_counts = {g: {s: int(((progs["cip_group"] == g) & (progs["status"] == s)).sum()) for s in t.STATUSES}
+    shown = progs["display_group"].where(progs["display_group"] != "", progs["cip_group"])   # 06 §2.8
+    sel_shown = shown[sel.index]
+    quota = {g: {"target": QUOTAS[g], "selected": int((sel_shown == g).sum()),
+                 "pilot": int(((sel_shown == g) & (sel["batch"] == "pilot")).sum()),
+                 **{b: int(((sel_shown == g) & (sel["batch"] == b)).sum()) for b in ("main", "expansion")}}
+             for g in GROUP_ORDER}
+    status_counts = {g: {s: int(((shown == g) & (progs["status"] == s)).sum()) for s in t.STATUSES}
                      for g in GROUP_ORDER}
     reasons = dict(Counter(progs.loc[progs["status"] == "excluded", "exclusion_reason"]))
     tos = crawl.tos

@@ -3,7 +3,7 @@ columbia-ms-datascience,pg-0001,
 nyu-ms-datascience,pg-0003,
 nyu-ms-datascience,pg-0004,
 nyu-ms-datascience,pg-0005,人工保存前先展开页面上所有折叠的问答 / 列表（答案不在未展开的页面中，2026-10-22 发现）
-nyu-ms-datascience,pg-0006,
+nyu-ms-datascience,pg-0006,Manual capture: gsas.nyu.edu serves a JavaScript challenge since 2026-11-22 (weekly run); not bypassed
 unt-ms-datascience,pg-0007,
 unt-ms-datascience,pg-0008,
 unt-ms-datascience,pg-0009,
@@ -69,3 +69,270 @@ uiuc-ms-statistics,pg-0069,
 uwmadison-ms-statistics,pg-0070,
 uwmadison-ms-statisticsdatascience,pg-0070,
 uwmadison-ms-quantitativeeconomics,pg-0070,
+cmu-ms-computerscience,pg-0071,
+cmu-ms-computerscience,pg-0072,Covers MSCS and Fifth Year MS; the MSCS section applies
+cmu-ms-computerscience,pg-0073,School-wide SCS graduate admissions; English proficiency section applies
+cmu-ms-computerscience,pg-0074,All SCS master's; the SCS Master's Program line
+columbia-ms-computerscience,pg-0075,
+columbia-ms-computerscience,pg-0076,
+columbia-ms-computerscience,pg-0051,Shared SEAS graduate admissions page
+columbia-ms-computerscience,pg-0077,SEAS-wide graduate application requirements
+columbia-ms-computerscience,pg-0078,Columbia Engineering graduate tuition for all MS programs
+cornell-meng-computerscience,pg-0079,
+cornell-meng-computerscience,pg-0080,
+cornell-meng-computerscience,pg-0081,"University-wide; the Professional and Select Master's M.Eng row, not distance learning"
+upenn-other-computerandinformationscience,pg-0082,
+upenn-other-computerandinformationscience,pg-0083,Penn Engineering-wide; the master's sections apply
+upenn-other-computerandinformationscience,pg-0084,Penn Engineering-wide admissions FAQ
+upenn-other-computerandinformationscience,pg-0085,"SEAS-wide; the on-campus master's per-course-unit rate, not the online rate"
+gatech-ms-computerscience,pg-0086,
+gatech-ms-computerscience,pg-0087,
+gatech-ms-computerscience,pg-0088,
+gatech-ms-computerscience,pg-0089,"Institute-wide tables; standard graduate out-of-state rate, not the OMSCS or professional-program rows"
+ucsd-ms-computerscience,pg-0090,MS in Computer Science and Engineering with CS and CE majors; the CS major applies
+ucsd-ms-computerscience,pg-0091,Covers CSE MS and PhD admissions
+ucsd-ms-computerscience,pg-0092,Covers CSE MS and PhD
+ucsd-ms-computerscience,pg-0093,Covers CSE MS and PhD
+ucsd-ms-computerscience,pg-0094,University-wide graduate English requirement
+ucsd-ms-computerscience,pg-0095,General graduate fees; not self-supporting or PDST programs
+usc-ms-computerscience,pg-0096,
+usc-ms-computerscience,pg-0097,
+usc-ms-computerscience,pg-0098,All Viterbi master's programs
+usc-ms-computerscience,pg-0099,All Viterbi master's programs
+usc-ms-computerscience,pg-0100,University-wide graduate English proficiency
+usc-ms-computerscience,pg-0101,All Viterbi master's programs
+nyu-ms-computerscience,pg-0102,
+nyu-ms-computerscience,pg-0103,"Covers MSCS, MSIS and MS-CEI"
+nyu-ms-computerscience,pg-0104,"Covers MSCS, MSIS and MS-CEI"
+nyu-ms-computerscience,pg-0105,GSAS Computer Science entry (MS and PhD)
+nyu-ms-computerscience,pg-0106,GSAS-wide per-credit tuition
+ucm-ms-computerscience,pg-0107,
+ucm-ms-computerscience,pg-0108,All international graduate applicants
+ucm-ms-computerscience,pg-0109,
+ucm-ms-computerscience,pg-0110,All programs; non-resident graduate rate
+uta-ms-computerscience,pg-0111,
+uta-ms-computerscience,pg-0112,retired 2026-11-24: the CSE graduate catalog page now only lists programs; replaced by the MS CS catalog page
+uta-ms-computerscience,pg-0113,All international graduate applicants
+uta-ms-computerscience,pg-0114,All students; graduate nonresident chart
+unt-ms-computerscience,pg-0115,Covers the MS and the Professional MS; the MS applies
+unt-ms-computerscience,pg-0116,All CSE graduate programs
+unt-ms-computerscience,pg-0117,All international applicants (not graduate-specific)
+unt-ms-computerscience,pg-0118,College of Engineering row
+northeastern-ms-computerscience,pg-0119,Boston campus page
+northeastern-ms-computerscience,pg-0120,All Khoury master's programs and campuses
+northeastern-ms-computerscience,pg-0121,All Khoury master's programs
+northeastern-ms-computerscience,pg-0122,Khoury graduate per-credit row
+asu-ms-computerscience,pg-0123,
+asu-ms-computerscience,pg-0124,All SCAI graduate programs; the CS MS (Tempe) section
+asu-ms-computerscience,pg-0125,All graduate programs; international column
+stevens-ms-computerscience,pg-0126,
+stevens-ms-computerscience,pg-0127,All graduate programs
+stevens-ms-computerscience,pg-0128,All graduate programs; full-time master's rows
+stevens-ms-computerscience,pg-0129,All graduate programs
+stevens-ms-computerscience,pg-0130,All graduate students; full-time rate
+ub-ms-computerscienceandengineering,pg-0131,
+ub-ms-computerscienceandengineering,pg-0132,MS and PhD applicants
+ub-ms-computerscienceandengineering,pg-0133,MS and PhD applicants
+ub-ms-computerscienceandengineering,pg-0134,All programs; graduate non-resident row
+campbellsville-ms-computerscience,pg-0135,
+campbellsville-ms-computerscience,pg-0136,All international applicants
+campbellsville-ms-computerscience,pg-0137,All programs; Louisville graduate MSCS line
+sau-other-computerandinformationscience,pg-0138,
+sau-other-computerandinformationscience,pg-0139,All international graduate applicants
+sau-other-computerandinformationscience,pg-0140,CS department programs
+sau-other-computerandinformationscience,pg-0141,All international graduate students
+unt-ms-datascience,pg-0117,University-wide international English page (undergraduate and graduate)
+utd-ms-businessanalytics,pg-0142,English Proficiency section of the international graduate admissions page
+utd-ms-businessanalyticscohort,pg-0142,English Proficiency section of the international graduate admissions page
+nyu-ms-datascience,pg-0143,GSAS-wide page; per-point billing for all GSAS master's
+uchicago-ms-applieddatascience,pg-0144,
+uiuc-ms-statistics,pg-0145,"2026-27 graduate rates; no Statistics row, so the Graduate base row presumably applies"
+uwmadison-ms-statisticsdatascience,pg-0146,Campus-wide; rates are in the linked yearly fee table PDF
+uwmadison-ms-statistics,pg-0146,Campus-wide; graduate nonresident row of the linked fee table
+uwmadison-ms-quantitativeeconomics,pg-0146,Campus-wide; graduate nonresident row of the linked fee table
+utd-ms-businessanalytics,pg-0147,Graduate non-resident tables plus the MGT graduate supplemental tuition row
+columbia-ms-datascience,pg-0078,Columbia Engineering graduate tuition; MS per-credit rate
+columbia-ma-statistics,pg-0148,GSAS cost of attendance by program; Statistics row or All Other MA Programs
+unt-ms-datascience,pg-0149,"Per-credit components: non-resident, graduate and Data Science differential"
+uva-ms-datascience,pg-0150,
+jhu-ma-economics,pg-0151,Krieger-wide full-time graduate rate
+duke-other-mqmbusinessanalytics,pg-0152,
+rochester-ms-businessanalytics,pg-0153,All Simon full-time MS programs; MS in Business Analytics row
+nyu-ms-computerengineering,pg-0154,
+nyu-ms-computerengineering,pg-0155,Tandon-wide graduate requirements incl. English minimums
+nyu-ms-computerengineering,pg-0156,NYU-wide tuition lookup; select Tandon graduate
+usc-ms-electricalandcomputerengineering,pg-0157,
+usc-ms-electricalandcomputerengineering,pg-0098,Viterbi-wide master's application requirements
+usc-ms-electricalandcomputerengineering,pg-0100,
+usc-ms-electricalandcomputerengineering,pg-0101,Viterbi-wide master's tuition
+scu-ms-computerscienceandengineering,pg-0158,
+scu-ms-computerscienceandengineering,pg-0159,"School of Engineering-wide; GRE rule specific to MSCSE; also holds deadlines, English minimums and tuition"
+scu-ms-computerscienceandengineering,pg-0160,Engineering graduate bulletin 2026-27 financial chapter
+cmu-ms-electricalandcomputerengineering,pg-0161,
+cmu-ms-electricalandcomputerengineering,pg-0162,covers all ECE graduate programs; MS in ECE part
+cmu-ms-electricalandcomputerengineering,pg-0163,ECE graduate admissions FAQ
+cmu-ms-electricalandcomputerengineering,pg-0164,fall and spring cycles; MS rows
+cmu-ms-electricalandcomputerengineering,pg-0165,College of Engineering table; Masters row
+gatech-ms-electricalandcomputerengineering,pg-0166,
+gatech-ms-electricalandcomputerengineering,pg-0167,deadlines listed per campus; use Atlanta MS rows
+gatech-ms-electricalandcomputerengineering,pg-0089,
+umich-ms-electricalandcomputerengineering,pg-0168,
+umich-ms-electricalandcomputerengineering,pg-0169,
+umich-ms-electricalandcomputerengineering,pg-0170,College of Engineering graduate full-term table; nonresident rows
+asu-other-electricalengineering,pg-0171,
+asu-other-electricalengineering,pg-0172,ECEE graduate programs page; preferred deadlines apply to all
+asu-other-electricalengineering,pg-0173,
+asu-other-electricalengineering,pg-0125,
+washu-ms-quantitativefinance,pg-0174,
+washu-ms-quantitativefinance,pg-0066,covers all Olin on-campus specialized master's; use general instructions plus the MS in Finance - Quantitative prerequisite line
+washu-ms-quantitativefinance,pg-0175,
+uiuc-ms-financialengineering,pg-0176,
+uiuc-ms-financialengineering,pg-0177,
+uiuc-ms-financialengineering,pg-0178,
+uiuc-ms-financialengineering,pg-0145,use the MS in Financial Engineering row in the graduate table
+northeastern-ms-quantitativefinance,pg-0179,
+northeastern-ms-quantitativefinance,pg-0180,covers all D'Amore-McKim graduate programs; use the MS in Quantitative Finance section
+northeastern-ms-quantitativefinance,pg-0181,covers all D'Amore-McKim programs; use Full-Time MS Programs section
+northeastern-ms-quantitativefinance,pg-0122,use D'Amore-McKim graduate/MS rate
+ucsd-other-quantitativefinance,pg-0182,
+ucsd-other-quantitativefinance,pg-0183,
+ucsd-other-quantitativefinance,pg-0184,use the Master of Quantitative Finance (self-supported) section
+mit-other-finance,pg-0185,
+mit-other-finance,pg-0186,
+mit-other-finance,pg-0187,
+mit-other-finance,pg-0188,
+utd-ms-finance,pg-0189,
+utd-ms-finance,pg-0019,covers all Jindal MS programs
+utd-ms-finance,pg-0142,
+utd-ms-finance,pg-0147,use graduate non-resident rates for Jindal School
+uci-other-finance,pg-0190,
+uci-other-finance,pg-0191,
+uci-other-finance,pg-0192,
+uci-other-finance,pg-0193,
+columbia-ms-operationsresearch,pg-0194,
+columbia-ms-operationsresearch,pg-0077,All Columbia Engineering graduate programs; use the Operations Research deadline rows
+columbia-ms-operationsresearch,pg-0051,All Columbia Engineering graduate programs
+columbia-ms-operationsresearch,pg-0078,All Columbia Engineering graduate programs
+tamu-ms-industrialengineering,pg-0195,
+tamu-ms-industrialengineering,pg-0196,"MS/MEng IE, MS Engineering Management and PhD; use the on-campus international master's rows"
+tamu-ms-industrialengineering,pg-0198,All graduate students; use non-resident rates and engineering program fee
+ucberkeley-meng-ieor,pg-0199,
+ucberkeley-meng-ieor,pg-0200,
+ucberkeley-meng-ieor,pg-0201,All graduate programs; English proficiency section
+ucberkeley-meng-ieor,pg-0202,All full-time MEng programs; use non-resident column
+ub-ms-industrialengineering,pg-0203,
+ub-ms-industrialengineering,pg-0204,MS Industrial Engineering and online ME Engineering Management; use the MS parts
+ub-ms-industrialengineering,pg-0134,All programs; use the graduate engineering non-resident full-time rows
+cornell-meng-orie,pg-0205,
+cornell-meng-orie,pg-0206,
+cornell-meng-orie,pg-0207,All graduate programs; use Professional Master's section
+cornell-meng-orie,pg-0081,All programs; use the M.Eng row (not distance learning)
+northeastern-ms-industrialengineering,pg-0208,
+northeastern-ms-industrialengineering,pg-0209,
+northeastern-ms-industrialengineering,pg-0210,All College of Engineering graduate programs; English proficiency section
+northeastern-ms-industrialengineering,pg-0122,All programs; use graduate engineering per-credit rate
+trine-ms-informationstudies,pg-0211,
+trine-ms-informationstudies,pg-0212,covers all hybrid programs; use the graduate/master's part
+trine-ms-informationstudies,pg-0213,hybrid tuition table; master's row lists MSIS
+trine-ms-informationstudies,pg-0214,covers all hybrid students
+cumberlands-ms-informationtechnology,pg-0215,
+cumberlands-ms-informationtechnology,pg-0216,shared graduate requirements; executive-format applicants send materials to International Graduate Services
+cumberlands-ms-informationtechnology,pg-0217,Graduate Tuition > Executive Programs table (master's row)
+utd-ms-informationtechnologyandmanagement,pg-0218,
+utd-ms-informationtechnologyandmanagement,pg-0019,shared Jindal master's requirements
+utd-ms-informationtechnologyandmanagement,pg-0219,
+utd-ms-informationtechnologyandmanagement,pg-0020,university-wide graduate deadlines
+utd-ms-informationtechnologyandmanagement,pg-0147,university-wide graduate rates
+cincinnati-ms-informationsystems,pg-0220,
+cincinnati-ms-informationsystems,pg-0221,content is the shared Lindner graduate application checklist
+cincinnati-ms-informationsystems,pg-0222,all Lindner graduate programs; MSIS listed among programs without spring entry
+cincinnati-ms-informationsystems,pg-0223,Business section; MSIS may fall under Graduate Premium Programs table
+cincinnati-ms-informationsystems,pg-0224,graduate nonresident surcharge
+unt-ms-informationsystemsandtechnologies,pg-0225,
+unt-ms-informationsystemsandtechnologies,pg-0226,shared RCoB master's page; use the MS Information Systems & Technologies section and deadline table
+unt-ms-informationsystemsandtechnologies,pg-0117,
+unt-ms-informationsystemsandtechnologies,pg-0149,
+cmu-other-informationsystemsmanagement,pg-0227,
+cmu-other-informationsystemsmanagement,pg-0228,
+cmu-other-informationsystemsmanagement,pg-0229,applies to all Heinz graduate programs
+cmu-other-informationsystemsmanagement,pg-0230,Heinz College section; MISM row links to a subpage
+cmich-ms-informationsystems,pg-0231,
+cmich-ms-informationsystems,pg-0232,
+cmich-ms-informationsystems,pg-0233,all international graduate applicants
+cmich-ms-informationsystems,pg-0234,
+cmich-ms-informationsystems,pg-0235,graduate tuition rates section (international master's row)
+nyu-ms-biostatistics,pg-0236,
+nyu-ms-biostatistics,pg-0237,
+columbia-ms-biostatistics,pg-0238,
+columbia-ms-biostatistics,pg-0239,Mailman-wide application components; applies to all master's programs
+columbia-ms-biostatistics,pg-0240,All Mailman programs; use the MS: Biostatistics row
+columbia-ms-biostatistics,pg-0241,All Mailman degrees; use the MS Full Time (Biostatistics and Epidemiology) per-point row
+umich-ms-biostatistics,pg-0242,
+umich-ms-biostatistics,pg-0243,
+umich-ms-biostatistics,pg-0244,SPH-wide residential tuition; use the MS/nonresident rows
+umich-ms-biostatistics,pg-0245,Rackham-wide English test rules
+emory-other-biostatistics,pg-0246,
+emory-other-biostatistics,pg-0247,All Rollins master's programs
+emory-other-biostatistics,pg-0248,All Rollins degrees; use the full-time MSPH semester rate
+emory-other-biostatistics,pg-0249,All Rollins international applicants
+unc-ms-biostatistics,pg-0250,
+unc-ms-biostatistics,pg-0251,Graduate School instructions for all programs
+unc-ms-biostatistics,pg-0252,All graduate programs; use the Public Health nonresident rows
+columbia-ms-electricalengineering,pg-0253,
+columbia-ms-electricalengineering,pg-0077,School-wide requirements for Columbia Engineering graduate programs; use the Electrical Engineering MS entries
+columbia-ms-electricalengineering,pg-0051,School-wide application entry for Columbia Engineering graduate programs
+columbia-ms-electricalengineering,pg-0078,School-wide graduate tuition for Columbia Engineering
+ucsd-ms-electricalandcomputerengineering,pg-0254,
+ucsd-ms-electricalandcomputerengineering,pg-0255,Covers both MS and PhD admissions
+ucsd-ms-electricalandcomputerengineering,pg-0094,
+ucsd-ms-electricalandcomputerengineering,pg-0095,Campus-wide graduate fees; use the standard graduate nonresident rows
+duke-ms-electricalandcomputerengineering,pg-0256,Hub page covering both the MS and the MEng in ECE; use the Master of Science sections
+duke-ms-electricalandcomputerengineering,pg-0257,
+duke-ms-electricalandcomputerengineering,pg-0258,
+duke-ms-electricalandcomputerengineering,pg-0259,Graduate School-wide schedule; use the master's tuition rows
+cmu-ms-computationalfinance,pg-0260,
+cmu-ms-computationalfinance,pg-0261,
+cmu-ms-computationalfinance,pg-0262,
+cmu-ms-computationalfinance,pg-0230,Computational Finance (MSCF) entry only; links to a subpage with Pittsburgh and New York tables
+ucberkeley-other-financialengineering,pg-0263,
+ucberkeley-other-financialengineering,pg-0264,
+ucberkeley-other-financialengineering,pg-0265,
+ucberkeley-other-financialengineering,pg-0266,"Use the full-time MFE rows, not part-time"
+nyu-ms-financialengineering,pg-0267,
+nyu-ms-financialengineering,pg-0155,Tandon-wide graduate requirements
+nyu-ms-financialengineering,pg-0268,Tandon-wide; use the fall full-time MS rows (FE takes no spring applications)
+nyu-ms-financialengineering,pg-0156,University-wide rates; use the Tandon graduate rows
+gatech-ms-industrialengineering,pg-0269,
+gatech-ms-industrialengineering,pg-0270,Institute-wide international applicant checklist
+gatech-ms-industrialengineering,pg-0271,
+gatech-ms-industrialengineering,pg-0089,Use the Atlanta graduate out-of-state rows
+uta-ms-industrialengineering,pg-0272,
+uta-ms-industrialengineering,pg-0273,
+uta-ms-industrialengineering,pg-0113,
+uta-ms-industrialengineering,pg-0114,
+uw-ms-informationmanagement,pg-0274,
+uw-ms-informationmanagement,pg-0275,covers residential and online modalities; use residential parts
+uw-ms-informationmanagement,pg-0276,covers residential and online modalities
+uw-ms-informationmanagement,pg-0277,separate residential and online timelines; use residential
+uw-ms-informationmanagement,pg-0278,one per-credit rate for all students regardless of residency and modality
+uiuc-ms-informationmanagement,pg-0279,
+uiuc-ms-informationmanagement,pg-0280,
+uiuc-ms-informationmanagement,pg-0145,"use Information Sciences row, International column; separate rows by entry before/after Fall 2026"
+umich-ms-information,pg-0281,
+umich-ms-information,pg-0282,
+umich-ms-information,pg-0283,
+harvard-other-biostatistics,pg-0284,
+harvard-other-biostatistics,pg-0285,common requirements for all Harvard Chan master's and DrPH programs
+harvard-other-biostatistics,pg-0286,school-wide table; use the standard SM rows (not online or summer-only)
+jhu-other-biostatistics,pg-0287,
+jhu-other-biostatistics,pg-0288,school-wide Bloomberg School application process
+jhu-other-biostatistics,pg-0289,school-wide table; use ScM - Biostatistics row
+jhu-other-biostatistics,pg-0290,school-wide
+jhu-other-biostatistics,pg-0291,school-wide; use full-time master's row
+asu-other-electricalengineering,pg-0292,University-wide application process for international graduate applicants; program-specific requirements are on the degree page
+uta-ms-industrialengineering,pg-0293,Current catalog entry for the MS in Industrial Engineering; the admission requirements section
+columbia-ms-financialengineering,pg-0294,
+columbia-ms-financialengineering,pg-0077,All Columbia Engineering graduate programs; use the Financial Engineering deadline rows
+columbia-ms-financialengineering,pg-0051,All Columbia Engineering graduate programs
+columbia-ms-financialengineering,pg-0078,All Columbia Engineering graduate programs
+uta-ms-computerscience,pg-0295,Current catalog page for the MS in Computer Science (thesis and non-thesis plans); the admission section

@@ -327,6 +327,17 @@ def test_site_blocked_403_makes_page_not_crawlable(registry, registry_candidates
     assert_error(r, "alpha-ms-datascience", "pg-0001", "site_blocked_403")
 
 
+def test_javascript_challenge_makes_page_not_crawlable(registry, registry_candidates):
+    # 06 §5.2 (2026-11-22): a 202 whose final URL carries a challenge parameter counts as blocked, like a 403.
+    checks = url_check(("pg-0001", "redirected", "202"), ("pg-0002", "redirected", "202"))
+    checks.loc[0, "final_url"] = "https://datascience.alpha.edu/ms?challenge=d06e90d7"
+    checks.loc[1, "final_url"] = "https://datascience.alpha.edu/ms/new"
+    r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=checks)
+    reasons = {b["page_id"]: b["reason"] for b in r.report["ready_crawl_blocked"]}
+    assert reasons["pg-0001"] == "site_challenge"
+    assert "pg-0002" not in reasons
+
+
 def test_other_check_errors_are_not_site_blocking(registry, registry_candidates):
     checks = url_check(("pg-0001", "error", "500"), ("pg-0002", "broken", "404"))
     r = run(registry, registry_candidates, ready=True, batch="pilot", url_check=checks)
@@ -372,9 +383,12 @@ def test_ready_only_checks_requested_batch(registry, registry_candidates):
 
 def test_quota_report(registry, registry_candidates):
     q = run(registry, registry_candidates).report["quota"]
-    assert q["ds"] == {"target": 25, "selected": 1, "pilot": 1, "main": 0}
+    assert q["ds"] == {"target": 25, "selected": 1, "pilot": 1, "main": 0, "expansion": 0}
     assert q["analytics"]["selected"] == 1
     assert q["stats"]["selected"] == 0 and q["mgmt_sci"]["target"] == 20 and q["econ"]["target"] == 10
+    # 06 §2.3 expansion quotas (2026-11-22), 57 in all.
+    targets = {g: q[g]["target"] for g in ("cs", "ece", "fin_eng", "ieor", "info_sys", "biostat")}
+    assert targets == {"cs": 15, "ece": 10, "fin_eng": 10, "ieor": 8, "info_sys": 8, "biostat": 6}
 
 
 def test_status_and_reason_counts(registry, registry_candidates):
@@ -581,3 +595,38 @@ def test_display_names_must_agree_within_an_institution(registry, registry_candi
 def test_degree_label_is_only_for_other(registry, registry_candidates):
     set_cell(registry.programs, "program_id", "alpha-ms-datascience", "degree_label", "MSDS")
     assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "degree_label")
+
+
+# --- display group and CIP source (06 §2.8, §3.1, 2026-11-23) -------------------
+
+def test_display_group_needs_a_cip_source(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "display_group", "fin_eng")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "cip_source")
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", "inferred")
+    assert run(registry, registry_candidates).errors == []
+
+
+def test_cip_source_without_display_group_is_an_error(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", "school_stated")
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience", "cip_source")
+
+
+@pytest.mark.parametrize("group, source", [("finance", "inferred"), ("ds", "inferred"), ("fin_eng", "guessed")])
+def test_display_group_and_cip_source_values(registry, registry_candidates, group, source):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "display_group", group)
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", source)
+    assert_error(run(registry, registry_candidates), "alpha-ms-datascience")
+
+
+def test_quota_counts_the_display_group(registry, registry_candidates):
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "display_group", "fin_eng")
+    set_cell(registry.programs, "program_id", "alpha-ms-datascience", "cip_source", "inferred")
+    q = run(registry, registry_candidates).report["quota"]
+    assert q["ds"]["selected"] == 0 and q["fin_eng"]["selected"] == 1
+
+
+def test_manual_cadence_values(registry, registry_candidates):
+    set_cell(registry.pages, "page_id", "pg-0001", "manual_cadence", "biweekly")
+    assert run(registry, registry_candidates).errors == []
+    set_cell(registry.pages, "page_id", "pg-0001", "manual_cadence", "weekly")
+    assert_error(run(registry, registry_candidates), "pg-0001", "manual_cadence")

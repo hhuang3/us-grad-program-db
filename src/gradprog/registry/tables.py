@@ -11,9 +11,9 @@ from gradprog.registry.urls import domain_of, normalize_url
 COLUMNS = {
     "programs": ["program_id", "unitid", "cip_code", "cip_group", "institution_name", "institution_short",
                  "institution_name_zh", "program_name", "degree_type", "degree_label", "department", "delivery_mode", "status", "exclusion_reason", "selection_note", "batch", "fetch_method",
-                 "intake_terms", "added_at"],
+                 "intake_terms", "added_at", "display_group", "cip_source"],
     "pages": ["page_id", "url", "domain", "page_type", "owner_level", "url_status", "content_format",
-              "robots_allowed", "crawl_allowed", "added_at"],
+              "robots_allowed", "crawl_allowed", "added_at", "manual_cadence"],
     "program_pages": ["program_id", "page_id", "scope_note"],
     "domains": ["domain", "robots_url", "robots_checked_at", "robots_status", "robots_allows_registered_paths",
                 "tos_url", "tos_status", "tos_note"],
@@ -25,8 +25,10 @@ DELIVERY_MODES = ("on_campus", "hybrid", "online", "unknown")
 STATUSES = ("selected", "excluded", "backlog")
 EXCLUSION_REASONS = ("mba", "online_only", "certificate", "out_of_scope", "duplicate", "not_found", "not_admitting",
                      "other")
-BATCHES = ("pilot", "main")
+BATCHES = ("pilot", "main", "expansion")
 FETCH_METHODS = ("auto", "manual")
+CIP_SOURCES = ("school_stated", "inferred")   # programs.cip_source, only with a display_group (06 §2.8)
+MANUAL_CADENCES = ("biweekly",)               # pages.manual_cadence: override of 07 §5.2
 INTAKE_TERMS = ("fall", "spring", "summer")   # programs.intake_terms: ";"-joined, in this order (06 §3.1)
 PAGE_TYPES = ("program_home", "admissions", "deadlines", "requirements", "tuition", "funding", "faq",
               "grad_school_intl", "isso_stem_list", "other")
@@ -42,6 +44,11 @@ TOS_STATUSES = ("no_restriction", "prohibits_automated_access", "unclear", "not_
 
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 PAGE_ID = re.compile(r"^pg-(\d{4,})$")
+
+
+def display_group(program):
+    """The direction a program is counted and shown under (06 §2.8): display_group, else cip_group."""
+    return program.get("display_group", "") or program["cip_group"]
 
 
 class RegistryError(ValueError):
@@ -150,7 +157,7 @@ def add_page(registry, url, page_type, owner_level, content_format, program_ids,
     registry.pages = _append(registry.pages, {
         "page_id": page_id, "url": norm, "domain": domain, "page_type": page_type, "owner_level": owner_level,
         "url_status": url_status, "content_format": content_format, "robots_allowed": "not_checked",
-        "crawl_allowed": "false", "added_at": added_at,
+        "crawl_allowed": "false", "added_at": added_at, "manual_cadence": "",
     })
     registry.pages["crawl_allowed"] = list(crawl_allowed_for(registry.pages, registry.domains))
     linked = set(map(tuple, registry.program_pages[["program_id", "page_id"]].values.tolist()))

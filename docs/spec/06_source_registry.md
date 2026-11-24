@@ -1,6 +1,6 @@
 # 06 来源登记表（Phase 2）
 
-> 状态：v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
+> 状态：v1.5（2026-11-23：§3.1 新增 `display_group`、`cip_source`，§3.2 新增 `manual_cadence`，§5.1、§8.1 相应修改）。v1.4（2026-11-23：§2.8 点名项目可按实际 CIP 登记，显示方向单独指定）。v1.3（2026-11-22：§2.8 比例上限只用于按排序选的一半；§5.2 JavaScript 验证页算拦截）。v1.2（2026-11-22：扩展批次，§2.3、§2.8、§6、§8）。v1.1（Phase 2a，2026-10-01 逐项确认）。原先标为待确认的补充设计均已确认；第 7 项（抓取许可的粒度）与第 9 项（MBA 匹配）按答复修订。
 > 登记表是 Phase 3 抓取的**唯一输入**。本阶段不抓取项目页面内容；唯一允许访问大学网站的操作是读取 `robots.txt`，以及你明确要求时用搜索引擎查找候选 URL。
 
 ---
@@ -58,6 +58,20 @@
 
 名额是目标值，最终数量以你的确认为准。校验只**报告**各组 selected 数量与名额的差距，不报错。
 
+**扩展批次**（`batch = expansion`，2026-11-22）：
+
+| 组 | 名额 |
+|---|---|
+| cs | 15 |
+| ece | 10 |
+| fin_eng | 10 |
+| ieor | 8 |
+| info_sys | 8 |
+| biostat | 6 |
+| **合计** | **57** |
+
+分两轮做（2026-11-22）：第一轮只做 `cs`，走完候选、提议、审核清单、`apply-review` 全流程，统计每个项目的审核用时和人工保存页面比例，报告负责人；第二轮其余 5 组一起做。
+
 ### 2.4 挑选工作表的排序
 
 - 组内按 `completions_masters_nonresident` **降序**，并列时按 `completions_masters` 降序，再并列时按 `unitid` 升序（按整数比较）、`cip_code` 升序。
@@ -86,6 +100,19 @@
 
 ---
 
+### 2.8 扩展批次的挑选（2026-11-22）
+
+- 每组约一半按 §2.4 的排序（国际学生授予数）挑选；另一半由负责人在审核清单（§8.2）中点名补充。
+- 同一所学校在同一组只选一个项目：在校全日制、主打的硕士项目（如 MSCS、MFE）。§2.2 的排除规则照常：MBA、纯线上、证书项目不收；只对本校学生开放的项目也不收。
+- 名额边缘的候选条件相近时，优先选页面可以自动抓取（robots 允许、条款没有限制）的学校；按排序选的那一半，人工保存的页面控制在这些项目全部页面的 30% 以内。点名的学校按需求选入，不受这个比例限制，也不为比例替换（2026-11-22 确认）。
+- 学校已经登记过的研究生院页面（例如英语要求页）直接沿用，不重复登记。
+- 每组按排序提议的项目比名额的一半多 1–2 个，负责人从中选，其余填 `backup`。
+- 第一轮由负责人预先点名的 `cs` 学校（2026-11-22）：CMU、Columbia、Cornell、UPenn、Georgia Tech、UCSD、USC、NYU。Claude 查找这些学校的项目，直接放进审核清单“我要加的学校”一栏下，与按排序挑选的一半分开列出。
+- **点名项目按实际 CIP 登记（例外，2026-11-23）**：点名的项目在 IPEDS 里没有本组 CIP 的候选行（例如金融工程项目报在 14.3701 Operations Research 下）时，可以按学校实际报的 CIP 登记，前提是这个 CIP 属于 04 §1 的目标 CIP，在 candidates.csv 中有这一行。`cip_group` 照常等于该行的组（§5.1 不变），另用 `display_group` 指定导出时显示的方向（如 `fin_eng` 显示为“金融工程”），用 `cip_source` 记录 CIP 的来源（§3.1）。先查学校公布的 STEM OPT 项目清单等官方资料：写明了就按它登记，记为 `school_stated`；查不到时由负责人决定，按负责人指定的代码登记的记为 `inferred`。实际 CIP 不在目标 CIP 中时不登记，先报告代码和它是否在 STEM 清单上，由负责人决定。
+  - 同一个学位只登记一次：点名的“项目”其实是已登记项目的一个方向（concentration）时，不另外登记。
+  - 名额（§2.3）、审核清单的分组（§8.2）和导出的“方向”（10）都按显示方向计：`display_group` 不为空时用它，否则用 `cip_group`。
+- 扩展批次不建标准答案集，质量靠审核队列和导出中的“待核实”兜底（08 §10、09 §1）。
+
 ## 3. 登记表结构
 
 所有表放在 `data/registry/`，CSV，UTF-8（无 BOM），`\n` 换行，**全部列按字符串读取**（`keep_default_na=False`）。日期为 `YYYY-MM-DD`，时间为 UTC `YYYY-MM-DDTHH:MM:SSZ`。
@@ -111,10 +138,12 @@
 | `status` | 状态 | `selected / excluded / backlog` |
 | `exclusion_reason` | 排除原因 | `mba / online_only / certificate / out_of_scope / duplicate / not_found / not_admitting / other`；`status = excluded` 时必填，否则必须为空 |
 | `selection_note` | 选入或排除的理由 | 自由文本；`status ∈ {selected, excluded}` 时必填 |
-| `batch` | 批次 | `pilot / main` |
+| `batch` | 批次 | `pilot / main / expansion`（`expansion` 为 2026-11 的扩展批次，§2.8） |
 | `fetch_method` | Phase 3 取得页面的方式（2026-10-03 新增） | `auto / manual`；`status = selected` 时必填，其他状态必须为空。`auto`：由抓取器自动抓取；`manual`：页面无法自动抓取（条款、robots.txt 或网站防护），由人工取得，具体流程在 P3 设计 |
 | `intake_terms` | 入学季（2026-10-12 新增） | `fall / spring / summer` 中的一个或多个，分号分隔，按 fall、spring、summer 的顺序，不重复（如 `fall;spring`）；`status = selected` 时必填，其他状态可空。由你填写，不由抓取或抽取写入。用途：P4 由日期推算学期时确定季节（08 §7.2）。根据页面提议、尚未核实的值，在 `selection_note` 中注明“intake_terms 未核实” |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
+| `display_group` | 显示方向（2026-11-23 新增，§2.8） | 通常为空。点名项目按实际 CIP 登记、方向与 `cip_group` 不同时填，取值同 `cip_group`，不能等于本行的 `cip_group`。名额、审核清单分组和导出用它代替 `cip_group` |
+| `cip_source` | CIP 的来源（2026-11-23 新增，§2.8） | `display_group` 不为空时必填，否则必须为空：`school_stated`（学校官方资料写明）/ `inferred`（查不到，由负责人指定） |
 
 **`program_id` 格式**：`{学校简称}-{学位}-{方向}`，如 `uwmadison-ms-statistics`。
 - 正则：`^[a-z0-9]+(-[a-z0-9]+){2,}$`（全小写 ASCII 字母和数字，用 `-` 分隔，至少 3 段）。
@@ -134,6 +163,7 @@
 | `robots_allowed` | robots.txt 是否允许抓取本页 | `yes / no / not_checked`；由 `check-robots` 写入，新页面为 `not_checked` |
 | `crawl_allowed` | 是否允许 Phase 3 抓取本页 | **导出列**，`true / false`，规则见 §4.3 |
 | `added_at` | 登记日期 | `YYYY-MM-DD` |
+| `manual_cadence` | 人工保存频率的例外（2026-11-23 新增，07 §5.2） | 通常为空，按 07 §5.2 由页面类型决定。填 `biweekly` 时强制每两周保存（例如项目首页上也写了截止日期） |
 
 **停用（`retired`，2026-10-06 新增）**：页面已不能作为来源（例如变为需要登录、已被删除），由你手动把 `url_status` 改为 `retired`。
 - 行和 `page_id` 保留（§5.1 “不删除”），已有快照历史不受影响；`add-page` 不能直接登记 `retired` 页面。
@@ -270,6 +300,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - `url_status = retired` 的页面：它的每一条 program_pages 记录，`scope_note` 都必须以 `retired <YYYY-MM-DD>:` 开头（日期合法）（2026-10-06 新增）。
 - 枚举值合法；日期、时间格式合法。
 - `status` 与 `exclusion_reason`、`selection_note` 的组合合法（§3.1）。
+- `display_group` 为空或是合法的组，且不等于本行的 `cip_group`；`cip_source` 与 `display_group` 同时为空或同时填写（§3.1，2026-11-23）。
 - `program_id` 格式合法（§3.1）；占位记录规则（§2.1）。
 - `url` 为 https 且等于 `normalize_url(url)`；`domain = domain_of(url)`；`page_id` 格式合法。
 - 枚举：`robots_allowed ∈ {yes, no, not_checked}`，`crawl_allowed ∈ {true, false}`。
@@ -297,7 +328,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 
 `--ready --batch pilot` 是 Phase 3 的准入检查：只检查 `batch = pilot` 的 selected 项目。2d 过程中允许出现 proposed 页面（只给 warning），否则提议阶段就无法通过校验。
 
-**“可抓取”**（准入检查与报告使用，2026-10-03 修订）：`crawl_allowed = true`，**且**该页在 `data/registry/url_check.csv` 中最近一次的检查结果不是 HTTP 403（`result = error` 且 `http_status = 403`，即网站防护拦截）。`url_check.csv` 不存在时无法判断网站防护，给出一条 warning，只按 `crawl_allowed` 判断。
+**“可抓取”**（准入检查与报告使用，2026-10-03 修订，2026-11-22 补充）：`crawl_allowed = true`，**且**该页在 `data/registry/url_check.csv` 中最近一次的检查结果不是网站防护拦截。拦截包括两种：HTTP 403（`result = error` 且 `http_status = 403`），以及 JavaScript 验证页（`http_status = 202` 且 `final_url` 的查询参数里有 `challenge`）。验证页不执行、不绕过（00 §6）。每周抓取遇到验证页时（index.csv 中 `http_status = 202` 且最终网址带 `challenge`），Claude 把那次结果（状态码、最终网址、时间）照录为 url_check 的一行，不另外请求；该页从此按人工取得处理（项目需为 `fetch_method = manual`），并在 program_pages 的 `scope_note` 里写明。`url_check.csv` 不存在时无法判断网站防护，给出一条 warning，只按 `crawl_allowed` 判断。
 
 “不可抓取”的原因按以下顺序取第一个成立的：
 1. `robots_allowed = not_checked` → `not_checked`（未检查）
@@ -305,6 +336,7 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 3. `robots_allowed = no` → `robots_disallowed`（robots.txt 明确禁止）
 4. `tos_status ≠ no_restriction` → `tos`（条款）
 5. url_check 中最近一次为 HTTP 403 → `site_blocked_403`（网站防护 403）
+6. url_check 中最近一次为 JavaScript 验证页 → `site_challenge`（网站验证页）
 
 ### 5.3 报告（不报错）
 
@@ -320,12 +352,14 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 | 命令 | 作用 |
 |---|---|
 | `gradprog registry init` | 建立 4 张空表（只有表头）；已存在则报错，不覆盖 |
-| `gradprog registry worksheet` | 从 candidates.csv 生成 `data/registry/selection_worksheet.csv`（§7） |
+| `gradprog registry worksheet [--groups g1,g2 --out <路径>]` | 从 candidates.csv 生成 `data/registry/selection_worksheet.csv`（§7） |
 | `gradprog registry add-page` | 登记一个页面：规范化 URL、分配 `page_id`、导出 `domain`、需要时补 domains 行、写入 program_pages 关联 |
 | `gradprog registry derive` | 重算导出列（§4.2） |
 | `gradprog registry check-robots` | §4.1 |
 | `gradprog registry check-urls` | §4.4：检查 proposed 页面的状态码与跳转，写 `url_check.csv`，不改登记表 |
 | `gradprog registry validate [--ready --batch pilot]` | §5 |
+| `gradprog registry add-program --from <提议表>` | §8.1：按提议表一次登记多个项目和页面，检查 robots 与网址状态，写出审核清单 |
+| `gradprog registry apply-review <审核清单>` | §8.3：按你在清单里的决定更新登记表 |
 
 ---
 
@@ -340,3 +374,39 @@ pages.csv 中某页 `crawl_allowed = true` 当且仅当：
 - 这份工作表**不是校验输入**，`validate` 不读它。
 - 已存在时拒绝覆盖（防止你填写的内容丢失），需要 `--force` 才覆盖。
 - 生成结果是确定的（同样的 candidates.csv → 逐字节相同的文件）。
+- 扩展批次（2026-11-22）：`gradprog registry worksheet --groups cs,ece,fin_eng,ieor,info_sys,biostat --out data/registry/selection_worksheet_expansion.csv --force` 只写指定组，规则同上；原有工作表不动。第一轮只写了 cs，第二轮重写为全部 6 个扩展组（cs 的行不变）。
+
+## 8. 批量登记与审核清单（2026-11-22）
+
+### 8.1 提议表与 `add-program`
+
+- 提议表 `data/registry/proposals_<日期>.csv` 由 Claude 准备：从挑选工作表（§7）取候选，在负责人要求下用搜索引擎和项目官网查找页面（只读页面，不提交任何表单）。每行一个页面，列：`program_id, unitid, cip_code, institution_name, institution_short, program_name, degree_type, degree_label, department, delivery_mode, intake_terms, nominated, url, page_type, owner_level, content_format, scope_note, tos_url, tos_hint, note`，可以在末尾再加 `display_group, cip_source` 两列（2026-11-23；没有这两列的旧提议表照常读取）。`note` 写排除提示（疑似 MBA、纯线上、证书、只对本校学生开放）和依据。
+- **已登记项目的补登页面**：`program_id` 是已登记项目时，这一行只补登页面（项目列须与登记表一致）。用于导出中“页面未写明”“见其他页面”的补登清单（例如研究生院英语要求页、学费页）。
+- `nominated`（`yes` 或空）：负责人点名的学校填 `yes`，审核清单据此分开列出。
+- `tos_url`、`tos_hint`：新域名的条款页和 Claude 的初步判断，写在该域名第一次出现的行。`add-program` 把 `tos_url` 写入 domains.csv，`tos_status` 仍为 `not_checked`，由负责人在审核清单中判断。
+- 新项目的 `selection_note` 写“Proposed <日期> (expansion round 1)”加上 `note`；`fetch_method` 留空（backlog 不填）。
+- 网址已登记过的页面不新建，只给项目加关联（沿用研究生院页等共用页面）。
+- `gradprog registry add-program --from <提议表>`：一次登记表中所有项目（`status = backlog`、`batch = expansion`）和页面（`url_status = proposed`），再执行 `check-robots`（只查新页面所在的域名，包括已登记的域名；2026-11-22 修正，原先只查新域名，已有域名上的新页面会停在 `not_checked`）和 `check-urls`（只查新页面），最后写出审核清单。任何一行不合 §3 的规则就整批不登记，并列出全部问题。重复运行时跳过已登记的项目和页面。
+
+### 8.2 审核清单 `data/registry/review_<日期>.md`
+
+- 按组分节。每节开头一行“我要加的学校：”，留给负责人点名补充本组的学校（§2.8）。
+- 每个项目一小节：IPEDS 硕士授予数、国际学生数、是否 STEM、在工作表中的排名；每个页面的网址、类型、层级、robots / 条款 / 网址检查结果；建议自动抓取还是人工保存；排除提示。
+- 每个项目一行“决定：”，填 `select`（选入）、`exclude <原因>`（`exclusion_reason` 的取值）或 `backup`（备选，保持 backlog）。
+- 每个项目一行“用时（分钟）：”，由负责人填写审核这个项目实际花的时间，可空；`apply-review` 汇总平均值和合计（第一轮报告用）。
+- 补登页面单独一节，每个页面一行“决定：”，填 `confirm` 或 `reject`。
+- 新域名单独一节：每个域名列出条款页和 Claude 的初步判断，一行“条款：”，填 `no_restriction`、`prohibits_automated_access` 或 `unclear`，后面可加说明。条款未判断的域名，页面按不可自动抓取计算。
+- 清单末尾汇总：每组已选数量与名额、人工保存页面占比（§2.8 的 30%）。
+
+### 8.3 `apply-review`
+
+- 先写入域名的条款判断：`tos_status`，`tos_note` 写“负责人: <说明>；Claude: <tos_hint>”，然后重新计算 `crawl_allowed`。
+- 读取清单中的决定：`select` → 项目 `status = selected`、`fetch_method` 按页面检查结果填写（项目的全部页面都“可抓取”（§5.2）时为 `auto`，否则 `manual`）、页面 `url_status = confirmed`；`exclude` → `status = excluded` 和对应的 `exclusion_reason`；`backup` 不变。
+- 补登页面：`confirm` → `url_status = confirmed`；`reject` → 删除这个页面及其关联（页面只是 proposed，尚未抓取）。
+- 新项目的某个页面不要时（例如网址 404），在“补登页面”一节为它加一小节 `#### 页面 <page_id>`、`决定：reject`（2026-11-23）。页面的决定先于项目的决定处理，所以被拒的页面不影响项目的 `fetch_method`。
+- 负责人把“按排序”一节里的项目改为按点名选入时，把它的小节移到同组的 `### 点名` 下（没有就新建）；人工保存比例按移动后的分组统计（2026-11-23）。
+- 只有 `select` 和 `confirm` 的页面变为 confirmed；`exclude` 项目的页面保持 proposed。
+- 没有填写决定的项目或页面不变，并在输出中列出。
+- “我要加的学校”不自动登记：Claude 为这些学校补提议表，再走一遍 §8.1。
+- 更新后执行 `validate --ready --batch expansion`。
+

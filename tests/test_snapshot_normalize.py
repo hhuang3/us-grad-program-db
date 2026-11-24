@@ -112,7 +112,8 @@ def test_rules_file_is_bound_to_normalizer_version():
 def test_v2_rules_cover_the_recurring_noise():
     """07 §6.5: the v2 rules file has the domains decided in Phase 3e."""
     rules = load_rules()
-    assert nz.NORMALIZER_VERSION == 2
+    assert nz.NORMALIZER_VERSION >= 2   # v3 (07 §6.6) changed code only; the rules file is the v2 one
+    assert nz.RULES_SHA256[nz.NORMALIZER_VERSION] == nz.RULES_SHA256[2]
     assert {"infosystems.utdallas.edu", "www.fuqua.duke.edu", "olin.washu.edu", "datascience.virginia.edu",
             "gsas.nyu.edu", "stat.illinois.edu"} <= set(rules)
     duke = [r.get("remove_selector") for r in rules["www.fuqua.duke.edu"]]
@@ -226,3 +227,22 @@ def test_data_like_patterns(line):
 @pytest.mark.parametrize("line", ["Campus tour", "Meet our students", "Class of 2024"])
 def test_not_data_like(line):
     assert not nz.DATA_LIKE.search(line)
+
+# --- v3 (07 §6.6, 2026-11-24): a form that wraps the whole page is unwrapped, small forms are removed ---------
+
+def test_page_wrapped_in_a_form_keeps_its_text():
+    html = ("<html><body><form id='aspnetForm' method='post'><nav>Menu</nav><div id='main'>"
+            "<h1>Information Systems, M.S.</h1><p>Admission Requirement Snapshot: GPA 2.7 or higher.</p>"
+            "<p>The program requires a minimum of 36 graduate credits.</p></div>"
+            "<form class='search'><input name='q'>Search the catalog</form></form></body></html>").encode()
+    text = normalize(html, "html")
+    assert "Admission Requirement Snapshot" in text and "36 graduate credits" in text
+    assert "Menu" not in text and "Search the catalog" not in text
+
+
+def test_small_forms_are_still_removed():
+    html = ("<html><body><main><h1>MS Data Science</h1><p>Applications open in September for the fall term.</p>"
+            "<p>Deadlines and requirements are listed below for all applicants.</p></main>"
+            "<form><label>Email</label><input name='email'>Subscribe</form></body></html>").encode()
+    text = normalize(html, "html")
+    assert "Applications open" in text and "Subscribe" not in text

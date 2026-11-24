@@ -11,7 +11,7 @@ COLUMNS = [
 ]
 
 
-def build_worksheet(candidates):
+def build_worksheet(candidates, groups=None):
     ws = candidates.copy()
     ws["_g"] = ws["cip_group"].map({g: i for i, g in enumerate(GROUP_ORDER)})
     ws["_nr"] = ws["completions_masters_nonresident"].astype(int)
@@ -22,6 +22,8 @@ def build_worksheet(candidates):
     ws["institution_group_count"] = ws.groupby("unitid")["cip_group"].transform("nunique")
     ws["decision"] = ""
     ws["note"] = ""
+    if groups is not None:
+        ws = ws[ws["cip_group"].isin(groups)]
     return ws[COLUMNS].reset_index(drop=True)
 
 

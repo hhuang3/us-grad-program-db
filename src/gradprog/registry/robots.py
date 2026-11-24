@@ -44,7 +44,8 @@ def summarize(verdicts):
 
 
 def check_robots(registry, contact_email=None, client=None, min_interval=3.0, clock=None, sleep=None,
-                 now=None):
+                 now=None, domains=None):
+    """Check robots.txt for every domain, or only for `domains` (06 §8.1)."""
     email = contact_email or os.environ.get(CONTACT_ENV, "").strip()
     if not email:
         raise DownloadError(f"set {CONTACT_ENV} to a contact email before checking robots.txt")
@@ -54,10 +55,14 @@ def check_robots(registry, contact_email=None, client=None, min_interval=3.0, cl
     now = now or utc_now
     headers = {"User-Agent": user_agent(email)}
 
-    pages, domains = registry.pages, registry.domains
+    pages = registry.pages
     last = None
     active = pages["url_status"] != "retired"   # 06 §4.1: retired pages are not judged
+    only = None if domains is None else set(domains)
+    domains = registry.domains
     for i, row in domains.iterrows():
+        if only is not None and row["domain"] not in only:
+            continue
         on_domain = pages["domain"] == row["domain"]
         if on_domain.any() and not (on_domain & active).any():
             continue

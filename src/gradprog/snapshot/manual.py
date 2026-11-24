@@ -20,7 +20,10 @@ from gradprog.util.manifest import ManifestError, validate_timestamp
 
 DUE_DAYS = 14
 DATE_ONLY = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-DUE_COLUMNS = ["program_id", "page_id", "page_type", "url", "last_retrieved", "save_note"]
+DUE_COLUMNS = ["school", "program_id", "page_id", "page_type", "cadence", "url", "last_retrieved", "save_note"]
+BIWEEKLY, TERMLY = "每两周", "每学期"
+BIWEEKLY_TYPES = ("admissions", "requirements", "deadlines", "grad_school_intl")   # 07 §5.2 (2026-11-23)
+TERM_DATES = ((1, 15), (8, 15))   # each term's save is due from these dates on
 SAVE_NOTE_MARK = "人工保存"   # 07 §5.2: scope notes with this text are instructions for the manual save
 
 
@@ -30,16 +33,48 @@ def manual_due(registry, store, today, url_check=None):
     ok = ix[ix["classification"].isin(SUCCESS)]
     pages = registry.pages.drop_duplicates("page_id").set_index("page_id")
     today_d = date.fromisoformat(today)
+    full = _all_manual_programs(registry, manual, pages)
+    progs = registry.programs.set_index("program_id")
     rows = []
     for p in manual:
         done = ok.loc[ok["page_id"] == p, "retrieved_at"]
         last = max(done) if len(done) else ""
-        if last and (today_d - date.fromisoformat(last[:10])).days < DUE_DAYS:
+        cadence = _cadence(pages.loc[p], programs_of(registry, p), full)
+        if last and cadence == BIWEEKLY and (today_d - date.fromisoformat(last[:10])).days < DUE_DAYS:
             continue
-        rows.append([";".join(programs_of(registry, p)), p, pages.loc[p, "page_type"], pages.loc[p, "url"],
+        if last and cadence == TERMLY and date.fromisoformat(last[:10]) >= _term_start(today_d):
+            continue
+        mine = programs_of(registry, p)
+        school = progs.loc[mine[0], "institution_short"] or progs.loc[mine[0], "institution_name"]
+        rows.append([school, ";".join(mine), p, pages.loc[p, "page_type"], cadence, pages.loc[p, "url"],
                      last[:10], _save_note(registry, p)])
     due = pd.DataFrame(rows, columns=DUE_COLUMNS)
-    return due.sort_values(["program_id", "page_id"]).reset_index(drop=True)
+    return due.sort_values(["school", "program_id", "page_id"]).reset_index(drop=True)
+
+
+def _all_manual_programs(registry, manual, pages):
+    """Selected programs whose every linked, non-retired page is a manual page (07 §5.2)."""
+    manual = set(manual)
+    sel = set(registry.programs.loc[registry.programs["status"] == "selected", "program_id"])
+    full = set()
+    for pid, g in registry.program_pages[registry.program_pages["program_id"].isin(sel)].groupby("program_id"):
+        live = [p for p in g["page_id"] if p in pages.index and pages.loc[p, "url_status"] != "retired"]
+        if live and all(p in manual for p in live):
+            full.add(pid)
+    return full
+
+
+def _cadence(page, programs, full):
+    """07 §5.2: term pages are the non-requirement pages linked only to all-manual programs."""
+    if page["page_type"] in BIWEEKLY_TYPES or page.get("manual_cadence", "") == "biweekly":
+        return BIWEEKLY
+    return TERMLY if programs and all(p in full for p in programs) else BIWEEKLY
+
+
+def _term_start(day):
+    """The latest of Jan 15 / Aug 15 on or before day."""
+    starts = [date(y, m, d) for y in (day.year - 1, day.year) for m, d in TERM_DATES]
+    return max(s for s in starts if s <= day)
 
 
 def _save_note(registry, page_id):
@@ -49,10 +84,15 @@ def _save_note(registry, page_id):
 
 
 def render_manual_due(due):
-    out = ["# 人工取得待办", "", f"距上次成功取得 ≥ {DUE_DAYS} 天或从未取得的页面。保存为 .mhtml（页面本身是 PDF 时保存 .pdf）。", ""]
-    for program, g in due.groupby("program_id", sort=True):
-        out += [f"## {program}", "", "| page_id | page_type | URL | 上次取得 | 保存说明 |", "|---|---|---|---|---|"]
-        out += [f"| {r.page_id} | {r.page_type} | [{r.url}]({r.url}) | {r.last_retrieved or '从未'} | {r.save_note} |"
+    out = ["# 人工取得待办", "",
+           f"“每两周”的页面：距上次成功取得 ≥ {DUE_DAYS} 天或从未取得。“每学期”的页面：最近的 1 月 15 日或 8 月 15 日以来"
+           "没有取得过（07 §5.2）。保存为 .mhtml（页面本身是 PDF 时保存 .pdf）。", ""]
+    for school, g in due.groupby("school", sort=True):   # 07 §5.2 (2026-11-23): one school per section
+        out += [f"## {school}（{len(g)} 页）", "", "| 项目 | page_id | page_type | 频率 | URL | 上次取得 | 保存说明 |",
+                "|---|---|---|---|---|---|---|"]
+        out += [f"| {r.program_id} | {r.page_id} | {r.page_type} | {r.cadence} | [{r.url}]({r.url}) "
+                f"| {r.last_retrieved or '从未'} "
+                f"| {r.save_note} |"
                 for r in g.itertuples(index=False)]
         out.append("")
     out.append(f"合计待办：{len(due)} 个页面")

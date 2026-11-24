@@ -13,6 +13,7 @@ from gradprog.extract.pipeline import (
 )
 from gradprog.extract.prompt import load_settings
 from gradprog.extract.store import ExtractionStore
+from gradprog.snapshot.normalize import NORMALIZER_VERSION
 from gradprog.snapshot.store import INDEX_COLUMNS, SnapshotStore
 
 PAGE = """Fall 2027 applications close December 1, 2026.
@@ -294,10 +295,10 @@ def add_snapshot(snaps, page="pg-0001", ts="2026-10-11T00:00:00Z", cls="unchange
     row = dict.fromkeys(INDEX_COLUMNS, "")
     row.update(snapshot_id=sid, page_id=page, run_id="r", method="auto", retrieved_at=ts, requested_url="u",
                final_url="https://a.edu", http_status="200", content_type="html", raw_sha256="r", raw_bytes="1",
-               normalizer_version="2", norm_sha256=sha, norm_chars=str(len(text)), classification=cls)
+               normalizer_version=str(NORMALIZER_VERSION), norm_sha256=sha, norm_chars=str(len(text)), classification=cls)
     snaps.append_index(row)
     if cls in ("first_capture", "unchanged", "changed", "suspected_redesign"):
-        path = snaps.norm_path(page, sid, 2)
+        path = snaps.norm_path(page, sid, NORMALIZER_VERSION)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
     return sid

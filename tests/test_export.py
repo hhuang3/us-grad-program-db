@@ -300,3 +300,56 @@ def test_an_estimate_equal_to_the_stated_total_is_written_once():
                row("tuition_amount_usd", "46250", group="g2", extras={"includes_fees": False})
                | {"derived": {"tuition_program_total_usd_est": 46250, "method": "program_total"}}])
     assert c["学费估算总额"].text == "$46,250"
+
+
+def test_area_uses_the_display_group():
+    # 06 §2.8 (2026-11-23): a nominated program registered under another CIP shows its display group.
+    c = cells([], program={**PROGRAM, "cip_group": "ieor", "display_group": "fin_eng"})
+    assert c["方向"].text == "金融工程"
+
+
+# 10 §3.1 (2026-11-23): programs with pages never captured show "待取得" instead of "页面未写明"
+def test_pending_program_shows_pending_for_missing_values():
+    c = cells([row("gre_policy", "optional"), row("ielts_min_overall", status="not_mentioned"),
+               row("toefl_min_legacy", status="extraction_failed")], pending=True)
+    assert c["GRE"].text == "可选"
+    assert c["雅思"].text == "待取得" and c["雅思"].mark != REVIEW
+    assert c["GMAT"].text == "待取得"                        # no rows at all
+    assert c["托福（旧制）"].text.startswith("待核实")        # other statuses are unchanged
+    assert "雅思" not in c["待核实说明"].text
+
+
+def test_program_with_an_uncaptured_page_is_pending():
+    index = pd.DataFrame([{"page_id": "pg-1", "retrieved_at": "2026-11-15T11:00:00Z", "classification": "unchanged"}])
+    sheets, counts = build([csv_row(row("gre_policy", "optional"))], Registry(), index, [], "2026-11-20")
+    by_program = {r[3].text: r for r in sheets["项目总表"][1]}
+    gmat = PROGRAM_COLUMNS.index("GMAT")
+    assert by_program["MS in Data Science"][gmat].text == "页面未写明"
+    assert by_program["Holdout MS"][gmat].text == "待取得"      # pg-2 was never captured
+    assert counts["pending_programs"] == 1
+
+
+# 10 §3.2 (2026-11-23): term-by-term tuition keeps only the fall terms
+def tuition_group(amount, year, gid):
+    return [{**row("tuition_amount_usd", amount, oid=f"a-{gid}"), "group_id": gid},
+            {**row("tuition_basis", "per_term", oid=f"b-{gid}"), "group_id": gid},
+            {**row("tuition_year", year, oid=f"y-{gid}"), "group_id": gid}]
+
+
+def test_term_by_term_tuition_keeps_the_fall_term():
+    rows = tuition_group("16073", "Summer 2027", "t0") + tuition_group("16073", "Spring 2027", "t1") \
+        + tuition_group("16073", "Fall 2026", "t2")
+    assert cells(rows)["学费"].text == "$16,073 / 学期（fall 2026）"
+
+
+def test_academic_year_tuition_is_kept_with_a_fall_term():
+    rows = tuition_group("30000", "2026-2027", "t0") + tuition_group("16000", "Fall 2026", "t1") \
+        + tuition_group("9000", "Summer 2027", "t2")
+    text = cells(rows)["学费"].text
+    assert "2026-2027" in text and "fall 2026" in text and "summer" not in text
+
+
+def test_tuition_without_a_fall_term_is_unchanged():
+    rows = tuition_group("9000", "Summer 2027", "t0") + tuition_group("16000", "Spring 2027", "t1")
+    text = cells(rows)["学费"].text
+    assert "summer 2027" in text and "spring 2027" in text

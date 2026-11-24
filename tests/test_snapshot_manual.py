@@ -277,3 +277,62 @@ def test_manual_due_takes_a_planned_date():
     assert build_parser().parse_args(["snapshot", "manual-due", "--on", "2026-11-21"]).on == "2026-11-21"
     with pytest.raises(SystemExit):
         build_parser().parse_args(["snapshot", "manual-due", "--on", "11/21"])
+
+
+# --- save frequency by page type (07 §5.2, 2026-11-23) ---------------------------
+
+@pytest.fixture
+def all_manual(reg):
+    """Drop the shared auto page pg-0002 so every page of alpha-ms-businessanalytics is manual."""
+    pp = reg.program_pages
+    reg.program_pages = pp[~((pp.program_id == "alpha-ms-businessanalytics") & (pp.page_id == "pg-0002"))]
+    return reg
+
+
+def cadence(due):
+    return dict(zip(due["page_id"], due["cadence"]))
+
+
+def test_programs_with_an_auto_page_keep_every_manual_page_biweekly(reg, store):
+    assert cadence(manual_due(reg, store, today="2026-10-06")) == {"pg-0003": "每两周", "pg-0004": "每两周"}
+
+
+def test_all_manual_program_saves_only_requirement_pages_biweekly(all_manual, store):
+    # pg-0003 is the program home, pg-0004 the requirements page.
+    assert cadence(manual_due(all_manual, store, today="2026-10-06")) == {"pg-0003": "每学期", "pg-0004": "每两周"}
+
+
+@pytest.mark.parametrize("today, due", [("2026-10-20", False), ("2027-01-14", False), ("2027-01-15", True)])
+def test_term_pages_are_due_from_the_next_term_date(all_manual, store, tmp_path, today, due):
+    reg_one(all_manual, store, write(tmp_path, "a.mhtml", make_mhtml(URL3, BODY)), when="2026-09-01T10:00:00Z")
+    assert ("pg-0003" in list(manual_due(all_manual, store, today=today)["page_id"])) is due
+
+
+def test_capture_before_august_15_is_due_on_august_15(all_manual, store, tmp_path):
+    reg_one(all_manual, store, write(tmp_path, "a.mhtml", make_mhtml(URL3, BODY)), when="2026-08-14T10:00:00Z")
+    assert "pg-0003" not in list(manual_due(all_manual, store, today="2026-08-14")["page_id"])
+    assert "pg-0003" in list(manual_due(all_manual, store, today="2026-08-15")["page_id"])
+
+
+def test_manual_cadence_forces_biweekly(all_manual, store):
+    p = all_manual.pages
+    p.loc[p.page_id == "pg-0003", "manual_cadence"] = "biweekly"
+    assert cadence(manual_due(all_manual, store, today="2026-10-06"))["pg-0003"] == "每两周"
+
+
+def test_render_shows_the_frequency(all_manual, store):
+    md = render_manual_due(manual_due(all_manual, store, today="2026-10-06"))
+    assert "| 频率 |" in md and "每学期" in md and "每两周" in md
+
+
+# --- grouped by school (07 §5.2, 2026-11-23) --------------------------------------
+
+def test_manual_due_is_grouped_by_school_with_page_counts(reg, store):
+    p = reg.programs
+    p.loc[p.program_id == "alpha-ms-datascience", "fetch_method"] = "manual"   # pg-0005 becomes manual too
+    due = manual_due(reg, store, today="2026-10-06")
+    assert set(due["school"]) == {"Alpha"}
+    md = render_manual_due(due)
+    assert "## Alpha（3 页）" in md and "## alpha-ms-businessanalytics" not in md
+    assert md.count("| pg-0003 |") == 1
+    assert "alpha-ms-datascience" in md and "alpha-ms-businessanalytics" in md

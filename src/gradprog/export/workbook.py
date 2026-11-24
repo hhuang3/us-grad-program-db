@@ -12,6 +12,7 @@ from gradprog.export.tables import (
     parse_view_row, program_row, school_key,
 )
 from gradprog.export.student import student_sheets
+from gradprog.registry.tables import display_group
 from gradprog.extract.evaluate import normalize_value
 from gradprog.snapshot.store import SUCCESS
 
@@ -116,7 +117,8 @@ def collect(view_rows, registry, index, on_date, gold_rows=(), link_of=None):
     for row in view:
         by_program[row["program_id"]].append(row)
     area_order = list(AREA)
-    chosen.sort(key=lambda x: (area_order.index(x[0]["cip_group"]) if x[0]["cip_group"] in area_order else len(area_order),
+    chosen.sort(key=lambda x: (area_order.index(display_group(x[0])) if display_group(x[0]) in area_order
+                               else len(area_order),
                                school_key(x[0]), x[0]["program_name"]))
     out = []
     for program, page_ids in chosen:
@@ -124,8 +126,9 @@ def collect(view_rows, registry, index, on_date, gold_rows=(), link_of=None):
         homes = [p for p in page_ids if pages.loc[p, "page_type"] == "program_home"] or page_ids
         home = pages.loc[homes[0], "url"]
         last = _last_checked(page_ids, index)
-        out.append({"program": program, "home": home, "last_checked": last,
-                    "cells": program_row(program, rows, home, last, gold, link_of or (lambda row: None)),
+        pending = last == "从未"   # 10 §3.1 (2026-11-23): some page was never captured
+        out.append({"program": program, "home": home, "last_checked": last, "pending": pending,
+                    "cells": program_row(program, rows, home, last, gold, link_of or (lambda row: None), pending),
                     "deadlines": deadline_rows(program, rows, on_date, gold)})
     page_urls = dict(zip(registry.pages["page_id"], registry.pages["url"]))
     return out, page_urls, gold
@@ -143,6 +146,7 @@ def build(view_rows, registry, index, changes, on_date, gold_rows=(), link_of=No
     checked = [c["last_checked"] for c in collected]
     counts = {
         "programs": len(program_table),
+        "pending_programs": sum(c["pending"] for c in collected),
         "program_cells_in_review": sum(c.mark == REVIEW for row in program_table for c in row),
         "programs_with_review": sum(any(c.mark == REVIEW for c in row) for row in program_table),
         "deadlines": len(deadline_table),
@@ -159,6 +163,7 @@ def build(view_rows, registry, index, changes, on_date, gold_rows=(), link_of=No
             ["已过期", "截止日期早于导出日期。标灰，排在截止日期表最后。"],
             ["学期", "只招秋季的项目，学期按日期推算。"],
             ["页面未写明", "我们收录的官网页面没有写这一项。不代表没有这项要求，也不代表答案是“否”，请到官网确认。"],
+            ["待取得", "这个项目还有收录的页面没有取得（多是等待人工保存的页面），没有值的项暂时不能判断，取得后补上。"],
             ["见其他页面", "官网让读者去另一个页面看这一项；单元格链接到那个页面。"],
             ["时长", "有多个方向（轨道）时合并为一个区间，例如 9–16 个月。"],
             ["学费估算总额", "按页面写的学费和学分估算的整个项目学费，不含杂费和生活费；页面只给项目总额时就是该数额；算不出时留空。"],

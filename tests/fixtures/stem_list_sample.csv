@@ -1,8 +1,21 @@
 cip_code,title,series,page
 03.0204,Environmental/Natural Resource Economics.,03,1
+11.0101,"Computer and Information Sciences, General.",11,3
+11.0102,Artificial Intelligence.,11,3
+11.0103,Information Technology.,11,3
+11.0104,Informatics.,11,3
+11.0401,Information Science/Studies.,11,3
+11.0701,Computer Science.,11,3
 14.0101,"Engineering, General.",14,1
 14.0201,"Aerospace, Aeronautical, and Astronautical/Space Engineering, General.",14,1
+14.0901,"Computer Engineering, General.",14,4
+14.1001,Electrical and Electronics Engineering.,14,4
+14.3501,Industrial Engineering.,14,6
+14.3701,Operations Research.,14,6
+14.4701,Electrical and Computer Engineering.,14,6
 15.0000,"Engineering Technologies/Technicians, General.",15,1
+26.1102,Biostatistics.,26,10
+27.0305,Financial Mathematics.,27,12
 27.0501,"Statistics, General.",27,2
 27.0599,"Statistics, Other.",27,2
 30.7001,"Data Science, General.",30,2

@@ -1,6 +1,6 @@
 # 04 候选（学校 × CIP）清单
 
-> 状态：v1.1（Phase 1b，已按 2026-09-30 的逐项答复修订）。本清单只是 Phase 2 人工挑选 100 个项目的**起点**，不是最终项目清单。
+> 状态：v1.2（2026-11-22：扩展批次新增 6 个组，§1）。v1.1（Phase 1b，已按 2026-09-30 的逐项答复修订）。本清单只是 Phase 2 人工挑选 100 个项目的**起点**，不是最终项目清单。
 > 本文件中的数字是 2026-09-30 用 CIP 2020 CSV、2024 版 STEM 清单和 C2024_A_RV 做的预检结果，仅供参考。正式数字以 1d 生成的表和 1e 报告为准。
 
 ## 1. 目标 CIP 的定义
@@ -15,8 +15,22 @@
 | `27.0601` | exact | `stats` | Applied Statistics, General |
 | `52.13` | prefix | `mgmt_sci` | Management Sciences and Quantitative Methods 系列 |
 | `45.0603` | exact | `econ` | Econometrics and Quantitative Economics |
+| `11.0101` | exact | `cs` | Computer and Information Sciences, General |
+| `11.0102` | exact | `cs` | Artificial Intelligence |
+| `11.0701` | exact | `cs` | Computer Science |
+| `14.0901` | exact | `ece` | Computer Engineering, General |
+| `14.1001` | exact | `ece` | Electrical and Electronics Engineering |
+| `14.4701` | exact | `ece` | Electrical and Computer Engineering |
+| `27.0305` | exact | `fin_eng` | Financial Mathematics |
+| `14.3501` | exact | `ieor` | Industrial Engineering |
+| `14.3701` | exact | `ieor` | Operations Research |
+| `11.0103` | exact | `info_sys` | Information Technology |
+| `11.0104` | exact | `info_sys` | Informatics |
+| `11.0401` | exact | `info_sys` | Information Science/Studies |
+| `26.1102` | exact | `biostat` | Biostatistics |
 
-- `cip_group` 的取值只能是 `ds / analytics / stats / mgmt_sci / econ`，固定排序也按这个顺序。
+- `cip_group` 的取值只能是 `ds / analytics / stats / mgmt_sci / econ / cs / ece / fin_eng / ieor / info_sys / biostat`，固定排序也按这个顺序。
+- **扩展批次的 6 个组**（2026-11-22 新增）：全部是 2024 版 STEM 清单上的代码。不在清单上的 52.0801 Finance, General、52.1201 Management Information Systems, General、52.1206 Information Resources Management 不收（负责人决定）；14.2701 Systems Engineering、26.1103 Bioinformatics 不加。52.1301 已属于 `mgmt_sci`，不在 `ieor` 中重复。
 - `econ` 组目前只有 45.0603 一个代码（2026-09-30 确认单独成组）。
 
 另有一份“必须存在”的清单，对应指令中点名的代码：`30.7102 Business Analytics`、`30.7103 Data Visualization`、`30.7104 Financial Analytics`、`45.0603`、`27.0601`。
@@ -123,7 +137,7 @@
 
 | 列 | 说明 |
 |---|---|
-| `cip_group` | `ds / analytics / stats / mgmt_sci / econ` |
+| `cip_group` | `ds / analytics / stats / mgmt_sci / econ / cs / ece / fin_eng / ieor / info_sys / biostat` |
 | `rank_in_group` | 组内排名，从 1 开始，按 §4.3 的顺序逐行递增（并列也不共享名次） |
 | `unitid` | IPEDS UNITID（字符串形式的整数） |
 | `institution_name` | HD2024 的 `INSTNM` |
@@ -139,7 +153,7 @@
 
 ### 4.3 排序（组内各自排序，不做跨组的总排名）
 
-- 文件行序：`cip_group`（按 ds → analytics → stats → mgmt_sci → econ 的固定顺序）→ `completions_masters` 降序 → `unitid` 升序（按整数比较）→ `cip_code` 升序。
+- 文件行序：`cip_group`（按 §1 的固定顺序）→ `completions_masters` 降序 → `unitid` 升序（按整数比较）→ `cip_code` 升序。
 - `rank_in_group` 在每个 `cip_group` 内按上述顺序从 1 开始重新编号。
 - 同一所学校在同一组有多个 CIP 时（如 30.7101 和 30.7102），各自占一行、各自排名。
 
@@ -147,7 +161,7 @@
 
 按学校汇总（同样排除 §4.1 的行），**不排名**：
 
-`unitid, institution_name, state, institution_target_cip_count, cip_codes, completions_ds, completions_analytics, completions_stats, completions_mgmt_sci, completions_econ`
+`unitid, institution_name, state, institution_target_cip_count, cip_codes, completions_ds, completions_analytics, completions_stats, completions_mgmt_sci, completions_econ, completions_cs, completions_ece, completions_fin_eng, completions_ieor, completions_info_sys, completions_biostat`
 
 - `cip_codes`：该校有授予的目标 CIP，按字典序用 `;` 连接。
 - `completions_<group>`：该校在该组的第一专业授予数合计，没有则为 0。

@@ -58,10 +58,13 @@ def cmd_registry(args):
         return
     if args.registry_command == "worksheet":
         candidates = pd.read_csv(CANDIDATES, dtype=str, keep_default_na=False)
-        path = REGISTRY / "selection_worksheet.csv"
-        ws = build_worksheet(candidates)
+        path = Path(args.out) if args.out else REGISTRY / "selection_worksheet.csv"
+        ws = build_worksheet(candidates, groups=args.groups.split(",") if args.groups else None)
         write_worksheet(ws, path, force=args.force)
-        print(f"wrote {path.relative_to(REPO)} ({len(ws):,} rows)")
+        print(f"wrote {path} ({len(ws):,} rows)")
+        return
+    if args.registry_command in ("add-program", "apply-review"):
+        _registry_batch(args)
         return
 
     reg = tables.load_registry(REGISTRY)
@@ -107,6 +110,58 @@ def cmd_registry(args):
             raise SystemExit(1)
 
 
+def _registry_batch(args):
+    """06 §8: add-program and apply-review."""
+    from datetime import datetime, timezone
+
+    import pandas as pd
+
+    from gradprog.registry import batch, tables
+    from gradprog.registry.robots import check_robots
+    from gradprog.registry.url_check import check_urls, merge_url_check
+    from gradprog.registry.validate import validate
+
+    today = args.on or datetime.now(timezone.utc).date().isoformat()
+    reg = tables.load_registry(REGISTRY)
+    candidates = pd.read_csv(CANDIDATES, dtype=str, keep_default_na=False)
+    uc_path = REGISTRY / "url_check.csv"
+    if args.registry_command == "add-program":
+        proposals = batch.read_proposals(args.source)
+        result = batch.add_programs(reg, proposals, candidates, today)
+        tables.save_registry(reg, REGISTRY)
+        print(f"registered {len(result.new_programs)} programs, {len(result.new_pages)} pages, "
+              f"{len(result.new_domains)} new domains; reused {len(result.reused)} links, "
+              f"page additions {len(result.page_additions)}")
+        if result.robots_domains:
+            check_robots(reg, domains=result.robots_domains)
+            tables.save_registry(reg, REGISTRY)
+            print(f"robots.txt checked for {len(result.robots_domains)} domains of new pages")
+        if result.new_pages:
+            checked = check_urls(reg, page_ids=result.new_pages)
+            from gradprog.registry.url_check import write_url_check
+            write_url_check(merge_url_check(uc_path, checked), uc_path)
+            print("url check:", dict(checked["result"].value_counts()))
+        url_check = pd.read_csv(uc_path, dtype=str, keep_default_na=False) if uc_path.exists() else None
+        out = Path(args.review) if args.review else REGISTRY / f"review_{today}.md"
+        if out.exists() and not args.force:
+            raise SystemExit(f"{out} already exists (it may hold your decisions); use --force to overwrite")
+        out.write_text(batch.write_review(reg, candidates, proposals, url_check, today, title=args.title or ""),
+                       encoding="utf-8")
+        print(f"wrote {out}")
+        return
+    url_check = pd.read_csv(uc_path, dtype=str, keep_default_na=False) if uc_path.exists() else None
+    path = Path(args.review_file)
+    review = batch.parse_review(path.read_text(encoding="utf-8"))
+    summary = batch.apply_review(reg, review, url_check, today, source=path.name)
+    tables.save_registry(reg, REGISTRY)
+    for key, value in summary.items():
+        print(f"{key}: {value}")
+    result = validate(reg, candidates, ready=True, batch="expansion", url_check=url_check)
+    _print_validation(result)
+    if result.errors:
+        raise SystemExit(1)
+
+
 def _print_validation(result):
     for e in result.errors:
         print(f"ERROR   {e}")
@@ -123,12 +178,12 @@ def _print_validation(result):
               f"graduate_school pages: {rep['graduate_school_pages']}")
         print("domains with tos_status != no_restriction:", rep["tos_not_ok_domains"] or "none")
         blocked = rep.get("ready_crawl_blocked", rep["crawl_blocked_pages"])
-        label = "pilot pages not crawlable" if "ready_crawl_blocked" in rep else "pages not crawlable"
+        label = "ready-batch pages not crawlable" if "ready_crawl_blocked" in rep else "pages not crawlable"
         print(f"{label}: {len(blocked)}")
         for b in blocked:
             print(f"  {b['page_id']} {b['domain']} ({b['reason']})")
         if "ready_manual_programs" in rep:
-            print(f"pilot programs with fetch_method=manual: {len(rep['ready_manual_programs'])}")
+            print(f"ready-batch programs with fetch_method=manual: {len(rep['ready_manual_programs'])}")
             for pid in rep["ready_manual_programs"]:
                 print(f"  {pid}")
     print(f"\n{len(result.errors)} error(s), {len(result.warnings)} warning(s)")
@@ -326,6 +381,8 @@ def build_parser():
     rsub = reg.add_subparsers(dest="registry_command", required=True)
     rsub.add_parser("init", help="create the four empty registry tables")
     w = rsub.add_parser("worksheet", help="write data/registry/selection_worksheet.csv")
+    w.add_argument("--groups", help="comma-separated cip_group values to include (06 §7)")
+    w.add_argument("--out", help="output path (default data/registry/selection_worksheet.csv)")
     w.add_argument("--force", action="store_true", help="overwrite an existing worksheet")
     a = rsub.add_parser("add-page", help="register one page and link it to programs")
     a.add_argument("--url", required=True)
@@ -336,12 +393,21 @@ def build_parser():
     a.add_argument("--status", default="proposed", help="url_status")
     a.add_argument("--added-at", help="YYYY-MM-DD (default: today, UTC)")
     rsub.add_parser("derive", help="recompute derived columns (domain, crawl_allowed)")
+    ap = rsub.add_parser("add-program", help="register programs and pages from a proposals file (06 §8.1)")
+    ap.add_argument("--from", dest="source", required=True, help="proposals CSV")
+    ap.add_argument("--review", help="review checklist path (default data/registry/review_<date>.md)")
+    ap.add_argument("--title", help="subtitle of the review checklist")
+    ap.add_argument("--on", help="registration date (default today, UTC)")
+    ap.add_argument("--force", action="store_true", help="overwrite an existing review checklist")
+    ar = rsub.add_parser("apply-review", help="apply the decisions in a review checklist (06 §8.3)")
+    ar.add_argument("review_file")
+    ar.add_argument("--on", help="decision date (default today, UTC)")
     rsub.add_parser("check-robots", help="check robots.txt for every domain")
     cu = rsub.add_parser("check-urls", help="status codes and redirects of proposed pages (writes url_check.csv)")
     cu.add_argument("--page", action="append", help="only check this page_id (repeatable)")
     v = rsub.add_parser("validate", help="validate the registry")
     v.add_argument("--ready", action="store_true", help="Phase 3 readiness checks")
-    v.add_argument("--batch", choices=["pilot", "main"], help="batch for --ready")
+    v.add_argument("--batch", choices=["pilot", "main", "expansion"], help="batch for --ready")
     reg.set_defaults(func=cmd_registry)
 
     snap = sub.add_parser("snapshot", help="Phase 3 snapshots and change detection (07)")

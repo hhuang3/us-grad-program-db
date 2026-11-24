@@ -2,7 +2,7 @@
 
 from openpyxl import load_workbook
 
-from gradprog.export.student import NOT_ON_SITE, UNSURE, _next_deadline, _plain, _stem, _toefl, _tuition
+from gradprog.export.student import IN_PROGRESS, NOT_ON_SITE, UNSURE, _next_deadline, _plain, _stem, _toefl, _tuition
 from gradprog.export.tables import REVIEW, Cell
 from gradprog.export.workbook import build, write
 from test_export import PROGRAM, Registry, csv_row, deadline, row
@@ -91,3 +91,15 @@ def test_student_workbook_keeps_only_usable_deadlines_and_no_internal_marks(tmp_
     assert not any(c.fill.fgColor.rgb not in ("00000000", None) for s in book for r in s.iter_rows() for c in r
                    if c.fill and c.fill.fill_type)
     assert all(s.auto_filter.ref for s in book)
+
+
+# 10 §8.1 (2026-11-23): pending cells read "数据整理中" with nothing else
+def test_pending_cells_read_in_progress_and_link_home():
+    cell = _plain(Cell("待取得"), HOME)
+    assert (cell.text, cell.link) == (IN_PROGRESS, HOME)
+    assert _toefl(Cell("待取得"), Cell("待取得"), HOME).text == IN_PROGRESS
+    assert _tuition(Cell("待取得"), Cell(""), HOME).text == IN_PROGRESS
+    assert _stem(Cell("待取得"), HOME).text == IN_PROGRESS
+    assert _stem(Cell("待取得，CIP 11.0701"), HOME).text == IN_PROGRESS
+    assert _next_deadline([], HOME, pending=True).text == IN_PROGRESS
+    assert IN_PROGRESS == "数据整理中"

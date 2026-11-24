@@ -192,3 +192,23 @@ def test_check_robots_does_not_request_domain_with_only_retired_pages(registry):
     run(registry, seen=seen)
     assert "datascience.alpha.edu" not in {h for h, _, _ in seen}
     assert registry.domains.set_index("domain").loc["datascience.alpha.edu"].to_dict() == before
+
+
+def test_check_robots_can_limit_to_some_domains(registry):
+    # 06 §8.1: add-program checks only the domains it added.
+    seen = []
+    fake = FakeTime()
+
+    def handler(request):
+        seen.append(request.url.host)
+        code, text = ROBOTS[request.url.host]
+        return httpx.Response(code, text=text)
+
+    before = registry.domains.set_index("domain").loc["datascience.alpha.edu"].to_dict()
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    check_robots(registry, contact_email=EMAIL, client=client, clock=fake.clock, sleep=fake.sleep, now=lambda: NOW,
+                 domains=["grad.alpha.edu"])
+    assert seen == ["grad.alpha.edu"]
+    d = registry.domains.set_index("domain")
+    assert d.loc["grad.alpha.edu", "robots_checked_at"] == NOW
+    assert d.loc["datascience.alpha.edu"].to_dict() == before

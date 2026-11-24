@@ -5,3 +5,16 @@ pattern,kind,cip_group,label
 27.0601,exact,stats,"Applied Statistics, General"
 52.13,prefix,mgmt_sci,Management Sciences and Quantitative Methods series
 45.0603,exact,econ,Econometrics and Quantitative Economics
+11.0101,exact,cs,"Computer and Information Sciences, General"
+11.0102,exact,cs,Artificial Intelligence
+11.0701,exact,cs,Computer Science
+14.0901,exact,ece,"Computer Engineering, General"
+14.1001,exact,ece,Electrical and Electronics Engineering
+14.4701,exact,ece,Electrical and Computer Engineering
+27.0305,exact,fin_eng,Financial Mathematics
+14.3501,exact,ieor,Industrial Engineering
+14.3701,exact,ieor,Operations Research
+11.0103,exact,info_sys,Information Technology
+11.0104,exact,info_sys,Informatics
+11.0401,exact,info_sys,Information Science/Studies
+26.1102,exact,biostat,Biostatistics
